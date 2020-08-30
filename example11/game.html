@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Example 11</title>
+
+<link rel='stylesheet' href='../css/cssreset-min.css' type='text/css' media='all' />
+<style type="text/css">
+	#easeljsCanvas, #box2dCanvas {
+		position: absolute;
+	}
+	#easeljsCanvas {
+		background-color: #8DB8E3;
+	}
+	#browser_os {
+		position: absolute;
+		top: 500px;
+		left: 20px;
+	}
+	#output {
+		position: absolute;
+		top: 510px;
+		left: 20px;
+	}
+</style>
+
+<script src="../js/Box2dWeb-2.1.a.3.js"></script>
+<script src="../js/easeljs-0.6.0.min.js"></script>
+<script src="../js/soundjs-NEXT.min.js"></script>
+<script src="../js/ColorFilter.js"></script>
+<script src="../js/ColorMatrixFilter.js"></script>
+<script src="../js/preloadjs-0.3.1.min.js"></script>
+
+<script src="../js/MyGameBuilder/ContactHandler.js"></script>
+<script src="../js/MyGameBuilder/BuoyancyHandler.js"></script>
+<script src="../js/MyGameBuilder/StickyTargetHandler.js"></script>
+<script src="../js/MyGameBuilder/KeyboardHandler.js"></script>
+<script src="../js/MyGameBuilder/MultiTouchHandler.js"></script>
+<script src="../js/MyGameBuilder/ZoomHandler.js"></script>
+<script src="../js/MyGameBuilder/Render.js"></script>
+<script src="../js/MyGameBuilder/ScreenHandler.js"></script>
+<script src="../js/MyGameBuilder/ScreenButton.js"></script>
+<script src="../js/MyGameBuilder/SliceHandler.js"></script>
+<script src="../js/MyGameBuilder/LoadingIndicator.js"></script>
+<script src="../js/MyGameBuilder/Entity.js"></script>
+<script src="../js/MyGameBuilder/Link.js"></script>
+<script src="../js/MyGameBuilder/Camera.js"></script>
+<script src="../js/MyGameBuilder/Player.js"></script>
+<script src="../js/MyGameBuilder/Landscape.js"></script>
+<script src="../js/MyGameBuilder/Gravitation.js"></script>
+<script src="../js/MyGameBuilder/Grenade.js"></script>
+<script src="../js/MyGameBuilder/SoundHandler.js"></script>
+<script src="../js/MyGameBuilder/TimeStepHandler.js"></script>
+<script src="../js/MyGameBuilder/BreakHandler.js"></script>
+<script src="../js/MyGameBuilder/Wind.js"></script>
+<script src="../js/MyGameBuilder/BrowserOSHandler.js"></script>
+<script src="../js/MyGameBuilder/WorldManager.js"></script>
+
+<script src="MyApp.js"></script>
+
+<script>
+function init() {
+	var browserOSHandler = new MyGameBuilder.BrowserOSHandler();
+	var os = browserOSHandler.getOS();
+	
+	var thisApp = null;
+	//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
+	if ( os === "iOS" || os === "Android" ) {
+		document.getElementById("output").innerHTML = 'Touch the canvas to start!';
+		document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false);
+		function handleTouch(event) {
+			document.getElementById("output").innerHTML = '';
+			document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false);
+			thisApp = new MyGameBuilder.MyApp();
+		}
+	}
+	else {
+		thisApp = new MyGameBuilder.MyApp();
+	}
+}
+
+window.addEventListener("load",init);
+</script>
+
+</head>
+<body>
+
+	<p id="browser_os"></p>
+	<p id="output"></p>
+	<canvas id="easeljsCanvas" width="980" height="500" ></canvas>
+	<canvas id="box2dCanvas" width="980" height="500" ></canvas>
+
+</body>
+</html>

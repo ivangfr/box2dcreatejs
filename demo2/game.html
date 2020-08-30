@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Demo 2</title>
+
+<link rel='stylesheet' href='../css/cssreset-min.css' type='text/css' media='all' />
+<style type="text/css">
+	body {
+		font-family: Verdana;
+	}
+	#easeljsCanvas, #box2dCanvas {
+		position: absolute;
+	}
+	#easeljsCanvas {
+		background-color: #8DB8E3;
+	}
+	#hint {
+		background: #3399cc;
+		position: absolute;
+		font-weight: bold;
+		font-size : 30px;
+		left: 100px;
+		top: 5px;
+		width: 800px;
+		color: #fff;
+		padding: 10px;
+		border-radius: 15px;
+		border-width: 10px;
+		box-shadow: 1px 10px 18px -3px #000;
+		text-align: center;
+		display: none;
+	}
+	#help {
+		position: absolute;
+		left: 250px;
+		top: 70px;
+		width: 464px;
+		height: 399px;
+		background-image:url('break_slice_help.jpg');
+		border: 5px solid black;
+		border-radius: 15px;
+		display: none;
+	}
+	#score {
+		background: #3399cc;
+		position: absolute;
+		font-weight: bold;
+		font-size: 18px;
+		left: 930px;
+		top: 5px;
+		width: 25px;
+		height: 20px;
+		color: #fff;
+		padding: 10px;
+		border-radius: 15px;
+		border-width: 10px;
+		box-shadow: 1px 10px 18px -3px #000;
+		text-align: center;
+		display: none;
+	}	
+	#message {
+		font-weight: bold;
+		position: absolute;
+		top: 510px;
+		left: 350px;
+		display: none;
+	}
+	#rank {
+		position: absolute;
+		top: 520px;
+		left: 200px;
+		border-collapse: collapse;
+	}
+	#rank th, #rank td {
+		border: 1px solid #000;
+		padding: 5px 10px 5px 10px;
+	}
+	#rank th {
+		text-align: center;
+		background-color: #ddd;
+		font-weight: bold;
+	}
+	#rank tr.highlight {
+		background-color: yellow;
+	}
+</style>
+
+<script src="../js/Box2dWeb-2.1.a.3.js"></script>
+<script src="../js/easeljs-0.7.1.min.js"></script>
+<script src="../js/preloadjs-0.4.1.min.js"></script>
+<script src="../js/soundjs-0.5.2.min.js"></script>
+
+<script src="../js/MyGameBuilder/ContactHandler.js"></script>
+<script src="../js/MyGameBuilder/BuoyancyHandler.js"></script>
+<script src="../js/MyGameBuilder/SliceHandler.js"></script>
+<script src="../js/MyGameBuilder/KeyboardHandler.js"></script>
+<script src="../js/MyGameBuilder/ZoomHandler.js"></script>
+<script src="../js/MyGameBuilder/Render.js"></script>
+<script src="../js/MyGameBuilder/ScreenButton.js"></script>
+<script src="../js/MyGameBuilder/LoadingIndicator.js"></script>
+<script src="../js/MyGameBuilder/Entity.js"></script>
+<script src="../js/MyGameBuilder/Link.js"></script>
+<script src="../js/MyGameBuilder/Camera.js"></script>
+<script src="../js/MyGameBuilder/Player.js"></script>
+<script src="../js/MyGameBuilder/Landscape.js"></script>
+<script src="../js/MyGameBuilder/TimeStepHandler.js"></script>
+<script src="../js/MyGameBuilder/BreakHandler.js"></script>
+<script src="../js/MyGameBuilder/BrowserOSHandler.js"></script>
+<script src="../js/MyGameBuilder/MultiTouchHandler.js"></script>
+<script src="../js/MyGameBuilder/WorldManager.js"></script>
+<script src="../js/MyGameBuilder/SoundHandler.js"></script>
+<script src="../js/MyGameBuilder/Utils.js"></script>
+
+<script src="http://j.maxmind.com/app/geoip.js"></script>
+
+<script src="MyApp.js"></script>
+
+<script>
+function init() {
+	var browserOSHandler = new MyGameBuilder.BrowserOSHandler();
+	var os = browserOSHandler.getOS();
+	
+	var thisApp = null;
+	//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
+	if ( os === "iOS" || os === "Android" ) {
+		document.getElementById("message").style.display = 'block';
+		document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false);
+		function handleTouch(event) {
+			document.getElementById("message").style.display = 'none';
+			document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false);
+			thisApp = new MyGameBuilder.MyApp();
+		}
+	}
+	else {
+		thisApp = new MyGameBuilder.MyApp();
+	}
+}
+
+window.addEventListener("load",init);
+</script>
+
+</head>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-39979346-2', 'mygamebuilder.appspot.com');
+  ga('send', 'pageview');
+</script>
+
+<body>
+
+	<canvas id="easeljsCanvas" width="980" height="500" ></canvas>
+	<canvas id="box2dCanvas" width="980" height="500" ></canvas>
+	<p id="message">Touch the canvas to start!</p>
+	<div id='help'></div>
+	<p id="hint"></p>
+	<p id="score"></p>
+	<table id="rank"></table>
+
+</body>
+</html>
