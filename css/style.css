@@ -46,28 +46,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', end
 	
 }
 
-.contact-container {
-	margin: 10px auto;
-	width: 50%;
-	border: 1px solid #999;
-	padding: 10px;
-	box-shadow: 1px 10px 10px 1px #ccc;
-	border-radius: 15px;
-	text-align: center;
-
-background: rgb(224,243,250); /* Old browsers */
-background: -moz-linear-gradient(-45deg,  rgba(224,243,250,1) 0%, rgba(216,240,252,1) 50%, rgba(184,226,246,1) 51%, rgba(182,223,253,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(224,243,250,1)), color-stop(50%,rgba(216,240,252,1)), color-stop(51%,rgba(184,226,246,1)), color-stop(100%,rgba(182,223,253,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(-45deg,  rgba(224,243,250,1) 0%,rgba(216,240,252,1) 50%,rgba(184,226,246,1) 51%,rgba(182,223,253,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(-45deg,  rgba(224,243,250,1) 0%,rgba(216,240,252,1) 50%,rgba(184,226,246,1) 51%,rgba(182,223,253,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(-45deg,  rgba(224,243,250,1) 0%,rgba(216,240,252,1) 50%,rgba(184,226,246,1) 51%,rgba(182,223,253,1) 100%); /* IE10+ */
-background: linear-gradient(135deg,  rgba(224,243,250,1) 0%,rgba(216,240,252,1) 50%,rgba(184,226,246,1) 51%,rgba(182,223,253,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', endColorstr='#b6dffd',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-	
-}
-
-.demo-container h3,
-.contact-container h3 {
+.demo-container h3 {
 	font-weight: bold;
 	font-size: 17px;
 	text-align: left;
@@ -83,71 +62,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', end
 	margin-bottom: 20px;
 }
 
-#form_contact fieldset {
-	clear: both;
-	padding: 6px;
-}
-
-#form_contact label {
-	font-size: 15px;
-	width: 85px;
-	float: left;
-	text-align: right;
-	margin-top: 5px;
-}
-
-#form_contact input[type="text"],
-#form_contact textarea,
-#form_contact button[type="button"] {
-	font-family: inherit;
-	font-size: 15px;
-	padding: 5px;
-	border: 1px solid #BBB;
-	border-radius: 5px;
-}
-
-#form_contact input[type="text"] {
-	height: 1.1em;
-	width: 75%;
-	float: left;
-	margin-left: 0.6em;
-	background: #eef0f1;
-	border-width: 2px 0 0 2px;
-}
-
-#form_contact textarea {
-	width: 75%;
-	height: 9em;
-	max-height: 9em;
-	float: left;
-	margin-left: 0.6em;
-	resize: vertical;
-	background: #eef0f1;
-	border-width: 2px 0 0 2px;
-}
-
-#form_contact button[type="button"] {
-	width: 6.25em;
-	margin: 0 5px;
-	cursor: pointer;
-	background-color: #FFF;
-	color: #000;
-}
-
-#form_contact button[type="button"]:hover {
-	background-color: #3399CC;
-	color: #FFF;
-	-webkit-transition: background 200ms linear;
-	-moz-transition: background 200ms linear;
-	transition: background 200ms linear;
-}
-
 footer {
 	margin-top: 50px;
 	text-align: center;
-}
-
-#blockUIMsg {
-	font-size: 20px;
-	font-weight: bold;
 }
