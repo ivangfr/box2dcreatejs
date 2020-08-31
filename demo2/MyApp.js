@@ -241,42 +241,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					_hintElem.style.display = 'block';
 					
 					setTimeout(function() {
-					    var name = prompt("Please enter your name", "");
-
-					    if ( name == null || name.trim().length == 0 ) {
-					    	_hintElem.innerHTML = "Try again!!!"
-					    	setTimeout(function() {
-						    	worldManager.getTimeStepHandler().pause();
-					    	}, 3000);
-					    }
-					    else {
-					    	if ( name.length > 20 )
-					    		name = name.substring(0,20);
-					    	
-					    	var date = getDateNow();
-					    	var city = geoip_city();
-					    	var country = geoip_country_name();
-					    	
-						    ajaxCall(
-						    		'SavePlayerRankBreakSlice',
-						    		{name : name, score : _numBreaks, date : date, city : city, country : country},
-						    		function(d1) {
-						    			_hintElem.innerHTML = 'Wait for the final rank!!!';
-								    	ajaxCall(
-								    			'GetPlayerRankBreakSlice', null,
-								    			function(d2) { //success
-								    				buildRankTable(_rankElem, d2, 'TOP 20', d1.id);
-								    				_hintElem.innerHTML = "Try again!!!"
-										    		setTimeout(function() {
-											    		worldManager.getTimeStepHandler().pause();
-										    		}, 3000);
-										    	},
-										    	function(status) { //error
-										    		console.log('Error : ' + status)
-										    	});
-						    		}
-						    	);				    	
-					    }
+						_hintElem.innerHTML = "Try again!!!"
+						setTimeout(function() {
+							worldManager.getTimeStepHandler().pause();
+						}, 3000);
 					}, 4000);
 				}
 			}
