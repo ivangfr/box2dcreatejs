@@ -1,90 +1,88 @@
-//Namespace
 this.MyGameBuilder = this.MyGameBuilder || {};
 
-(function() {
+(function () {
 
 	MyGameBuilder.MouseTouchHandler = MouseTouchHandler;
-	
-	//Constructor
+
 	function MouseTouchHandler(worldManager, details) {
 		initialize(worldManager, details);
 	}
-	
+
 	var _validMouseTouchHandlerDef = ['enableDrag', 'onmousedown', 'onmouseup'];
-	
+
 	var _worldManager;
 	var _enableDrag, _userOnMouseDown, _userOnMouseUp;
-	
+
 	var _mouseX, _mouseY, _mousePVec, _isMouseDown, _selectedBody, _mouseJoint;
 	var _canvasPosition;
-	
+
 	var _screenButton;
-		
+
 	function initialize(worldManager, details) {
 		validate(worldManager, details);
-		
+
 		_worldManager = worldManager;
-		
+
 		var canvas = worldManager.getBox2dCanvas();
 		_canvasPosition = getElementPosition(canvas);
-		
+
 		_enableDrag = true;
-		if ( details && details.enableDrag !== undefined )
+		if (details && details.enableDrag !== undefined)
 			_enableDrag = details.enableDrag;
-		
-		if ( details && details.onmousedown !== undefined )
-			_userOnMouseDown = details.onmousedown;		
-		
-		if ( details && details.onmouseup !== undefined )
+
+		if (details && details.onmousedown !== undefined)
+			_userOnMouseDown = details.onmousedown;
+
+		if (details && details.onmouseup !== undefined)
 			_userOnMouseUp = details.onmouseup;
-		
+
 		MouseAndTouch(/*document*/canvas, downHandler, upHandler, moveHandler);
 	}
-	
-	MouseTouchHandler.prototype.update = function() {
+
+	MouseTouchHandler.prototype.update = function () {
 		var screenButttons = _worldManager.getScreenButtons();
-		for ( var i = 0; i < screenButttons.length; i++ ) {
+		for (var i = 0; i < screenButttons.length; i++) {
 			var screenButton = screenButttons[i];
-			if ( screenButton.keepPressed && screenButton.isButtonDown )
+			if (screenButton.keepPressed && screenButton.isButtonDown)
 				screenButton.onMouseDown();
 		}
-		
-		if ( _enableDrag ) {
+
+		if (_enableDrag) {
 			drag();
 		}
 	}
-	
-	MouseTouchHandler.prototype.getEntityAtMouseTouch = function() {
+
+	MouseTouchHandler.prototype.getEntityAtMouseTouch = function () {
 		var entity = null;
 		var body = getBodyAtMouseTouch();
-		
-		if ( body != null ) {
-			for ( var i = 0; i < _worldManager.getEntities().length; i++ ) {
+
+		if (body != null) {
+			for (var i = 0; i < _worldManager.getEntities().length; i++) {
 				var entity = _worldManager.getEntities()[i];
-				if ( entity.getId() == body.GetUserData().id )
+				if (entity.getId() == body.GetUserData().id)
 					break;
 			}
 		}
-		
+
 		return entity;
 	}
 
 	function downHandler(e) {
 		_isMouseDown = true;
-		
+
 		_screenButton = downOnScreenButton(e);
-				
-		if ( _screenButton != null ) {
+
+		if (_screenButton != null) {
 			_screenButton.isButtonDown = true;
-			if ( _screenButton.onMouseDown !== undefined )
+			if (_screenButton.onMouseDown !== undefined)
 				_screenButton.onMouseDown();
 		}
 		else {
 			moveHandler(e);
-			
-			if ( _userOnMouseDown ) {
+
+			if (_userOnMouseDown) {
 				_userOnMouseDown(e);
-			}			
+			}
 		}
 	}
 
@@ -92,14 +90,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_isMouseDown = false;
 		_mouseX = undefined;
 		_mouseY = undefined;
-				
-		if ( _screenButton != null) {
+
+		if (_screenButton != null) {
 			_screenButton.isButtonDown = false;
-			if ( _screenButton.onMouseUp !== undefined )
+			if (_screenButton.onMouseUp !== undefined)
 				_screenButton.onMouseUp();
 			_screenButton = null;
 		}
-		else if ( _userOnMouseUp ) {
+		else if (_userOnMouseUp) {
 			_userOnMouseUp(e);
 		}
 	}
@@ -121,7 +119,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_worldManager.getWorld().QueryAABB(getBodyCB, aabb);
 		return _selectedBody;
 	}
-	
+
 	function getBodyCB(fixture) {
 		if (fixture.GetBody().GetType() != box2d.b2Body.b2_staticBody) {
 			if (fixture.GetShape().TestPoint(fixture.GetBody().GetTransform(), _mousePVec)) {
@@ -150,8 +148,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		return {
-			x : x,
-			y : y
+			x: x,
+			y: y
 		};
 	}
 
@@ -178,37 +176,37 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				_mouseJoint = null;
 			}
 		}
-	}	
-	
+	}
+
 	function downOnScreenButton(e) {
 		var screenButton = null;
-		
-		for ( var i = 0; i < _worldManager.getScreenButtons().length; i++ ) {
+
+		for (var i = 0; i < _worldManager.getScreenButtons().length; i++) {
 			screenButton = _worldManager.getScreenButtons()[i];
-			
-			if ( e.x >= screenButton.view.x0 && e.x <= screenButton.view.x0 + screenButton.view.width &&
-				 e.y >= screenButton.view.y0 && e.y <= screenButton.view.y0 + screenButton.view.height )
+
+			if (e.x >= screenButton.view.x0 && e.x <= screenButton.view.x0 + screenButton.view.width &&
+				e.y >= screenButton.view.y0 && e.y <= screenButton.view.y0 + screenButton.view.height)
 				break;
 			else
 				screenButton = null;
 		}
-		
+
 		return screenButton;
 	}
-	
+
 	function MouseAndTouch(dom, down, up, move) {
 		var canvas = dom;
 		var isDown = false;
-	
+
 		canvas.addEventListener("mousedown", mouseDownHandler, true);
 		canvas.addEventListener("touchstart", touchDownHandler, true);
-	
+
 		//When drawing the "road" get mouse or touch positions
 		function mouseMoveHandler(e) {
 			updateFromEvent(e);
 			move(e);
 		}
-	
+
 		function updateFromEvent(e) {
 			e.preventDefault();
 			var touch = e.originalEvent;
@@ -222,7 +220,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				e.y = e.pageY;
 			}
 		}
-	
+
 		function mouseUpHandler(e) {
 			canvas.addEventListener("mousedown", mouseDownHandler, true);
 			canvas.removeEventListener("mousemove", mouseMoveHandler, true);
@@ -230,7 +228,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			updateFromEvent(e);
 			up(e);
 		}
-	
+
 		function touchUpHandler(e) {
 			canvas.addEventListener("touchstart", touchDownHandler, true);
 			canvas.removeEventListener("touchmove", mouseMoveHandler, true);
@@ -238,7 +236,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			updateFromEvent(e);
 			up(e);
 		}
-	
+
 		function mouseDownHandler(e) {
 			canvas.removeEventListener("mousedown", mouseDownHandler, true);
 			canvas.addEventListener("mouseup", mouseUpHandler, true);
@@ -247,7 +245,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			updateFromEvent(e);
 			down(e);
 		}
-	
+
 		function touchDownHandler(e) {
 			canvas.removeEventListener("touchstart", touchDownHandler, true);
 			canvas.addEventListener("touchend", touchUpHandler, true);
@@ -256,42 +254,42 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			updateFromEvent(e);
 			down(e);
 		}
-	
+
 		var ret = {};
-		ret.x = function() {
+		ret.x = function () {
 			return e.x;
 		}
-		ret.y = function() {
+		ret.y = function () {
 			return e.y;
 		}
-		ret.isDown = function() {
+		ret.isDown = function () {
 			return isDown
 		}
-	
+
 		return ret;
 	}
-	
+
 	function validate(worldManager, details) {
-		if ( !(worldManager instanceof MyGameBuilder.WorldManager) )
+		if (!(worldManager instanceof MyGameBuilder.WorldManager))
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!");
-		
-		if ( details ) {
-			if ( typeof details != 'object' )
+
+		if (details) {
+			if (typeof details != 'object')
 				throw new Error(arguments.callee.name + " : The MouseTouchHandler details must be an object!");
-			
-			for ( var def in details )
-				if ( _validMouseTouchHandlerDef.indexOf(def) < 0 )
+
+			for (var def in details)
+				if (_validMouseTouchHandlerDef.indexOf(def) < 0)
 					throw new Error(arguments.callee.name + " : the detail (" + def + ") for MouseTouchHandler is not supported! Valid definitions: " + _validMouseTouchHandlerDef);
-	
-			if ( details.enableDrag !== undefined && typeof details.enableDrag != 'boolean' )
+
+			if (details.enableDrag !== undefined && typeof details.enableDrag != 'boolean')
 				throw new Error(arguments.callee.name + " : enableDrag must be a true/false!");
-	
-			if ( details.onmousedown !== undefined && typeof details.onmousedown != 'function' )
+
+			if (details.onmousedown !== undefined && typeof details.onmousedown != 'function')
 				throw new Error(arguments.callee.name + " : onmousedown must be a function!");
-	
-			if ( details.onmouseup !== undefined && typeof details.onmouseup != 'function' )
+
+			if (details.onmouseup !== undefined && typeof details.onmouseup != 'function')
 				throw new Error(arguments.callee.name + " : onmouseup must be a function!");
 		}
 	}
-	
+
 })();

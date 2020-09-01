@@ -1,11 +1,9 @@
-//Namespace
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
 	MyGameBuilder.SoundHandler = SoundHandler;
 
-	//Constructor
 	function SoundHandler(details) {
 		initialize(this, details);
 	}
