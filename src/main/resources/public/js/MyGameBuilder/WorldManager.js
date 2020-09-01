@@ -431,7 +431,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			_screenHandler.showFullScreen();
 		
 		createjs.Ticker.addEventListener('tick', tick);
-		createjs.Ticker.setFPS(_FPS);
+		createjs.Ticker.framerate = _FPS;
 		createjs.Ticker.useRAF = true;		
 	}
 	
@@ -648,7 +648,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}	
 	
 	//================================================================================================
-	//--------------------------------------- Entity--------------------------------------------------
+	//--------------------------------------- Entity -------------------------------------------------
 	//================================================================================================	
 	
 	WorldManager.prototype.createEntity = function(details) {

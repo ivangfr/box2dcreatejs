@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Game - Break & Slice</title>
+
+	<link rel='stylesheet' href='../../css/cssreset-min.css' type='text/css' media='all' />
+	<style type="text/css">
+		body {
+			font-family: Verdana;
+		}
+
+		#easeljsCanvas,
+		#box2dCanvas {
+			position: absolute;
+		}
+
+		#easeljsCanvas {
+			background-color: #8DB8E3;
+		}
+
+		#hint {
+			background: #3399cc;
+			position: absolute;
+			font-weight: bold;
+			font-size: 30px;
+			left: 100px;
+			top: 5px;
+			width: 800px;
+			color: #fff;
+			padding: 10px;
+			border-radius: 15px;
+			border-width: 10px;
+			box-shadow: 1px 10px 18px -3px #000;
+			text-align: center;
+			display: none;
+		}
+
+		#help {
+			position: absolute;
+			left: 250px;
+			top: 70px;
+			width: 464px;
+			height: 399px;
+			background-image: url('break_slice_help.jpg');
+			border: 5px solid black;
+			border-radius: 15px;
+			display: none;
+		}
+
+		#score {
+			background: #3399cc;
+			position: absolute;
+			font-weight: bold;
+			font-size: 18px;
+			left: 930px;
+			top: 5px;
+			width: 25px;
+			height: 20px;
+			color: #fff;
+			padding: 10px;
+			border-radius: 15px;
+			border-width: 10px;
+			box-shadow: 1px 10px 18px -3px #000;
+			text-align: center;
+			display: none;
+		}
+
+		#message {
+			font-weight: bold;
+			position: absolute;
+			top: 510px;
+			left: 350px;
+			display: none;
+		}
+	</style>
+
+	<script src="../../js/Box2dWeb-2.1.a.3.js"></script>
+	<script src="../../js/easeljs-1.0.0.min.js"></script>
+	<script src="../../js/soundjs-1.0.0.min.js"></script>
+	<script src="../../js/preloadjs-1.0.0.min.js"></script>
+
+	<script src="../../js/MyGameBuilder/ContactHandler.js"></script>
+	<script src="../../js/MyGameBuilder/BuoyancyHandler.js"></script>
+	<script src="../../js/MyGameBuilder/SliceHandler.js"></script>
+	<script src="../../js/MyGameBuilder/KeyboardHandler.js"></script>
+	<script src="../../js/MyGameBuilder/ZoomHandler.js"></script>
+	<script src="../../js/MyGameBuilder/Render.js"></script>
+	<script src="../../js/MyGameBuilder/ScreenButton.js"></script>
+	<script src="../../js/MyGameBuilder/LoadingIndicator.js"></script>
+	<script src="../../js/MyGameBuilder/Entity.js"></script>
+	<script src="../../js/MyGameBuilder/Link.js"></script>
+	<script src="../../js/MyGameBuilder/Camera.js"></script>
+	<script src="../../js/MyGameBuilder/Player.js"></script>
+	<script src="../../js/MyGameBuilder/Landscape.js"></script>
+	<script src="../../js/MyGameBuilder/TimeStepHandler.js"></script>
+	<script src="../../js/MyGameBuilder/BreakHandler.js"></script>
+	<script src="../../js/MyGameBuilder/BrowserOSHandler.js"></script>
+	<script src="../../js/MyGameBuilder/MultiTouchHandler.js"></script>
+	<script src="../../js/MyGameBuilder/WorldManager.js"></script>
+	<script src="../../js/MyGameBuilder/SoundHandler.js"></script>
+	<script src="../../js/MyGameBuilder/Utils.js"></script>
+
+	<script src="MyApp.js"></script>
+
+	<script>
+		function init() {
+			var browserOSHandler = new MyGameBuilder.BrowserOSHandler();
+			var os = browserOSHandler.getOS();
+
+			var thisApp = null;
+			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
+			if (os === "iOS" || os === "Android") {
+				document.getElementById("message").style.display = 'block';
+				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false);
+				function handleTouch(event) {
+					document.getElementById("message").style.display = 'none';
+					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false);
+					thisApp = new MyGameBuilder.MyApp();
+				}
+			}
+			else {
+				thisApp = new MyGameBuilder.MyApp();
+			}
+		}
+
+		window.addEventListener("load", init);
+	</script>
+
+</head>
+
+<body>
+	<canvas id="easeljsCanvas" width="980" height="500"></canvas>
+	<canvas id="box2dCanvas" width="980" height="500"></canvas>
+	<p id="message">Touch the canvas to start!</p>
+	<div id='help'></div>
+	<p id="hint"></p>
+	<p id="score"></p>
+</body>
+
+</html>

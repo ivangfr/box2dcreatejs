@@ -1,0 +1,261 @@
+this.MyGameBuilder = this.MyGameBuilder || {};
+
+(function () {
+
+	var CATEGORY_CAR = 0x0001;
+	var CATEGORY_SCENERY = 0x0002;
+	var CAR_WIDTH = 170, CAR_HEIGHT = 55, CAR_X = 360, CAR_Y = 330;
+
+	var worldManager;
+
+	function MyApp() {
+		this.initialize();
+	}
+
+	MyGameBuilder.MyApp = MyApp;
+
+	MyApp.prototype.initialize = function () {
+		var easeljsCanvas = document.getElementById("easeljsCanvas");
+		var box2dCanvas = document.getElementById("box2dCanvas");
+
+		output = document.getElementById("output");
+
+		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+			enableRender: true,
+			enableDebug: true,
+			showFPSIndicator: true,
+			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
+			preLoad: {
+				showLoadingIndicator: true,
+				loadingIndicatorOpts: {
+					x: 420,
+					y: 210,
+					font: 'bold italic 30px Verdana',
+					color: 'white'
+				},
+				files: [
+					'../../images/tire.png',
+					'../../images/hummer.png'
+				],
+				onComplete: testJoints
+			}
+		});
+	}
+
+	function testJoints() {
+
+		worldManager.createKeyboardHandler({
+			68: { // d
+				onkeydown: function (e) {
+					worldManager.setEnableDebug(!worldManager.getEnableDebug());
+				}
+			},
+			82: { // r
+				onkeydown: function (e) {
+					worldManager.setEnableRender(!worldManager.getEnableRender());
+				}
+			}
+		});
+
+		worldManager.createMultiTouchHandler({
+			enableDrag: true
+		});
+
+		createWorldLimits();
+		createCar();
+	}
+
+	function createWorldLimits() {
+
+		const renderStatic = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: '#8a8a8a' }
+			}
+		};
+
+		const fixtureStatic = { filterCategoryBits: CATEGORY_SCENERY }
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 500,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: renderStatic,
+			fixtureDefOpts: fixtureStatic
+		});
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 0,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: renderStatic,
+			fixtureDefOpts: fixtureStatic
+		});
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 0, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: renderStatic,
+			fixtureDefOpts: fixtureStatic
+		});
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 980, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: renderStatic,
+			fixtureDefOpts: fixtureStatic
+		});
+	}
+
+	function createCar() {
+
+		var car = worldManager.createEntity({
+			type: 'dynamic',
+			x: CAR_X, y: CAR_Y,
+			shape: 'box',
+			boxOpts: { width: CAR_WIDTH, height: CAR_HEIGHT },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/hummer.png',
+					adjustImageSize: true
+				}
+			},
+			fixtureDefOpts: {
+				friction: 0.2,
+				density: 7,
+				filterCategoryBits: CATEGORY_CAR,
+				filterMaskBits: CATEGORY_SCENERY
+			},
+			draggable: true,
+			name: 'car'
+		});
+
+		var backAxis = worldManager.createEntity({
+			type: 'dynamic',
+			x: CAR_X - 55, y: CAR_Y + 30,
+			shape: 'box',
+			boxOpts: { width: 20, height: 20 },
+			fixtureDefOpts: {
+				filterCategoryBits: CATEGORY_CAR,
+				filterMaskBits: CATEGORY_SCENERY
+			},
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'transparent'
+				}
+			}
+		});
+
+		var frontAxis = worldManager.createEntity({
+			type: 'dynamic',
+			x: CAR_X + 55, y: CAR_Y + 30,
+			shape: 'box',
+			boxOpts: { width: 20, height: 20 },
+			fixtureDefOpts: {
+				filterCategoryBits: CATEGORY_CAR,
+				filterMaskBits: CATEGORY_SCENERY
+			},
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'transparent'
+				}
+			}
+		});
+
+		var renderTire = {
+			type: 'image',
+			imageOpts: {
+				image: '../../images/tire.png',
+				adjustImageSize: true
+			}
+		};
+
+		var backTire = worldManager.createEntity({
+			type: 'dynamic',
+			x: CAR_X - 55, y: CAR_Y + 30,
+			shape: 'circle',
+			circleOpts: { radius: 22 },
+			render: renderTire,
+			fixtureDefOpts: {
+				density: 5.0,
+				filterCategoryBits: CATEGORY_CAR,
+				filterMaskBits: CATEGORY_SCENERY
+			},
+			draggable: true,
+			name: 'backTire',
+			group: 'tire'
+		});
+
+		var frontTire = worldManager.createEntity({
+			type: 'dynamic',
+			x: CAR_X + 55, y: CAR_Y + 30,
+			shape: 'circle',
+			circleOpts: { radius: 22 },
+			render: renderTire,
+			fixtureDefOpts: {
+				density: 5.0,
+				friction: 3.0,
+				filterCategoryBits: CATEGORY_CAR,
+				filterMaskBits: CATEGORY_SCENERY
+			},
+			draggable: true,
+			name: 'frontTire',
+			group: 'tire'
+		});
+
+		worldManager.createLink({
+			entityA: car,
+			entityB: backAxis,
+			type: 'line',
+			localAnchorA: { x: -1.85, y: 0.1 },
+			localAxisA: { x: 0, y: 0.9 },
+			options: {
+				enableLimit: true,
+				lowerTranslation: 0.8,
+				upperTranslation: 0.95,
+				enableMotor: true,
+				maxMotorForce: 45,
+				motorSpeed: 2
+			}
+		});
+
+		worldManager.createLink({
+			entityA: car,
+			entityB: frontAxis,
+			type: 'line',
+			localAnchorA: { x: 1.85, y: 0.1 },
+			localAxisA: { x: 0, y: 0.9 },
+			options: {
+				enableLimit: true,
+				lowerTranslation: 0.8,
+				upperTranslation: 0.95,
+				enableMotor: true,
+				maxMotorForce: 45,
+				motorSpeed: 2
+			}
+		});
+
+		worldManager.createLink({
+			entityA: backAxis,
+			entityB: backTire,
+			type: 'revolute'
+		});
+
+		worldManager.createLink({
+			entityA: frontAxis,
+			entityB: frontTire,
+			type: 'revolute'
+		});
+	}
+
+}());

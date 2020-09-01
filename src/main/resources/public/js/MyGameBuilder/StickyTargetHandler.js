@@ -133,7 +133,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape : 'circle',
 			circleOpts : { radius : 2 },
 			render : {
-				z : _worldManager.getEaseljsStage().getNumChildren(),
+				z : _worldManager.getEaseljsStage().numChildren,
 				type : 'draw',
 				drawOpts : { bgColorStyle : 'solid', bgSolidColorOpts : { color : 'yellow' } }
 			}

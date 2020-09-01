@@ -43,8 +43,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		
 		_worldManager = worldManager;
 		
-		if ( details.z === undefined || details.z > worldManager.getEaseljsStage().getNumChildren() )
-			details.z = worldManager.getEaseljsStage().getNumChildren();		
+		if ( details.z === undefined || details.z > worldManager.getEaseljsStage().numChildren )
+			details.z = worldManager.getEaseljsStage().numChildren;
 
 		if ( details.opacity === undefined )
 			details.opacity = 1;
@@ -184,10 +184,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			spriteData.frames.regY = spriteData.frames.height/2;
 
 		var spriteSheet = new createjs.SpriteSheet(spriteData);
-		spriteSheet.onComplete = function() {
-			onLoadSpriteSheet(view, spriteData);
-		}
-		var animations = spriteSheet.getAnimations();
+		var animations = spriteSheet.animations;
 		for ( var i = 0; i < animations.length; i++ ) {
 			var anim = spriteSheet.getAnimation(animations[i]);
 			anim.frequency0 = anim.frequency;
@@ -232,8 +229,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		view.gotoAndPlay(details.spriteSheetOpts.startAnimation);
 		
-		if ( spriteSheet.complete != false )
-			onLoadSpriteSheet(view, spriteData);
+		if ( view.filters !== null )
+			view.cache(-spriteData.frames.width/2, -spriteData.frames.height/2, spriteData.frames.width, spriteData.frames.height);
+		
+		if ( view.adjustImageSize ) {
+			view.scaleX = view.dimension.width/spriteData.frames.width;
+			view.scaleY = view.dimension.height/spriteData.frames.height;	
+		}
 		
 		return view;
 	}
@@ -540,16 +542,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 	
-	function onLoadSpriteSheet(view, spriteData) {
-		if ( view.filters !== null )
-			view.cache(-spriteData.frames.width/2, -spriteData.frames.height/2, spriteData.frames.width, spriteData.frames.height);
-		
-		if ( view.adjustImageSize ) {
-			view.scaleX = view.dimension.width/spriteData.frames.width;
-			view.scaleY = view.dimension.height/spriteData.frames.height;	
-		}
-	}
-	
 	function drawShape(view) {
 		switch (view.shape) {
 		case 'circle':
@@ -613,8 +605,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		if ( details.z !== undefined ) {
 			if ( typeof details.z != 'number' )
 				throw new Error(arguments.callee.name + " : z must be a number!");
-//			else if ( details.z > worldManager.getEaseljsStage().getNumChildren() )
-//				throw new Error(arguments.callee.name + " : z must be <= to number of children in EaselJS Stage, i.e, " + worldManager.getEaseljsStage().getNumChildren() + "!");
 		}
 		
 		if ( details.type === undefined )

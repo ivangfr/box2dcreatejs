@@ -61,12 +61,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 		
 		timeStepHandler.isPaused = function() {
-			return createjs.Ticker.getPaused();
+			return createjs.Ticker.paused;
 		}
 		
 		timeStepHandler.pause = function() {
 			worldManager.setTimeStep(0);
-			createjs.Ticker.setPaused(true);
+			createjs.Ticker.paused = true;
 			
 			if ( timeStepHandler.view !== null ) {
 				var player = worldManager.getPlayer();
@@ -84,7 +84,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		
 		timeStepHandler.play = function() {
 			worldManager.setTimeStep(1/actualFPS);
-			createjs.Ticker.setPaused(false);
+			createjs.Ticker.paused = false;
 			
 			if ( timeStepHandler.view !== null ) {
 				var player = worldManager.getPlayer();
@@ -102,7 +102,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			
 			worldManager.setFPS(fps);
 			worldManager.setTimeStep(1/fps);
-			createjs.Ticker.setFPS(fps);
+			createjs.Ticker.framerate = fps;
 			
 			setSpriteSheetFrequency(fps);
 
@@ -111,7 +111,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				for ( var i = 0; i < entities.length; i++ ) {
 					var entity = entities[i];
 					if ( entity.b2body.view && entity.b2body.view.type === "spritesheet" ) {
-						var animations = entity.b2body.view.spriteSheet.getAnimations();
+						var animations = entity.b2body.view.spriteSheet.animations;
 						for ( var j = 0; j < animations.length; j++ ) {
 							var anim = entity.b2body.view.spriteSheet.getAnimation(animations[j]);
 							if ( fps == normalFPS )

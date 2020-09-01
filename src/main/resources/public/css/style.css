@@ -26,7 +26,7 @@ h2 {
 	text-align: center;
 }
 
-.demo-container {
+.game-container {
 	margin: 20px auto 40px;
 	width: 880px;
 	border: 1px solid #999;
@@ -46,18 +46,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', end
 	
 }
 
-.demo-container h3 {
+.game-container h3 {
 	font-weight: bold;
 	font-size: 17px;
 	text-align: left;
 	margin-bottom: 10px;
 }
 
-.demo-container a {
+.game-container a {
 	text-decoration: none;
 }
 
-.demo-container img {
+.game-container img {
 	width: 100%;
 	margin-bottom: 20px;
 }
