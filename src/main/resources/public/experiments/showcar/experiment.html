@@ -66,37 +66,34 @@
 
 	<script>
 		function init() {
-			window.performance.mark("markStartInit");
+			window.performance.mark("markStartInit")
 
-			var browserOSHandler = new MyGameBuilder.BrowserOSHandler();
-			var os = browserOSHandler.getOS();
+			const browserOSHandler = new MyGameBuilder.BrowserOSHandler()
+			const os = browserOSHandler.getOS()
 
-			var thisApp = null;
+			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
 			if (os === "iOS" || os === "Android") {
-				document.getElementById("output").innerHTML = 'Touch the canvas to start!';
-				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false);
+				document.getElementById("output").innerHTML = 'Touch the canvas to start!'
+				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false)
 				function handleTouch(event) {
-					document.getElementById("output").innerHTML = '';
-					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false);
-					thisApp = new MyGameBuilder.MyApp();
+					document.getElementById("output").innerHTML = ''
+					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false)
+					thisApp = new MyGameBuilder.MyApp()
 				}
 			}
 			else {
-				thisApp = new MyGameBuilder.MyApp();
+				thisApp = new MyGameBuilder.MyApp()
 			}
 
-			window.performance.mark("markEndInit");
-			window.performance.measure('measureInit', 'markStartInit', 'markEndInit');
-
-			var items = window.performance.getEntriesByType('measure');
-			for (var i = 0; i < items.length; ++i) {
-				var req = items[i];
-				console.log(req.name + ' took ' + req.duration + 'ms');
-			}
+			window.performance.mark("markEndInit")
+			window.performance.measure('measureInit', 'markStartInit', 'markEndInit')
+			window.performance.getEntriesByType('measure').forEach(entry => {
+				console.log(entry.name + ' took ' + entry.duration + 'ms')
+			})
 		}
 
-		window.addEventListener("load", init);
+		window.addEventListener("load", init)
 	</script>
 
 </head>

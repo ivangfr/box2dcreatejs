@@ -2,23 +2,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	var CATEGORY_CAR = 0x0001;
-	var CATEGORY_SCENERY = 0x0002;
-	var CAR_WIDTH = 170, CAR_HEIGHT = 55, CAR_X = 360, CAR_Y = 330;
+	const CATEGORY_CAR = 0x0001
+	const CATEGORY_SCENERY = 0x0002
+	const CAR_WIDTH = 170, CAR_HEIGHT = 55, CAR_X = 360, CAR_Y = 230
 
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -39,41 +37,35 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: testJoints
 			}
-		});
+		})
 	}
 
 	function testJoints() {
 
 		worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			}
-		});
+		})
 
-		worldManager.createMultiTouchHandler({
-			enableDrag: true
-		});
+		worldManager.createMultiTouchHandler()
 
-		createWorldLimits();
-		createCar();
+		createWorldLimits()
+		createCar()
 	}
 
 	function createWorldLimits() {
 
-		const renderStatic = {
+		const staticRender = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#8a8a8a' }
+				bgSolidColorOpts: { color: 'black' }
 			}
-		};
+		}
 
 		const fixtureStatic = { filterCategoryBits: CATEGORY_SCENERY }
 
@@ -82,41 +74,41 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			x: 490, y: 500,
 			shape: 'box',
 			boxOpts: { width: 980, height: 10 },
-			render: renderStatic,
+			render: staticRender,
 			fixtureDefOpts: fixtureStatic
-		});
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
 			boxOpts: { width: 980, height: 10 },
-			render: renderStatic,
+			render: staticRender,
 			fixtureDefOpts: fixtureStatic
-		});
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
-			render: renderStatic,
+			render: staticRender,
 			fixtureDefOpts: fixtureStatic
-		});
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
-			render: renderStatic,
+			render: staticRender,
 			fixtureDefOpts: fixtureStatic
-		});
+		})
 	}
 
 	function createCar() {
 
-		var car = worldManager.createEntity({
+		const car = worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X, y: CAR_Y,
 			shape: 'box',
@@ -134,11 +126,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
-			draggable: true,
 			name: 'car'
-		});
+		})
 
-		var backAxis = worldManager.createEntity({
+		const axisRender = {
+			type: 'draw',
+			drawOpts: { bgColorStyle: 'transparent' }
+		}
+
+		const backAxis = worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X - 55, y: CAR_Y + 30,
 			shape: 'box',
@@ -147,15 +143,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'transparent'
-				}
-			}
-		});
+			render: axisRender
+		})
 
-		var frontAxis = worldManager.createEntity({
+		const frontAxis = worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X + 55, y: CAR_Y + 30,
 			shape: 'box',
@@ -164,54 +155,47 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'transparent'
-				}
-			}
-		});
+			render: axisRender
+		})
 
-		var renderTire = {
+		const tireRender = {
 			type: 'image',
 			imageOpts: {
 				image: '../../images/tire.png',
 				adjustImageSize: true
 			}
-		};
+		}
 
-		var backTire = worldManager.createEntity({
+		const backTire = worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X - 55, y: CAR_Y + 30,
 			shape: 'circle',
 			circleOpts: { radius: 22 },
-			render: renderTire,
+			render: tireRender,
 			fixtureDefOpts: {
 				density: 5.0,
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
-			draggable: true,
 			name: 'backTire',
 			group: 'tire'
-		});
+		})
 
-		var frontTire = worldManager.createEntity({
+		const frontTire = worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X + 55, y: CAR_Y + 30,
 			shape: 'circle',
 			circleOpts: { radius: 22 },
-			render: renderTire,
+			render: tireRender,
 			fixtureDefOpts: {
 				density: 5.0,
 				friction: 3.0,
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
-			draggable: true,
 			name: 'frontTire',
 			group: 'tire'
-		});
+		})
 
 		worldManager.createLink({
 			entityA: car,
@@ -227,7 +211,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				maxMotorForce: 45,
 				motorSpeed: 2
 			}
-		});
+		})
 
 		worldManager.createLink({
 			entityA: car,
@@ -243,19 +227,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				maxMotorForce: 45,
 				motorSpeed: 2
 			}
-		});
+		})
 
 		worldManager.createLink({
 			entityA: backAxis,
 			entityB: backTire,
 			type: 'revolute'
-		});
+		})
 
 		worldManager.createLink({
 			entityA: frontAxis,
 			entityB: frontTire,
 			type: 'revolute'
-		});
+		})
 	}
 
-}());
+}())

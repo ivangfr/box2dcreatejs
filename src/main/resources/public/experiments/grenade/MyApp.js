@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -35,135 +33,48 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: testGrenade
 			}
-		});
+		})
 	}
 
 	function testGrenade() {
-		var renderStatic = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#bbb' }
-			}
-		};
 
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 500,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 0,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 0, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 980, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
+		createWorldLimitsAndPlatform()
+		createToys()
 
 		worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			},
 			65: { // a
-				onkeydown: function (e) {
-					grenade1.explode();
-				}
+				onkeydown: () => grenade1.explode()
 			},
 			83: { // s
-				onkeydown: function (e) {
-					grenade2.explode();
-				}
+				onkeydown: () => grenade2.explode()
 			},
 			80: { // p
-				onkeydown: function (e) {
-					var isPaused = worldManager.getTimeStepHandler().isPaused();
-					if (isPaused)
-						worldManager.getTimeStepHandler().play();
-					else
-						worldManager.getTimeStepHandler().pause();
+				onkeydown: () => {
+					const timeStepHandler = worldManager.getTimeStepHandler()
+					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
 				}
 			}
-		});
+		})
 
-		worldManager.createMultiTouchHandler();
+		worldManager.createMultiTouchHandler()
 
 		worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
-					drawOpts: {
-						bgColorStyle: 'solid',
-					},
+					drawOpts: { bgColorStyle: 'solid' },
 					opacity: 0.3
 				}
 			}
-		});
+		})
 
-		var soundHandler = worldManager.createSoundHandler();
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 350,
-			shape: 'box',
-			boxOpts: { width: 400, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'dynamic',
-			x: 550, y: 100,
-			shape: 'box',
-			boxOpts: { width: 20, height: 60 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#1316AD' }
-				}
-			},
-			draggable: true
-		});
-
-		worldManager.createEntity({
-			type: 'dynamic',
-			x: 350, y: 400,
-			shape: 'box',
-			boxOpts: { width: 30, height: 90 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#1316AD' }
-				}
-			},
-			draggable: true
-		});
+		var soundHandler = worldManager.createSoundHandler()
 
 		var ball1 = worldManager.createEntity({
 			type: 'dynamic',
@@ -178,21 +89,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						animations: { 'normal': [0], 'explode': [1, 47, 'normal'] },
 						frames: { 'height': 256, 'width': 256 }
 					},
-					startAnimation: 'normal',
-					adjustImageSize: false
+					startAnimation: 'normal'
 				}
 			},
 			bodyDefOpts: { fixedRotation: true },
-			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 },
-			draggable: true
-		});
+			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 }
+		})
 
 		var grenade1 = worldManager.createGrenade(ball1, {
 			numParticles: 32,
 			blastPower: 1000,
 			particleOpts: {
 				shape: 'circle',
-				circleOpts: { radius: 5 },
+				circleOpts: { radius: 3 },
 				render: {
 					type: 'draw',
 					drawOpts: {
@@ -202,14 +111,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			afterExplosion: function () {
-				grenade1.getEntity().b2body.view.gotoAndPlay("explode");
+				grenade1.getEntity().b2body.view.gotoAndPlay("explode")
+				soundHandler.createSoundInstance({ id: 'explosion' }).myPlay({ volume: 0.3 })
 				setTimeout(function () {
-					grenade1.clearParticles();
-				}, 500);
-
-				soundHandler.createSoundInstance({ id: 'explosion' }).play();
+					grenade1.clearParticles()
+				}, 500)
 			}
-		});
+		})
 
 		var ball2 = worldManager.createEntity({
 			type: 'dynamic',
@@ -224,14 +132,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						animations: { 'normal': [0], 'explode': [1, 47, 'normal'] },
 						frames: { 'height': 256, 'width': 256 }
 					},
-					startAnimation: 'normal',
-					adjustImageSize: false
+					startAnimation: 'normal'
 				}
 			},
 			bodyDefOpts: { fixedRotation: true },
-			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 },
-			draggable: true
-		});
+			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 }
+		})
 
 		var grenade2 = worldManager.createGrenade(ball2, {
 			numParticles: 32,
@@ -253,13 +159,108 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			beforeExplosion: function () {
-				grenade2.clearParticles();
+				grenade2.clearParticles()
 			},
 			afterExplosion: function () {
-				grenade2.getEntity().b2body.view.gotoAndPlay("explode");
-				soundHandler.createSoundInstance({ id: 'explosion2' }).play();
+				grenade2.getEntity().b2body.view.gotoAndPlay("explode")
+				soundHandler.createSoundInstance({ id: 'explosion2' }).play()
 			}
-		});
+		})
 	}
 
-}());
+	function createWorldLimitsAndPlatform() {
+		const staticRender = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'black' }
+			}
+		}
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 500,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticRender
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 0,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticRender
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 0, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticRender
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 980, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticRender
+		})
+
+		// Platform
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 350,
+			shape: 'box',
+			boxOpts: { width: 400, height: 10 },
+			render: staticRender
+		})
+	}
+
+	function createToys() {
+		const toysRender = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'teal' },
+				borderWidth: 2,
+				borderColor: 'white'
+			}
+		}
+
+		worldManager.createEntity({
+			type: 'dynamic',
+			x: 600, y: 300,
+			shape: 'box',
+			boxOpts: { width: 20, height: 60 },
+			render: toysRender
+		})
+
+		worldManager.createEntity({
+			type: 'dynamic',
+			x: 400, y: 300,
+			shape: 'box',
+			boxOpts: { width: 50, height: 50 },
+			render: toysRender
+		})
+
+		worldManager.createEntity({
+			type: 'dynamic',
+			x: 150, y: 400,
+			shape: 'box',
+			boxOpts: { width: 30, height: 90 },
+			render: toysRender
+		})
+
+		worldManager.createEntity({
+			type: 'dynamic',
+			x: 850, y: 400,
+			shape: 'box',
+			boxOpts: { width: 30, height: 90 },
+			render: toysRender
+		})
+	}
+
+}())

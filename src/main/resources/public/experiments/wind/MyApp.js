@@ -1,107 +1,104 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: true,
 			showFPSIndicator: true,
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true)
-		});
+		})
 
-		testWind();
-		worldManager.start();
+		testWind()
+		worldManager.start()
 	}
 
 	function testWind() {
-		var renderStatic = {
+		createWorldLimits()
+		createToys()
+		
+		worldManager.createKeyboardHandler({
+			68: { // d
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+			},
+			82: { // r
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+			},
+			65: { // a
+				onkeydown: () => {
+					const wind = worldManager.getWind()
+					wind.isOn() ? wind.stop() : wind.start()
+				}
+			}
+		})
+
+		worldManager.createMultiTouchHandler()
+
+		// Wind
+		worldManager.createWind({
+			numRays: 50,
+			power: 1000,
+			on: true,
+			directionTo: 'right',
+			height: 400
+		})
+	}
+
+	function createWorldLimits() {
+		const staticRender = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#bbb' }
+				bgSolidColorOpts: { color: 'black' }
 			}
-		};
+		}
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
 			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
+			render: staticRender
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
 			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
+			render: staticRender
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
+			render: staticRender
+		})
 
 		worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
+			render: staticRender
+		})
+	}
 
-		worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
-			},
-			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
-			},
-			65: { // a
-				onkeydown: function (e) {
-					var windOn = worldManager.getWind().isOn();
-					if (windOn)
-						worldManager.getWind().stop();
-					else
-						worldManager.getWind().start();
-				}
-			}
-		});
-
-		worldManager.createMultiTouchHandler();
-		worldManager.createWind({
-			numRays: 50,
-			power: 500,
-			on: true,
-			directionTo: 'right',
-			width: 800,
-			height: 400,
-			adjustY: 10,
-			adjustX: 100
-		});
-
-		var box = worldManager.createEntity({
+	function createToys() {
+		worldManager.createEntity({
 			type: 'dynamic',
 			x: 800, y: 100,
 			shape: 'box',
@@ -110,14 +107,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' }
+					bgSolidColorOpts: { color: 'blue' }
 				}
 			},
-			fixtureDefOpts: { density: 10 },
-			draggable: true
-		});
+			fixtureDefOpts: { density: 10 }
+		})
 
-		var box2 = worldManager.createEntity({
+		worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 100,
 			shape: 'box',
@@ -128,11 +124,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					bgColorStyle: 'solid',
 					bgSolidColorOpts: { color: 'white' }
 				}
-			},
-			draggable: true
-		});
+			}
+		})
 
-		var box3 = worldManager.createEntity({
+		worldManager.createEntity({
 			type: 'static',
 			x: 650, y: 450,
 			shape: 'box',
@@ -143,11 +138,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					bgColorStyle: 'solid',
 					bgSolidColorOpts: { color: 'black' }
 				}
-			},
-			draggable: true
-		});
+			}
+		})
 
-		var circle = worldManager.createEntity({
+		worldManager.createEntity({
 			type: 'dynamic',
 			x: 600, y: 100,
 			shape: 'circle',
@@ -156,13 +150,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' }
+					bgSolidColorOpts: { color: 'yellow' }
 				}
-			},
-			draggable: true
-		});
+			}
+		})
 
-		var triangle = worldManager.createEntity({
+		worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'polygon',
@@ -171,12 +164,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' }
+					bgSolidColorOpts: { color: 'green' }
 				}
 			},
-			fixtureDefOpts: { density: 1.0 },
-			draggable: true
-		});
+			fixtureDefOpts: { density: 1.0 }
+		})
 	}
 
-}());
+}())

@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -31,15 +29,27 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				files: [
 					{ src: '../../sounds/blink-182_dammit.mp3', id: 'music' },
 					'../../sounds/shotgun.mp3',
-					'../../sounds/Game-Shot.mp3',
+					'../../sounds/slice.mp3'
 				],
 				onComplete: testSound
 			}
-		});
+		})
 	}
 
 	function testSound() {
-		worldManager.createMultiTouchHandler();
+		const soundHandler = worldManager.createSoundHandler()
+
+		// Create music just with id, as the preload has the src
+		const music = soundHandler.createSoundInstance({ id: 'music' })
+		soundHandler.addSoundInstance(music)
+
+		// Create slice with id and src
+		const slice = soundHandler.createSoundInstance({ id: 'slice', src: '../../sounds/slice.mp3' })
+		soundHandler.addSoundInstance(slice)
+
+		// Note: shotgun is not created yet, just preload
+
+		worldManager.createMultiTouchHandler()
 
 		worldManager.createScreenButton({
 			x: 100, y: 100,
@@ -50,15 +60,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				drawOpts: {
 					bgColorStyle: 'transparent',
 					textOpts: { text: 'Play' },
-					borderWidth: 2, borderColor: 'white'
+					borderWidth: 2,
+					borderColor: 'white'
 				}
 			},
-			onmousedown: function (e) {
-				music.myPlay({
-					loop: -1
-				});
-			}
-		});
+			onmousedown: () => music.myPlay({ loop: -1 })
+		})
 
 		worldManager.createScreenButton({
 			x: 100, y: 160,
@@ -69,13 +76,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				drawOpts: {
 					bgColorStyle: 'transparent',
 					textOpts: { text: 'Stop' },
-					borderWidth: 2, borderColor: 'white'
+					borderWidth: 2,
+					borderColor: 'white'
 				}
 			},
-			onmousedown: function (e) {
-				music.stop();
-			}
-		});
+			onmousedown: () => music.stop()
+		})
 
 		worldManager.createScreenButton({
 			x: 300, y: 100,
@@ -86,13 +92,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				drawOpts: {
 					bgColorStyle: 'transparent',
 					textOpts: { text: 'Resume' },
-					borderWidth: 2, borderColor: 'white'
+					borderWidth: 2,
+					borderColor: 'white'
 				}
 			},
-			onmousedown: function (e) {
-				music.paused = false;
-			}
-		});
+			onmousedown: () => music.paused = false
+		})
 
 		worldManager.createScreenButton({
 			x: 300, y: 160,
@@ -103,48 +108,49 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				drawOpts: {
 					bgColorStyle: 'transparent',
 					textOpts: { text: 'Pause' },
-					borderWidth: 2, borderColor: 'white'
+					borderWidth: 2,
+					borderColor: 'white'
 				}
 			},
-			onmousedown: function (e) {
-				music.paused = true;
-			}
-		});
+			onmousedown: () => music.paused = true
+		})
 
-		var shotgunRender1 = {
+		const shotgunRender1 = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
 				textOpts: { text: 'Shotgun' },
-				borderWidth: 2, borderColor: 'white', borderRadius: 10
+				borderWidth: 2,
+				borderColor: 'white',
+				borderRadius: 10
 			}
-		};
-		var shotgunRender2 = {
+		}
+
+		const shotgunRender2 = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
 				bgSolidColorOpts: { color: 'white' },
 				textOpts: { text: 'Shotgun', color: 'black' },
-				borderWidth: 2, borderColor: 'white', borderRadius: 10
+				borderWidth: 2,
+				borderColor: 'white',
+				borderRadius: 10
 			}
-		};
+		}
 
-		var shotgunBtn = worldManager.createScreenButton({
+		const shotgunBtn = worldManager.createScreenButton({
 			x: 300, y: 240,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
 			render: shotgunRender1,
-			onmousedown: function (e) {
-				var shotgun = soundHandler.createSoundInstance({
-					src: '../../sounds/shotgun.mp3'
-				});
-				shotgun.play();
-				shotgunBtn.changeRender(shotgunRender2);
+			onmousedown: () => {
+				// Here shotgun is created and played
+				// It can be fired several times
+				soundHandler.createSoundInstance({src: '../../sounds/shotgun.mp3'}).play()
+				shotgunBtn.changeRender(shotgunRender2)
 			},
-			onmouseup: function (e) {
-				shotgunBtn.changeRender(shotgunRender1);
-			}
-		});
+			onmouseup: () => shotgunBtn.changeRender(shotgunRender1)
+		})
 
 		worldManager.createScreenButton({
 			x: 300, y: 300,
@@ -154,27 +160,16 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					textOpts: { text: 'Shot' },
-					borderWidth: 2, borderColor: 'white', borderRadius: 10
+					textOpts: { text: 'Slice' },
+					borderWidth: 2,
+					borderColor: 'white',
+					borderRadius: 10
 				}
 			},
-			onmousedown: function (e) {
-				soundHandler.getSoundInstance('shot').play();
-			}
-		});
-
-		var soundHandler = worldManager.createSoundHandler();
-
-		var music = soundHandler.createSoundInstance({
-			id: 'music'
-		});
-		soundHandler.addSoundInstance(music);
-
-		var shot = soundHandler.createSoundInstance({
-			id: 'shot',
-			src: '../../sounds/Game-Shot.mp3',
-		});
-		soundHandler.addSoundInstance(shot);
+			// Here slice is played. It is not fired several as shotgun.
+			// It need to stop the first execution to start a new one
+			onmousedown: () => soundHandler.getSoundInstance('slice').play()
+		})
 	}
 
-}());
+}())

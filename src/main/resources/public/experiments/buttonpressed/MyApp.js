@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -35,172 +33,165 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: testButtonPressed
 			}
-		});
+		})
 	}
 
 	function testButtonPressed() {
-		var renderStatic = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#8a8a8a' }
-			}
-		};
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 450,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 0,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 0, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 980, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
+		createWorldLimits()
+		createSmallBalls(250)
 
 		worldManager.createScreenButton({
-			x: 830, y: 480,
+			x: 810, y: 478,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
+			boxOpts: { width: 100, height: 35 },
 			render: {
-				type: 'image',
-				imageOpts: {
-					image: '../../images/leftarrow.png',
-					adjustImageSize: true
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					textOpts: { text: 'Button 1' },
+					borderWidth: 2,
+					borderColor: 'white',
+					borderRadius: 10
 				}
 			},
-			onmousedown: function (e) {
-				createBullet();
-			},
+			onmousedown: () => createSoccerBall(),
 			keepPressed: true
-		});
+		})
 
 		worldManager.createScreenButton({
-			x: 930, y: 480,
+			x: 920, y: 478,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
+			boxOpts: { width: 100, height: 35 },
 			render: {
-				type: 'image',
-				imageOpts: {
-					image: '../../images/rightarrow.png',
-					adjustImageSize: true
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					textOpts: { text: 'Button 2' },
+					borderWidth: 2,
+					borderColor: 'white',
+					borderRadius: 10
 				}
 			},
-			onmousedown: function (e) {
-				createBullet();
-			}
-		});
+			onmousedown: () => createSoccerBall()
+		})
 
 		worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			},
 			49: { // 1
-				onkeydown: function (e) {
-					createBullet();
-				},
+				onkeydown: () => createSoccerBall(),
 				keepPressed: true
 			},
 			50: { // 2
-				onkeydown: function (e) {
-					console.log('down' + e.which);
-					createBullet();
-				},
-				onkeyup: function (e) {
-					console.log('up' + e.which);
-				}
+				onkeydown: () => createSoccerBall()
 			}
-		});
+		})
 
 		worldManager.createMultiTouchHandler({
 			radius: 20,
 			accurate: false,
 			drawLocation: true,
 			onmousedown: function (e) {
-				var entities = worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e);
-				for (var i = 0; i < entities.length; i++) {
-					var entity = entities[i];
-					worldManager.deleteEntity(entity);
-				}
+				worldManager.getMultiTouchHandler()
+					.getEntitiesAtMouseTouch(e)
+					.forEach(entity => worldManager.deleteEntity(entity))
 			},
 			onmousemove: function (e) {
-				var x = e.x || e.clientX;
-				var y = e.y || e.clientY;
-				output.innerHTML = x + ':' + y;
-				if (!worldManager.getMultiTouchHandler().isTouchable() && !worldManager.getMultiTouchHandler().isMouseDown())
-					return;
+				const x = e.x || e.clientX
+				const y = e.y || e.clientY
+				document.getElementById("output").innerHTML = x + ':' + y
 
-				var entities = worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e);
-				for (var i = 0; i < entities.length; i++) {
-					var entity = entities[i];
-					worldManager.deleteEntity(entity);
+				const multiTouchHandler = worldManager.getMultiTouchHandler()
+				if (!multiTouchHandler.isTouchable() && !multiTouchHandler.isMouseDown()) {
+					return
 				}
+				multiTouchHandler.getEntitiesAtMouseTouch(e)
+					.forEach(entity => worldManager.deleteEntity(entity))
 			}
-		});
+		})
+	}
 
-		for (var i = 0; i < 200; i++) {
+	function createWorldLimits() {
+		const staticReander = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'black' }
+			}
+		}
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 450,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 0,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 0, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 980, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticReander
+		})
+	}
+
+	function createSmallBalls(number) {
+		for (let i = 0; i < number; i++) {
 			worldManager.createEntity({
 				type: 'dynamic',
-				x: Math.random() * 980,
-				y: Math.random() * 400,
+				x: Math.random() * 960 + 10,
+				y: Math.random() * 400 + 20,
 				shape: 'circle',
 				circleOpts: { radius: 10 },
 				render: {
 					type: 'draw',
 					drawOpts: {
 						bgColorStyle: 'solid',
-						bgSolidColorOpts: { color: 'black' }
+						bgSolidColorOpts: { color: 'white' },
+						borderWidth: 2
 					}
-				},
-				draggable: true
-			});
-		}
-
-		function createBullet() {
-			var ball = worldManager.createEntity({
-				type: 'dynamic',
-				x: 50, y: 100,
-				shape: 'circle',
-				circleOpts: { radius: 30 },
-				render: {
-					type: 'image',
-					imageOpts: {
-						image: '../../images/ball.png',
-						adjustImageSize: true
-					}
-				},
-				draggable: true
-			});
-			ball.b2body.ApplyImpulse(new box2d.b2Vec2(-300, 0), ball.b2body.GetWorldCenter());
+				}
+			})
 		}
 	}
 
-}());
+	function createSoccerBall() {
+		const ball = worldManager.createEntity({
+			type: 'dynamic',
+			x: 50, y: 100,
+			shape: 'circle',
+			circleOpts: { radius: 25 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/ball.png',
+					adjustImageSize: true
+				}
+			}
+		})
+		ball.b2body.ApplyImpulse(new box2d.b2Vec2(-300, 0), ball.b2body.GetWorldCenter())
+	}
+
+}())

@@ -224,7 +224,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		validate(easeljsCanvas, box2dCanvas, details);
 
 		_easeljsCanvas = easeljsCanvas;
-		_easeljsStage = new createjs.Stage(document.getElementById("easeljsCanvas"));
+		_easeljsStage = new createjs.Stage(easeljsCanvas);
 		adjustCanvasStyle(_easeljsCanvas);
 
 		_box2dCanvas = box2dCanvas;
@@ -317,7 +317,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function handleComplete(e) {
 		console.log('handleComplete');
-		_loadingIndicator.view.alpha = 0.0;
+
+		if (_loadingIndicator)
+			_loadingIndicator.view.alpha = 0.0;
 
 		_onPreLoadComplete();
 

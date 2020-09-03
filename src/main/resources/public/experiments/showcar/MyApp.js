@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -21,7 +19,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			showFPSIndicator: true,
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
-				showLoadingIndicator: true,
+				showLoadingIndicator: false,
 				loadingIndicatorOpts: {
 					x: 420,
 					y: 210,
@@ -39,193 +37,264 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: showCar
 			}
-		});
+		})
 	}
 
-	var greyScaleFilter = new createjs.ColorMatrixFilter([
-		0.33, 0.33, 0.33, 0, 0, // red
-		0.33, 0.33, 0.33, 0, 0, // green
-		0.33, 0.33, 0.33, 0, 0, // blue
-		0, 0, 0, 1, 0  // alpha
-	]);
-
 	function showCar() {
-
-		worldManager.createLandscape({
-			x: 2000, y: -150,
-			shape: 'box',
-			boxOpts: { width: 4000, height: 1137 },
-			render: {
-				type: 'image',
-				imageOpts: {
-					image: '../../images/background.jpg'
-				},
-				filters: [greyScaleFilter]
-			}
-		});
+		
+		createLandscapeAndWorldLimits()
+		
+		const car = createCar()
 
 		worldManager.createKeyboardHandler({
 			65: { // a
-				onkeydown: function (e) {
-					worldManager.getZoomHandler().zoomIn();
-				}
+				onkeydown: () => worldManager.getZoomHandler().zoomIn()
 			},
 			83: { // s
-				onkeydown: function (e) {
-					worldManager.getZoomHandler().zoomOut();
-				}
+				onkeydown: () => worldManager.getZoomHandler().zoomOut()
 			},
 			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			},
 			70: { // f
-				onkeydown: function (e) {
-					var fullScreen = !worldManager.getScreenHandler().isFullScreen();
-					if (fullScreen)
-						worldManager.getScreenHandler().showFullScreen();
-					else
-						worldManager.getScreenHandler().showNormalCanvasSize();
+				onkeydown: () => {
+					const screenHandler = worldManager.getScreenHandler()
+					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
 				}
 			},
 			37: { // left arrow
-				onkeydown: function (e) {
-					worldManager.getPlayer().left(e);
-				},
+				onkeydown: (e) => worldManager.getPlayer().left(e),
 				keepPressed: true
 			},
 			39: { // right arrow
-				onkeydown: function (e) {
-					worldManager.getPlayer().right(e);
-				},
+				onkeydown: (e) => worldManager.getPlayer().right(e),
 				keepPressed: true
 			},
 			80: { // p
-				onkeydown: function (e) {
-					var isPaused = worldManager.getTimeStepHandler().isPaused();
-					if (isPaused)
-						worldManager.getTimeStepHandler().play();
-					else
-						worldManager.getTimeStepHandler().pause();
+				onkeydown: () => {
+					const timeStepHandler = worldManager.getTimeStepHandler()
+					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
 				}
 			},
 			79: { // o
-				onkeydown: function (e) {
-					worldManager.getTimeStepHandler().setFPS(980);
-				}
+				onkeydown: () => worldManager.getTimeStepHandler().setFPS(980)
 			},
 			73: { // i
-				onkeydown: function (e) {
-					worldManager.getTimeStepHandler().restoreFPS();
-				}
+				onkeydown: () => worldManager.getTimeStepHandler().restoreFPS()
 			},
 			49: { // 1
-				onkeydown: function (e) {
-					chassis.changeScale(1.1);
-					tire1.changeScale(1.1);
-					tire2.changeScale(1.1);
-					link1.changeScale(1.1);
-					link2.changeScale(1.1);
-
-					man.changeScale(1.1);
-					triangle.changeScale(1.1);
-					letter.changeScale(1.1);
+				onkeydown: () => {
+					car.chassis.changeScale(1.1)
+					car.tire1.changeScale(1.1)
+					car.tire2.changeScale(1.1)
+					car.link1.changeScale(1.1)
+					car.link2.changeScale(1.1)
 				}
 			},
 			50: { // 2
-				onkeydown: function (e) {
-					chassis.changeScale(0.9);
-					tire1.changeScale(0.9);
-					tire2.changeScale(0.9);
-					link1.changeScale(0.9);
-					link2.changeScale(0.9);
-
-					man.changeScale(0.9);
-					triangle.changeScale(0.9);
-					letter.changeScale(0.9);
+				onkeydown: () => {
+					car.chassis.changeScale(0.9)
+					car.tire1.changeScale(0.9)
+					car.tire2.changeScale(0.9)
+					car.link1.changeScale(0.9)
+					car.link2.changeScale(0.9)
 				}
 			}
-		});
+		})
 
 		worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
-					drawOpts: {
-						bgColorStyle: 'solid'
-					},
+					drawOpts: { bgColorStyle: 'solid' },
 					opacity: 0.3
 				}
 			}
-		});
+		})
 
 		worldManager.createMultiTouchHandler({
-			enableDrag: true,
 			enableSlice: true,
 			drawLocation: false,
-		});
+		})
 
-		worldManager.createZoomHandler({
-			max: 1.1,
-			min: 0.5,
-			step: 0.1
-		});
+		worldManager.createZoomHandler({ max: 1.1, min: 0.5, step: 0.1 })
 
-		worldManager.createScreenHandler({
-			fullScreen: false
-		});
+		worldManager.createScreenHandler({ fullScreen: false })
 
-		var floor = worldManager.createEntity({
-			type: 'static',
-			x: 980, y: 400,
-			shape: 'box',
-			boxOpts: { width: 20000, height: 10 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#bbb' }
+		const player = worldManager.createPlayer(car.chassis, {
+			camera: {
+				adjustX: 490,
+				// adjustY: 400,
+				xAxisOn: true,
+				// yAxisOn: true
+			},
+			events: {
+				left: function (e) {
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(-1500, 0), this.getB2Body().GetWorldCenter())
+				},
+				right: function (e) {
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(1500, 0), this.getB2Body().GetWorldCenter())
 				}
 			}
-		});
+		})
 
-		var wall = worldManager.createEntity({
+		const leftBtnRender1 = {
+			type: 'image',
+			imageOpts: {
+				image: '../../images/leftarrow.png',
+				adjustImageSize: true
+			}
+		}
+
+		const leftBtnRender2 = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'white' },
+				borderWidth: 2,
+				bgImage: '../../images/leftarrow.png',
+				adjustBgImageSize: true
+			}
+		}
+
+		const leftBtn = worldManager.createScreenButton({
+			x: 830, y: 480,
+			shape: 'box',
+			boxOpts: { width: 100, height: 40 },
+			render: leftBtnRender1,
+			onmousedown: function (e) {
+				player.left(e)
+				leftBtn.changeRender(leftBtnRender2)
+			},
+			onmouseup: function (e) {
+				leftBtn.changeRender(leftBtnRender1)
+			},
+			keepPressed: true
+		})
+
+		const rightBtnRender1 = {
+			type: 'image',
+			imageOpts: {
+				image: '../../images/rightarrow.png',
+				adjustImageSize: true
+			}
+		}
+
+		const rightBtnRender2 = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'white' },
+				borderWidth: 2,
+				bgImage: '../../images/rightarrow.png',
+				adjustBgImageSize: true
+			}
+		}
+
+		const rightBtn = worldManager.createScreenButton({
+			x: 930, y: 480,
+			shape: 'box',
+			boxOpts: { width: 100, height: 40 },
+			render: rightBtnRender1,
+			onmousedown: function (e) {
+				player.right(e)
+				rightBtn.changeRender(rightBtnRender2)
+			},
+			onmouseup: function (e) {
+				rightBtn.changeRender(rightBtnRender1)
+			},
+			keepPressed: true
+		})
+	}
+
+	function createLandscapeAndWorldLimits() {
+
+		// Not Working!
+		const greyScaleFilter = new createjs.ColorMatrixFilter([
+			0.33, 0.33, 0.33, 0, 0, // red
+			0.33, 0.33, 0.33, 0, 0, // green
+			0.33, 0.33, 0.33, 0, 0, // blue
+			0, 0, 0, 1, 0  // alpha
+		])
+
+		worldManager.createLandscape({
+			x: 5000, y: -100,
+			shape: 'box',
+			boxOpts: { width: 10000, height: 1137 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/background.jpg',
+					adjustImageSize: true
+				},
+				filters: [greyScaleFilter]
+			}
+		})
+
+		const staticRender = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'black' }
+			}
+		}
+
+		// Floor
+		worldManager.createEntity({
+			type: 'static',
+			x: 980, y: 450,
+			shape: 'box',
+			boxOpts: { width: 20000, height: 10 },
+			render: staticRender
+		})
+
+		// Wall 1
+		worldManager.createEntity({
+			type: 'static',
+			x: 0, y: 0,
+			shape: 'box',
+			boxOpts: { width: 10, height: 2000 },
+			render: staticRender
+		})
+
+		// Wall 2
+		worldManager.createEntity({
 			type: 'static',
 			x: 10000, y: 0,
 			shape: 'box',
 			boxOpts: { width: 10, height: 2000 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#bbb' }
-				}
-			}
-		});
+			render: staticRender
+		})
 
-		var ramp = worldManager.createEntity({
+		// Ramp 1
+		worldManager.createEntity({
 			type: 'static',
 			x: 4000, y: 400, angle: 75,
 			shape: 'box',
 			boxOpts: { width: 10, height: 400 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#000' }
-				},
-			},
-		});
+			render: staticRender
+		})
 
-		var chassis = worldManager.createEntity({
+		// Ramp 2
+		worldManager.createEntity({
+			type: 'static',
+			x: 4390, y: 400, angle: -75,
+			shape: 'box',
+			boxOpts: { width: 10, height: 400 },
+			render: staticRender
+		})
+	}
+
+	function createCar() {
+		const CAR_X = 360
+		const CAR_Y = 350
+
+		const chassis = worldManager.createEntity({
 			type: 'dynamic',
-			x: 360, y: 150,
+			x: CAR_X, y: CAR_Y,
 			shape: 'box',
 			boxOpts: { width: 150, height: 50 },
 			render: {
@@ -235,136 +304,50 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					adjustImageSize: true
 				}
 			},
-			draggable: true,
 			name: 'chassis'
-		});
+		})
 
-		var renderTire = {
+		const renderTire = {
 			type: 'image',
 			imageOpts: {
 				image: '../../images/tire.png',
 				adjustImageSize: true
 			}
-		};
+		}
 
-		var tire1 = worldManager.createEntity({
+		const tire1 = worldManager.createEntity({
 			type: 'dynamic',
-			x: 330, y: 200,
+			x: CAR_X - 30, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: renderTire,
-			draggable: true
-		});
+			render: renderTire
+		})
 
-		var tire2 = worldManager.createEntity({
+		const tire2 = worldManager.createEntity({
 			type: 'dynamic',
-			x: 420, y: 200,
+			x: CAR_X + 60, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: renderTire,
-			draggable: true
-		});
+			render: renderTire
+		})
 
-		var link1 = worldManager.createLink({
+		const link1 = worldManager.createLink({
 			entityA: chassis,
 			entityB: tire1,
 			type: 'revolute',
 			localAnchorA: { x: -1.6, y: 1.1 },
 			localAnchorB: { x: 0, y: 0 }
-		});
+		})
 
-		var link2 = worldManager.createLink({
+		const link2 = worldManager.createLink({
 			entityA: chassis,
 			entityB: tire2,
 			type: 'revolute',
 			localAnchorA: { x: 1.8, y: 1.1 },
 			localAnchorB: { x: 0, y: 0 }
-		});
+		})
 
-		var player = worldManager.createPlayer(chassis, {
-			camera: {
-				adjustX: 490,
-				// adjustY: 400,
-				xAxisOn: true,
-				// yAxisOn: true
-			},
-			events: {
-				left: function (e) {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-1500, 0), this.getB2Body().GetWorldCenter());
-				},
-				right: function (e) {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(1500, 0), this.getB2Body().GetWorldCenter());
-				}
-			}
-		});
-
-		var leftBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/leftarrow.png',
-				adjustImageSize: true
-			}
-		};
-
-		var leftBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/leftarrow.png',
-				adjustBgImageSize: true
-			}
-		};
-
-		var leftBtn = worldManager.createScreenButton({
-			x: 830, y: 480,
-			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: leftBtnRender1,
-			onmousedown: function (e) {
-				player.left(e);
-				leftBtn.changeRender(leftBtnRender2);
-			},
-			onmouseup: function (e) {
-				leftBtn.changeRender(leftBtnRender1);
-			},
-			keepPressed: true
-		});
-
-		var rightBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/rightarrow.png',
-				adjustImageSize: true
-			}
-		};
-
-		var rightBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/rightarrow.png',
-				adjustBgImageSize: true
-			}
-		};
-
-		var rightBtn = worldManager.createScreenButton({
-			x: 930, y: 480,
-			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: rightBtnRender1,
-			onmousedown: function (e) {
-				player.right(e);
-				rightBtn.changeRender(rightBtnRender2);
-			},
-			onmouseup: function (e) {
-				rightBtn.changeRender(rightBtnRender1);
-			},
-			keepPressed: true
-		});
+		return { chassis, tire1, tire2, link1, link2 }
 	}
 
-}());
+}())

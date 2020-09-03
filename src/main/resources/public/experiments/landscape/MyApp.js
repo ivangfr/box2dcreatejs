@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -35,7 +33,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: testBackground
 			}
-		});
+		})
 	}
 
 	function testBackground() {
@@ -53,9 +51,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 			}
-		});
+		})
 
-		var cloud1 = worldManager.createLandscape({
+		const cloud1 = worldManager.createLandscape({
 			x: 300, y: 200,
 			shape: 'box',
 			boxOpts: { width: 200, height: 150 },
@@ -65,59 +63,45 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					image: '../../images/cloud.png',
 					adjustImageSize: true,
 				},
-				action: function () {
-					cloud1.view.x -= 0.1;
-				}
+				action: () => cloud1.view.x -= 0.1
 			}
-		});
+		})
 
-		var hill = worldManager.createLandscape({
+		const hill = worldManager.createLandscape({
 			x: 500, y: 320,
 			shape: 'box',
 			boxOpts: { width: 600, height: 264 },
 			render: {
 				type: 'image',
-				imageOpts: {
-					image: '../../images/hill.png',
-					adjustImageSize: false,
-				},
-				action: function () {
-					hill.view.x -= 0.2;
-				}
+				imageOpts: { image: '../../images/hill.png' },
+				action: () => hill.view.x -= 0.2
 			}
-		});
+		})
 
-		var cloud2 = worldManager.createLandscape({
+		const cloud2 = worldManager.createLandscape({
 			x: 750, y: 220,
 			shape: 'box',
-			boxOpts: { width: 315, height: 243 },
+			boxOpts: { width: 415, height: 343 },
 			render: {
 				type: 'image',
-				imageOpts: {
+				imageOpts: { 
 					image: '../../images/cloud.png',
-					adjustImageSize: false,
-				},
-				action: function () {
-					cloud2.view.x -= 0.3;
-				}
+					adjustImageSize: true
+				 },
+				action: () => cloud2.view.x -= 0.3
 			}
-		});
+		})
 
-		var grass = worldManager.createLandscape({
+		const grass = worldManager.createLandscape({
 			x: 1000, y: 250,
 			shape: 'box',
 			boxOpts: { width: 1990, height: 500 },
 			render: {
 				type: 'image',
-				imageOpts: {
-					image: '../../images/grass.png',
-					adjustImageSize: false,
-				},
-				action: function () {
-					grass.view.x -= 0.6;
-				}
+				imageOpts: { image: '../../images/grass.png' },
+				action: () => grass.view.x -= 0.6
 			}
-		});
+		})
 	}
 
-}());
+}())

@@ -1,19 +1,17 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
+	let worldManager
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
-
-		output = document.getElementById("output");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -37,113 +35,66 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				],
 				onComplete: testGravitation
 			}
-		});
+		})
 	}
 
 	function testGravitation() {
-		var renderStatic = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#bbb' }
-			}
-		}
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 500,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 490, y: 0,
-			shape: 'box',
-			boxOpts: { width: 980, height: 10 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 0, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
-
-		worldManager.createEntity({
-			type: 'static',
-			x: 980, y: 250,
-			shape: 'box',
-			boxOpts: { width: 10, height: 500 },
-			render: renderStatic
-		});
+		createLandscapeAndWorldLimits()
 
 		worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: function (e) {
-					worldManager.setEnableRender(!worldManager.getEnableRender());
-				}
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			},
 			37: { // left arrow
-				onkeydown: function (e) {
-					player.left();
-				},
+				onkeydown: () => player.left(),
 				keepPressed: true
 			},
 			38: { // up arrow
-				onkeydown: function (e) {
-					player.up();
-				},
+				onkeydown: () => player.up(),
 				keepPressed: true
 			},
 			39: { // right arrow
-				onkeydown: function (e) {
-					player.right();
-				},
+				onkeydown: () => player.right(),
 				keepPressed: true
 			},
 			40: { // down arrow
-				onkeydown: function (e) {
-					player.down();
-				},
+				onkeydown: () => player.down(),
 				keepPressed: true
 			}
-		});
+		})
 
 		worldManager.createContactHandler({
 			beginContact: function (contact) {
-				var bodyA = contact.GetFixtureA().GetBody();
-				var bodyB = contact.GetFixtureB().GetBody();
+				const bodyA = contact.GetFixtureA().GetBody()
+				const bodyB = contact.GetFixtureB().GetBody()
+				const bodyAUserData = bodyA.GetUserData()
+				const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyA.GetUserData().name == 'earth' && bodyB.GetUserData().name == 'asteroid') ||
-					(bodyA.GetUserData().name == 'asteroid' && bodyB.GetUserData().name == 'earth')) {
-					var earth, asteroid;
-					if (bodyA.GetUserData().name == 'earth') {
-						earth = worldManager.getEntityByItsBody(bodyA);
-						asteroid = worldManager.getEntityByItsBody(bodyB);
+				if ((bodyAUserData.name === 'earth' && bodyBUserData.name === 'asteroid') ||
+					(bodyAUserData.name === 'asteroid' && bodyBUserData.name === 'earth')) {
+					let earth, asteroid
+					if (bodyAUserData.name === 'earth') {
+						earth = worldManager.getEntityByItsBody(bodyA)
+						asteroid = worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						earth = worldManager.getEntityByItsBody(bodyB);
-						asteroid = worldManager.getEntityByItsBody(bodyA);
+						earth = worldManager.getEntityByItsBody(bodyB)
+						asteroid = worldManager.getEntityByItsBody(bodyA)
 					}
 
-					var dirX = asteroid.getPosition().x - earth.getPosition().x;
-					var dirY = asteroid.getPosition().y - earth.getPosition().y;
-					var theta = Math.atan2(dirY, dirX);
-					if (theta < 0)
-						theta += 2 * Math.PI;
-					var angle = theta * (180 / Math.PI);
+					const dirX = asteroid.getPosition().x - earth.getPosition().x
+					const dirY = asteroid.getPosition().y - earth.getPosition().y
+					let theta = Math.atan2(dirY, dirX)
+					if (theta < 0) {
+						theta += 2 * Math.PI
+					}
+					const angle = theta * (180 / Math.PI)
 
-					var up = true;
-					var explosion = worldManager.createLandscape({
+					let up = true
+					const explosion = worldManager.createLandscape({
 						x: asteroid.getPosition().x,
 						y: asteroid.getPosition().y,
 						angle: angle + 90,
@@ -163,32 +114,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 							},
 							action: function () {
 								if (up) {
-									explosion.view.alpha += 0.05;
-									if (explosion.view.alpha > 1)
-										up = false;
+									explosion.view.alpha += 0.05
+									if (explosion.view.alpha > 1) {
+										up = false
+									}
 								}
-								else {
-									if (explosion.view.alpha > 0)
-										explosion.view.alpha -= 0.01;
+								else if (explosion.view.alpha > 0) {
+									explosion.view.alpha -= 0.01
 								}
 							}
 						}
-					});
+					})
 				}
 
-				if ((bodyA.GetUserData().name == 'moon' && bodyB.GetUserData().name == 'asteroid') ||
-					(bodyA.GetUserData().name == 'asteroid' && bodyB.GetUserData().name == 'moon')) {
-					var moon, asteroid;
-					if (bodyA.GetUserData().name == 'moon') {
-						moon = worldManager.getEntityByItsBody(bodyA);
-						asteroid = worldManager.getEntityByItsBody(bodyB);
+				if ((bodyAUserData.name === 'moon' && bodyBUserData.name === 'asteroid') ||
+					(bodyAUserData.name === 'asteroid' && bodyBUserData.name === 'moon')) {
+					let moon, asteroid
+					if (bodyAUserData.name === 'moon') {
+						moon = worldManager.getEntityByItsBody(bodyA)
+						asteroid = worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						moon = worldManager.getEntityByItsBody(bodyB);
-						asteroid = worldManager.getEntityByItsBody(bodyA);
+						moon = worldManager.getEntityByItsBody(bodyB)
+						asteroid = worldManager.getEntityByItsBody(bodyA)
 					}
 
-					var explosion = worldManager.createLandscape({
+					worldManager.createLandscape({
 						x: asteroid.getPosition().x,
 						y: asteroid.getPosition().y,
 						shape: 'circle',
@@ -206,25 +157,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 								adjustImageSize: true
 							}
 						}
-					});
+					})
 				}
 			}
-		});
+		})
 
-		worldManager.createLandscape({
-			x: 490, y: 250,
-			shape: 'box',
-			boxOpts: { width: 980, height: 500 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#6B6DB5' }
-				}
-			}
-		});
-
-		var asteroid = worldManager.createEntity({
+		const asteroid = worldManager.createEntity({
 			type: 'dynamic',
 			x: 750, y: 120,
 			shape: 'circle',
@@ -236,74 +174,66 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					adjustImageSize: true
 				}
 			},
-			name: 'asteroid',
-			draggable: true
-		});
+			name: 'asteroid'
+		})
 
-		var player = worldManager.createPlayer(asteroid, {
+		const player = worldManager.createPlayer(asteroid, {
 			camera: { xAxisOn: false, yAxisOn: false },
 			events: {
 				up: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -10), this.getB2Body().GetWorldCenter());
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -10), this.getB2Body().GetWorldCenter())
 				},
 				down: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 10), this.getB2Body().GetWorldCenter());
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 10), this.getB2Body().GetWorldCenter())
 				},
 				left: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-10, 0), this.getB2Body().GetWorldCenter());
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(-10, 0), this.getB2Body().GetWorldCenter())
 				},
 				right: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(10, 0), this.getB2Body().GetWorldCenter());
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(10, 0), this.getB2Body().GetWorldCenter())
 				}
 			}
-		});
+		})
 
-		var mainEarthRender = true;
-		var multiTouchHandler = worldManager.createMultiTouchHandler({
+		let mainEarthRender = true
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
 			onmousedown: function (e) {
-				var entities = multiTouchHandler.getEntitiesAtMouseTouch(e);
-
-				for (var i = 0; i < entities.length; i++) {
-					var entity = entities[i];
-
-					if (entity.b2body.GetUserData().name == 'earth') {
-						mainEarthRender = !mainEarthRender;
-						if (mainEarthRender)
-							entity.changeRender(earthRender1);
-						else
-							entity.changeRender(earthRender2);
+				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
+				entities.forEach(entity => {
+					if (entity.b2body.GetUserData().name === 'earth') {
+						mainEarthRender = !mainEarthRender
+						mainEarthRender ? entity.changeRender(earthRender1) : entity.changeRender(earthRender2)
 					}
-				}
+				})
 			}
-		});
+		})
 
-		var earthRender1 = {
+		const earthRender1 = {
 			type: 'image',
 			imageOpts: {
 				image: '../../images/earth.png',
 				adjustImageSize: true
 			}
-		};
+		}
 
-		var earthRender2 = {
+		const earthRender2 = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'radialGradient',
 				bgRadialGradientOpts: { colors: ['red', 'yellow'] },
 				borderColor: 'white', borderWidth: 2
 			}
-		};
+		}
 
-		var earth = worldManager.createEntity({
+		const earth = worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 250,
 			shape: 'circle',
 			circleOpts: { radius: 100 },
 			render: earthRender1,
 			fixtureDefOpts: { density: 100 },
-			name: 'earth',
-			draggable: true
-		});
+			name: 'earth'
+		})
 
 		worldManager.createGravitation(earth, {
 			gravityRadius: 300,
@@ -320,9 +250,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 			}
-		});
+		})
 
-		var moon = worldManager.createEntity({
+		const moon = worldManager.createEntity({
 			type: 'dynamic',
 			x: 750, y: 250,
 			shape: 'circle',
@@ -335,9 +265,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			fixtureDefOpts: { density: 100 },
-			name: 'moon',
-			draggable: true
-		});
+			name: 'moon'
+		})
 
 		worldManager.createGravitation(moon, {
 			attractionPower: 5,
@@ -353,7 +282,62 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 			}
-		});
+		})
 	}
 
-}());
+	function createLandscapeAndWorldLimits() {
+		worldManager.createLandscape({
+			x: 490, y: 250,
+			shape: 'box',
+			boxOpts: { width: 980, height: 500 },
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					bgSolidColorOpts: { color: '#6B6DB5' }
+				}
+			}
+		})
+
+		const staticReander = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'black' }
+			}
+		}
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 500,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 490, y: 0,
+			shape: 'box',
+			boxOpts: { width: 980, height: 10 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 0, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticReander
+		})
+
+		worldManager.createEntity({
+			type: 'static',
+			x: 980, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticReander
+		})
+	}
+
+}())

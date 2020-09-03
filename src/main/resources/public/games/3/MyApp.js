@@ -1,37 +1,36 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	var worldManager;
 
-	var _os, _countTick = 0, _score;
+	let worldManager
+	let _countTick = 0, _score
+	let _hintElem
+	let _soundHandler
+	let _freeFire = false, _gameOver = false
+	let _numHitAircraft = 0, _numHitUfo = 0
+	let _aircraft, _player, _aircraftDir = 0, _missile = null, _missileLink
+	let _ufo, _laser, _laserLink
 
-	var _hintElem;
-	var _soundHandler;
-	var _freeFire = false, _gameOver = false;
+	const _lasers = [], _storedMissiles = [], _flyingMissiles = []
+	const _vP = [0.5, 1, 2, 4]
 
-	var _numHitAircraft = 0, _numHitUfo = 0;
-
-	var _aircraft, _player, _aircraftDir = 0, _missile = null, _missilesStored = [], _missilesFlying = [], _missileLink;
-	var _ufo, _laser, _lasers = [], _laserLink;
-	var _vP = [0.5, 1, 2, 4];
-
-	var CATEGORY_AIRCRAFT = 0x0001;
-	var CATEGORY_ENEMY = 0x0002;
-	var CATEGORY_LIMITS = 0x0004;
-	var CATEGORY_EARTH = 0x0016;
-	var CATEGORY_MOON = 0x0008;
+	const CATEGORY_AIRCRAFT = 0x0001
+	const CATEGORY_ENEMY = 0x0002
+	const CATEGORY_LIMITS = 0x0004
+	const CATEGORY_EARTH = 0x0016
+	const CATEGORY_MOON = 0x0008
 
 	function MyApp() {
-		this.initialize();
+		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp;
+	MyGameBuilder.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
-		var easeljsCanvas = document.getElementById("easeljsCanvas");
-		var box2dCanvas = document.getElementById("box2dCanvas");
+		const easeljsCanvas = document.getElementById("easeljsCanvas")
+		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		_hintElem = document.getElementById("hint");
+		_hintElem = document.getElementById("hint")
 
 		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
@@ -64,35 +63,33 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					{ src: '../../sounds/crowd_applause.mp3', id: 'applause' }
 				],
 				onComplete: function () {
-					startWorld();
-					startCountingDown();
+					startWorld()
+					startCountingDown()
 				}
 			}
-		});
-
-		_os = worldManager.createBrowserOSHandler().getOS();
+		})
 	}
 
 	function startCountingDown() {
-		_hintElem.innerHTML = 'Human vs Alien!!!';
-		_hintElem.style.display = 'block';
+		_hintElem.innerHTML = 'Human vs Alien!!!'
+		_hintElem.style.display = 'block'
 
 		setTimeout(function () {
-			_hintElem.innerHTML = 'READY??';
+			_hintElem.innerHTML = 'READY??'
 			setTimeout(function () {
-				_hintElem.innerHTML = 'FIGHT!!!';
+				_hintElem.innerHTML = 'FIGHT!!!'
 
-				_freeFire = true;
+				_freeFire = true
 
 				setTimeout(function () {
-					_hintElem.style.display = 'none';
-				}, 2000);
-			}, 2000);
-		}, 3000);
+					_hintElem.style.display = 'none'
+				}, 2000)
+			}, 2000)
+		}, 3000)
 	}
 
 	function updateScore() {
-		var newRender = {
+		const newRender = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
@@ -104,7 +101,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				},
 				borderWidth: 0
 			}
-		};
+		}
 
 		if (!_score) {
 			_score = worldManager.createLandscape({
@@ -113,15 +110,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				shape: 'box',
 				boxOpts: { width: 100, height: 20 },
 				render: newRender
-			});
+			})
 		}
 		else {
-			_score.changeRender(newRender);
+			_score.changeRender(newRender)
 		}
 	}
 
 	function getScoreNumbers() {
-		return '[' + _missilesStored.length + '] ' + _numHitUfo + ' x ' + _numHitAircraft + ' [' + _lasers.length + ']';
+		return '[' + _storedMissiles.length + '] ' + _numHitUfo + ' x ' + _numHitAircraft + ' [' + _lasers.length + ']'
 	}
 
 	function startWorld() {
@@ -137,246 +134,212 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					bgSolidColorOpts: { color: '#6B6DB5' }
 				}
 			}
-		});
+		})
 
 		worldManager.setUserOnTick(function () {
-			if (_gameOver)
-				return;
+			if (_gameOver) {
+				return
+			}
 
-			_countTick++;
+			_countTick++
 
-			updateScore();
+			updateScore()
 
-			if (_missilesStored.length == 0 && _lasers.length == 0) {
-				_gameOver = true;
+			if (_storedMissiles.length === 0 && _lasers.length === 0) {
+				_gameOver = true
 				setTimeout(function () {
 					if (_numHitUfo > _numHitAircraft) {
-						_hintElem.innerHTML = 'Human wins';
-						_soundHandler.createSoundInstance({
-							id: 'applause'
-						}).play();
+						_hintElem.innerHTML = 'Human wins'
+						_soundHandler.createSoundInstance({ id: 'applause' }).play()
 					}
 					else if (_numHitUfo < _numHitAircraft) {
-						_hintElem.innerHTML = 'Alien wins';
-						_soundHandler.createSoundInstance({
-							id: 'aliens'
-						}).play();
+						_hintElem.innerHTML = 'Alien wins'
+						_soundHandler.createSoundInstance({ id: 'aliens' }).play()
 					}
-					else
-						_hintElem.innerHTML = 'Draw game';
-					_hintElem.style.display = 'block';
+					else {
+						_hintElem.innerHTML = 'Draw game'
+					}
+					_hintElem.style.display = 'block'
 
 					setTimeout(function () {
-						worldManager.getTimeStepHandler().pause();
-					}, 3000);
+						worldManager.getTimeStepHandler().pause()
+					}, 3000)
 
-				}, 5000);
+				}, 5000)
 			}
-		});
+		})
 
-		_soundHandler = worldManager.createSoundHandler();
-
-		_soundHandler.createSoundInstance({
-			id: 'music'
-		}).myPlay({
-			loop: -1,
-			volume: 1
-		});
+		_soundHandler = worldManager.createSoundHandler()
+		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 1 })
 
 		worldManager.createKeyboardHandler({
 			68: { //d
-				onkeydown: function (e) {
-					worldManager.setEnableDebug(!worldManager.getEnableDebug());
-				}
+				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			38: { //up arrow
-				onkeydown: function (e) {
-					_player.up();
-				},
-				onkeyup: function (e) {
-					_player.upNormal();
-				},
+				onkeydown: () => _player.up(),
+				onkeyup: () => _player.upNormal(),
 				keepPressed: true
 			},
 			40: { //down arrow
-				onkeydown: function (e) {
-					_player.down();
-				},
-				onkeyup: function (e) {
-					_player.downNormal();
-				},
+				onkeydown: () => _player.down(),
+				onkeyup: () => _player.downNormal(),
 				keepPressed: true
 			},
 			65: { //a
-				onkeydown: function (e) {
-					_player.fire();
-				}
+				onkeydown: () => _player.fire()
 			},
 			83: { //s
 				onkeydown: function (e) {
-					if (worldManager.getTimeStepHandler().isPaused())
-						worldManager.getTimeStepHandler().play();
-					else
-						worldManager.getTimeStepHandler().pause();
+					const timeStepHandler = worldManager.getTimeStepHandler()
+					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
 				}
 			}
-		});
+		})
 
 		worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
-					drawOpts: {
-						bgColorStyle: 'solid'
-					},
+					drawOpts: { bgColorStyle: 'solid' },
 					opacity: 0.1
 				}
 			}
-		});
+		})
 
-		var contactHandler = worldManager.createContactHandler({
+		worldManager.createContactHandler({
 			enabledBuoyancy: false,
 			enabledStickyTarget: false,
 			enabledBreak: false,
 			beginContact: function (contact) {
-				var projectileEntity, moonEntity;
-				var fixtureA = contact.GetFixtureA();
-				var fixtureB = contact.GetFixtureB();
-				var bodyA = fixtureA.GetBody();
-				var bodyB = fixtureB.GetBody();
+				const bodyA = contact.GetFixtureA().GetBody()
+				const bodyB = contact.GetFixtureB().GetBody()
+				const bodyAUserData = bodyA.GetUserData()
+				const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyA.GetUserData().group == 'missile' && bodyB.GetUserData().group == 'limit') ||
-					(bodyB.GetUserData().group == 'missile' && bodyA.GetUserData().group == 'limit')) {
-					if (bodyA.GetUserData().group == 'missile')
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-					else
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
+				if ((bodyAUserData.group === 'missile' && bodyBUserData.group === 'limit') ||
+					(bodyBUserData.group === 'missile' && bodyAUserData.group === 'limit')) {
 
-					removeFromMissilesFlying(projectileEntity);
-					worldManager.deleteEntity(projectileEntity);
+					const projectileEntity = (bodyAUserData.group === 'missile') ?
+						worldManager.getEntityByItsBody(bodyA) : worldManager.getEntityByItsBody(bodyB)
+
+					removeFromFlyingMissiles(projectileEntity)
+					worldManager.deleteEntity(projectileEntity)
 				}
-				else if ((bodyA.GetUserData().group == 'laser' && bodyB.GetUserData().group == 'limit') ||
-					(bodyB.GetUserData().group == 'laser' && bodyA.GetUserData().group == 'limit')) {
-					if (bodyA.GetUserData().group == 'laser')
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-					else
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
+				else if ((bodyAUserData.group === 'laser' && bodyBUserData.group === 'limit') ||
+					(bodyBUserData.group === 'laser' && bodyAUserData.group === 'limit')) {
 
-					worldManager.deleteEntity(projectileEntity);
+					const projectileEntity = (bodyAUserData.group === 'laser') ?
+						worldManager.getEntityByItsBody(bodyA) : worldManager.getEntityByItsBody(bodyB)
+
+					worldManager.deleteEntity(projectileEntity)
 				}
-				else if ((bodyA.GetUserData().group == 'missile' && bodyB.GetUserData().name == 'moon') ||
-					(bodyB.GetUserData().group == 'missile' && bodyA.GetUserData().name == 'moon')) {
-					if (bodyA.GetUserData().group == 'missile') {
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-						moonEntity = worldManager.getEntityByItsBody(bodyB);
+				else if ((bodyAUserData.group === 'missile' && bodyBUserData.name === 'moon') ||
+					(bodyBUserData.group === 'missile' && bodyAUserData.name === 'moon')) {
+
+					let projectileEntity, moonEntity
+					if (bodyAUserData.group === 'missile') {
+						projectileEntity = worldManager.getEntityByItsBody(bodyA)
+						moonEntity = worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
-						moonEntity = worldManager.getEntityByItsBody(bodyA);
+						projectileEntity = worldManager.getEntityByItsBody(bodyB)
+						moonEntity = worldManager.getEntityByItsBody(bodyA)
 					}
 
-					removeFromMissilesFlying(projectileEntity);
-					worldManager.deleteEntity(projectileEntity);
-					createMoonExplosion(projectileEntity, moonEntity);
+					removeFromFlyingMissiles(projectileEntity)
+					worldManager.deleteEntity(projectileEntity)
+					createMoonExplosion(projectileEntity, moonEntity)
 				}
-				else if ((bodyA.GetUserData().group == 'laser' && bodyB.GetUserData().name == 'moon') ||
-					(bodyB.GetUserData().group == 'laser' && bodyA.GetUserData().name == 'moon')) {
-					if (bodyA.GetUserData().group == 'laser') {
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-						moonEntity = worldManager.getEntityByItsBody(bodyB);
+				else if ((bodyAUserData.group === 'laser' && bodyBUserData.name === 'moon') ||
+					(bodyBUserData.group === 'laser' && bodyAUserData.name === 'moon')) {
+
+					let projectileEntity, moonEntity
+					if (bodyAUserData.group === 'laser') {
+						projectileEntity = worldManager.getEntityByItsBody(bodyA)
+						moonEntity = worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
-						moonEntity = worldManager.getEntityByItsBody(bodyA);
+						projectileEntity = worldManager.getEntityByItsBody(bodyB)
+						moonEntity = worldManager.getEntityByItsBody(bodyA)
 					}
 
-					worldManager.deleteEntity(projectileEntity);
-					createMoonExplosion(projectileEntity, moonEntity);
+					worldManager.deleteEntity(projectileEntity)
+					createMoonExplosion(projectileEntity, moonEntity)
 				}
-				else if ((bodyA.GetUserData().group == 'missile' && bodyB.GetUserData().name == 'ufo') ||
-					(bodyB.GetUserData().group == 'missile' && bodyA.GetUserData().name == 'ufo')) {
-					_numHitUfo++;
+				else if ((bodyAUserData.group === 'missile' && bodyBUserData.name === 'ufo') ||
+					(bodyBUserData.group === 'missile' && bodyAUserData.name === 'ufo')) {
+					_numHitUfo++
 
-					if (bodyA.GetUserData().group == 'missile')
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-					else
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
+					const projectileEntity = (bodyAUserData.group === 'missile') ?
+						worldManager.getEntityByItsBody(bodyA) : worldManager.getEntityByItsBody(bodyB)
 
-					removeFromMissilesFlying(projectileEntity);
-					worldManager.deleteEntity(projectileEntity);
-					createExplosion(projectileEntity);
+					removeFromFlyingMissiles(projectileEntity)
+					worldManager.deleteEntity(projectileEntity)
+					createExplosion(projectileEntity)
 
-					if (_numHitUfo % 2 == 0) {
-						_soundHandler.createSoundInstance({
-							id: 'bravo'
-						}).play();
+					if (_numHitUfo % 2 === 0) {
+						_soundHandler.createSoundInstance({ id: 'bravo' }).play()
 					}
 				}
-				else if ((bodyA.GetUserData().group == 'laser' && bodyB.GetUserData().name == 'aircraft') ||
-					(bodyB.GetUserData().group == 'laser' && bodyA.GetUserData().name == 'aircraft')) {
-					_numHitAircraft++;
+				else if ((bodyAUserData.group === 'laser' && bodyBUserData.name === 'aircraft') ||
+					(bodyBUserData.group === 'laser' && bodyAUserData.name === 'aircraft')) {
+					_numHitAircraft++
 
-					if (bodyA.GetUserData().group == 'laser')
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-					else
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
+					const projectileEntity = (bodyAUserData.group === 'laser') ?
+						worldManager.getEntityByItsBody(bodyA) : worldManager.getEntityByItsBody(bodyB)
 
-					worldManager.deleteEntity(projectileEntity);
-					createExplosion(projectileEntity);
+					worldManager.deleteEntity(projectileEntity)
+					createExplosion(projectileEntity)
 
-					if (_numHitAircraft % 2 == 0) {
-						_soundHandler.createSoundInstance({
-							id: 'fix_on_that_position'
-						}).play();
+					if (_numHitAircraft % 2 === 0) {
+						_soundHandler.createSoundInstance({ id: 'fix_on_that_position' }).play()
 					}
 				}
-				else if ((bodyA.GetUserData().group == 'laser' && bodyB.GetUserData().group == 'missile') ||
-					(bodyB.GetUserData().group == 'laser' && bodyA.GetUserData().group == 'missile')) {
-					if (bodyA.GetUserData().group == 'missile') {
-						projectileEntity = worldManager.getEntityByItsBody(bodyA);
-						worldManager.deleteEntity(worldManager.getEntityByItsBody(bodyB));
+				else if ((bodyAUserData.group === 'laser' && bodyBUserData.group === 'missile') ||
+					(bodyBUserData.group === 'laser' && bodyAUserData.group === 'missile')) {
+
+					let projectileEntity
+					if (bodyAUserData.group === 'missile') {
+						projectileEntity = worldManager.getEntityByItsBody(bodyA)
+						worldManager.deleteEntity(worldManager.getEntityByItsBody(bodyB))
 					}
 					else {
-						projectileEntity = worldManager.getEntityByItsBody(bodyB);
-						worldManager.deleteEntity(worldManager.getEntityByItsBody(bodyA));
+						projectileEntity = worldManager.getEntityByItsBody(bodyB)
+						worldManager.deleteEntity(worldManager.getEntityByItsBody(bodyA))
 					}
 
-					removeFromMissilesFlying(projectileEntity);
-					worldManager.deleteEntity(projectileEntity);
-					createExplosion(projectileEntity);
+					removeFromFlyingMissiles(projectileEntity)
+					worldManager.deleteEntity(projectileEntity)
+					createExplosion(projectileEntity)
 				}
-			},
-			endContact: function (contact) {
-				var fixtureA = contact.GetFixtureA();
-				var fixtureB = contact.GetFixtureB();
-				var bodyA = fixtureA.GetBody();
-				var bodyB = fixtureB.GetBody();
 			}
-		});
+		})
 
-		createLimits();
-		createEarth();
-		createMoon();
+		createLimits()
+		createEarth()
+		createMoon()
 
-		createMissiles(100);
-		createAircraft();
-		loadAircraft();
+		createMissiles(100)
+		createAircraft()
+		loadAircraft()
 
-		createLasers(100);
-		createUfo();
-		loadUfo();
+		createLasers(100)
+		createUfo()
+		loadUfo()
 	}
 
 	function createMoonExplosion(projectileEntity, moonEntity) {
-		var dirX = projectileEntity.getPosition().x - moonEntity.getPosition().x;
-		var dirY = projectileEntity.getPosition().y - moonEntity.getPosition().y;
-		var theta = Math.atan2(dirY, dirX);
-		if (theta < 0)
-			theta += 2 * Math.PI;
-		var angle = theta * (180 / Math.PI)
+		const dirX = projectileEntity.getPosition().x - moonEntity.getPosition().x
+		const dirY = projectileEntity.getPosition().y - moonEntity.getPosition().y
+		let theta = Math.atan2(dirY, dirX)
+		if (theta < 0) {
+			theta += 2 * Math.PI
+		}
+		const angle = theta * (180 / Math.PI)
 
-		var up = true;
-		var explosion = worldManager.createLandscape({
+		let up = true
+		const explosion = worldManager.createLandscape({
 			x: projectileEntity.getPosition().x,
 			y: projectileEntity.getPosition().y,
 			angle: angle + 90,
@@ -392,23 +355,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				},
 				action: function () {
 					if (up) {
-						explosion.view.alpha += 0.05;
-						if (explosion.view.alpha > 1)
-							up = false;
+						explosion.view.alpha += 0.05
+						if (explosion.view.alpha > 1) {
+							up = false
+						}
 					}
-					else {
-						if (explosion.view.alpha > 0)
-							explosion.view.alpha -= 0.01;
+					else if (explosion.view.alpha > 0) {
+						explosion.view.alpha -= 0.01
 					}
 				}
 			}
-		});
+		})
 
-		_soundHandler.createSoundInstance({
-			id: 'explosion'
-		}).myPlay({
-			volume: 0.7
-		});
+		_soundHandler.createSoundInstance({ id: 'explosion' }).myPlay({ volume: 0.7 })
 	}
 
 	function createExplosion(projectileEntity) {
@@ -426,37 +385,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						animations: { 'normal': [47], 'explode': [1, 47, 'normal'] },
 						frames: { 'height': 64, 'width': 64 },
 					},
-					startAnimation: 'explode',
-					adjustImageSize: false
+					startAnimation: 'explode'
 				}
 			}
-		});
+		})
 
-		_soundHandler.createSoundInstance({
-			id: 'explosion'
-		}).myPlay({
-			volume: 0.7
-		});
+		_soundHandler.createSoundInstance({ id: 'explosion' }).myPlay({ volume: 0.7 })
 	}
 
 	function createLimits() {
-		var i, limits = [];
-		limits.push({ x: 490, y: -20, width: 980, height: 10 });
-		limits.push({ x: 490, y: 520, width: 980, height: 10 });
-		limits.push({ x: -20, y: 250, width: 10, height: 500 });
-		limits.push({ x: 1000, y: 250, width: 10, height: 500 });
+		const limits = []
+		limits.push({ x: 490, y: -20, width: 980, height: 10 })
+		limits.push({ x: 490, y: 520, width: 980, height: 10 })
+		limits.push({ x: -20, y: 250, width: 10, height: 500 })
+		limits.push({ x: 1000, y: 250, width: 10, height: 500 })
 
-		for (i = 0; i < limits.length; i++) {
+		limits.forEach(limit => {
 			worldManager.createEntity({
 				type: 'static',
-				x: limits[i].x, y: limits[i].y,
+				x: limit.x, y: limit.y,
 				shape: 'box',
-				boxOpts: { width: limits[i].width, height: limits[i].height },
+				boxOpts: { width: limit.width, height: limit.height },
 				render: {
 					type: 'draw',
 					drawOpts: {
 						bgColorStyle: 'solid',
-						bgSolidColorOpts: { color: '#000' }
+						bgSolidColorOpts: { color: 'black' }
 					}
 				},
 				fixtureDefOpts: {
@@ -465,22 +419,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					filterMaskBits: CATEGORY_AIRCRAFT | CATEGORY_ENEMY
 				},
 				group: 'limit'
-			});
-		}
+			})
+		})
 	}
 
 	function createEarth() {
-		var earth = worldManager.createEntity({
+		worldManager.createEntity({
 			type: 'static',
 			x: -250, y: 250,
 			shape: 'circle',
 			circleOpts: { radius: 400 },
 			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'transparent',
-					bgImage: '../../images/earth.png',
-					adjustBgImageSize: true
+				type: 'image',
+				imageOpts: {
+					image: '../../images/earth.png',
+					adjustImageSize: true
 				}
 			},
 			fixtureDefOpts: {
@@ -488,7 +441,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterMaskBits: CATEGORY_MOON
 			},
 			name: 'earth'
-		});
+		})
 	}
 
 	function createMoon() {
@@ -509,7 +462,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterCategoryBits: CATEGORY_MOON
 			},
 			name: 'moon'
-		});
+		})
 
 		worldManager.createGravitation(moon, {
 			attractionPower: 0.5,
@@ -525,13 +478,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 			}
-		});
+		})
 	}
 
 	function createMissiles(num) {
-		var i;
-		for (i = 0; i < num; i++) {
-			var missile = worldManager.createEntity({
+		for (let i = 0; i < num; i++) {
+			const missile = worldManager.createEntity({
 				type: 'dynamic',
 				x: -100, y: 250,
 				shape: 'box',
@@ -549,8 +501,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					filterMaskBits: CATEGORY_ENEMY | CATEGORY_LIMITS | CATEGORY_MOON
 				},
 				group: 'missile'
-			});
-			_missilesStored.push(missile);
+			})
+			_storedMissiles.push(missile)
 		}
 	}
 
@@ -590,13 +542,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						},
 						frames: { 'height': 100, 'width': 100 }
 					},
-					startAnimation: 'normal',
-					adjustImageSize: false
+					startAnimation: 'normal'
 				}
 			},
-			bodyDefOpts: {
-				fixedRotation: true
-			},
+			bodyDefOpts: { fixedRotation: true },
 			fixtureDefOpts: {
 				density: 20,
 				restitution: 0,
@@ -604,89 +553,79 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filterMaskBits: CATEGORY_ENEMY | CATEGORY_LIMITS | CATEGORY_MOON
 			},
 			name: 'aircraft'
-		});
+		})
 
 		_player = worldManager.createPlayer(_aircraft, {
-			camera: { xAxisOn: false, yAxisOn: false },
 			events: {
-				up: function () {
-					_aircraft.b2body.ApplyForce(new box2d.b2Vec2(0, -7500), _aircraft.b2body.GetWorldCenter());
-					if (_aircraftDir != -1)
-						_aircraft.b2body.view.gotoAndPlay("goUp");
-					_aircraftDir = -1;
+				up: () => {
+					_aircraft.b2body.ApplyForce(new box2d.b2Vec2(0, -7500), _aircraft.b2body.GetWorldCenter())
+					if (_aircraftDir !== -1) {
+						_aircraft.b2body.view.gotoAndPlay("goUp")
+					}
+					_aircraftDir = -1
 				},
-				down: function () {
-					_aircraft.b2body.ApplyForce(new box2d.b2Vec2(0, 7500), _aircraft.b2body.GetWorldCenter());
-					if (_aircraftDir != 1)
-						_aircraft.b2body.view.gotoAndPlay("goDown");
-					_aircraftDir = 1;
+				down: () => {
+					_aircraft.b2body.ApplyForce(new box2d.b2Vec2(0, 7500), _aircraft.b2body.GetWorldCenter())
+					if (_aircraftDir !== 1) {
+						_aircraft.b2body.view.gotoAndPlay("goDown")
+					}
+					_aircraftDir = 1
 				},
-				upNormal: function () {
-					_aircraft.b2body.view.gotoAndPlay("upNormal");
-					_aircraftDir = 0;
+				upNormal: () => {
+					_aircraft.b2body.view.gotoAndPlay("upNormal")
+					_aircraftDir = 0
 				},
-				downNormal: function () {
-					_aircraft.b2body.view.gotoAndPlay("downNormal");
-					_aircraftDir = 0;
+				downNormal: () => {
+					_aircraft.b2body.view.gotoAndPlay("downNormal")
+					_aircraftDir = 0
 				},
-				fire: function () {
+				fire: () => {
 					if (_freeFire) {
-						if (_missile != null) {
-							worldManager.getWorld().DestroyJoint(_missileLink.getJoint());
-							_missile.b2body.SetLinearVelocity({ x: 10, y: 0 });
-
-							_soundHandler.createSoundInstance({
-								id: 'missile'
-							}).myPlay({
-								volume: 0.2
-							});
-
-							_missilesFlying.push(_missile);
-							loadAircraft();
+						if (_missile !== null) {
+							worldManager.getWorld().DestroyJoint(_missileLink.getJoint())
+							_missile.b2body.SetLinearVelocity({ x: 10, y: 0 })
+							_soundHandler.createSoundInstance({ id: 'missile' }).myPlay({ volume: 0.2 })
+							_flyingMissiles.push(_missile)
+							loadAircraft()
 						}
 						else {
-							_soundHandler.createSoundInstance({
-								id: 'dry_fire'
-							}).myPlay({
-								volume: 0.2
-							});
+							_soundHandler.createSoundInstance({ id: 'dry_fire' }).myPlay({ volume: 0.2 })
 						}
 					}
 				}
 			}
-		});
+		})
 	}
 
 	function loadAircraft() {
-		if (_missilesStored.length > 0) {
-			_missile = _missilesStored[0];
-			_missile.setPosition(_aircraft.getPosition().x + 25, _aircraft.getPosition().y);
-			_missilesStored.splice(0, 1);
+		if (_storedMissiles.length > 0) {
+			_missile = _storedMissiles[0]
+			_missile.setPosition(_aircraft.getPosition().x + 25, _aircraft.getPosition().y)
+			_storedMissiles.splice(0, 1)
 
 			_missileLink = worldManager.createLink({
 				entityA: _aircraft,
 				entityB: _missile,
 				type: 'weld'
-			});
+			})
 		}
-		else
-			_missile = null;
+		else {
+			_missile = null
+		}
 	}
 
-	function removeFromMissilesFlying(missile) {
-		var i;
-		for (i = 0; i < _missilesFlying.length; i++) {
-			if (_missilesFlying[i] === missile) {
-				_missilesFlying.splice(i, 1);
-				break;
+	function removeFromFlyingMissiles(missile) {
+		for (let i = 0; i < _flyingMissiles.length; i++) {
+			if (_flyingMissiles[i] === missile) {
+				_flyingMissiles.splice(i, 1)
+				break
 			}
 		}
 	}
 
 	function createLasers(num) {
-		var i;
-		for (i = 0; i < num; i++) {
-			var laser = worldManager.createEntity({
+		for (let i = 0; i < num; i++) {
+			const laser = worldManager.createEntity({
 				type: 'dynamic',
 				x: 1080, y: 250,
 				shape: 'box',
@@ -704,8 +643,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					filterMaskBits: CATEGORY_AIRCRAFT | CATEGORY_LIMITS | CATEGORY_MOON
 				},
 				group: 'laser'
-			});
-			_lasers.push(laser);
+			})
+			_lasers.push(laser)
 		}
 	}
 
@@ -725,13 +664,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						},
 						frames: { 'height': 84, 'width': 84 }
 					},
-					startAnimation: 'normal',
-					adjustImageSize: false
+					startAnimation: 'normal'
 				}
 			},
-			bodyDefOpts: {
-				fixedRotation: true
-			},
+			bodyDefOpts: { fixedRotation: true },
 			fixtureDefOpts: {
 				density: 20,
 				restitution: 0,
@@ -740,139 +676,130 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			name: 'ufo',
 			events: {
-				ontick: function () {
-					var i, j, dir = 0, s = 0, r;
-					for (i = 0; i < _missilesFlying.length; i++) {
-						for (j = 0; j < _vP.length; j++) {
-							dir = willHit(_missilesFlying[i], _vP[j]);
-							s += dir;
-							if (dir != 0) {
-								moveUfo(dir, _vP[j] * 200);
-								attackAircraft(false);
+				ontick: () => {
+					let s = 0;
+					for (let i = 0; i < _flyingMissiles.length; i++) {
+						for (let j = 0; j < _vP.length; j++) {
+							const dir = willHit(_flyingMissiles[i], _vP[j])
+							s += dir
+							if (dir !== 0) {
+								moveUfo(dir, _vP[j] * 200)
+								attackAircraft(false)
 							}
 						}
 					}
-					if (s == 0) {
-						attackAircraft(true);
+					if (s === 0) {
+						attackAircraft(true)
 					}
 				}
 			}
-		});
+		})
 	}
 
 	function attackAircraft(move) {
-		var ufoY = _ufo.getPosition().y;
-
+		const ufoY = _ufo.getPosition().y
 		if (move) {
-			if (_aircraft.getPosition().y < ufoY)
-				moveUfo(-1, 100);
-			else
-				moveUfo(1, 100);
+			_aircraft.getPosition().y < ufoY ? moveUfo(-1, 100) : moveUfo(1, 100)
 		}
-
-		if (_countTick % 15 == 0
-			&& (ufoY < 250 - 70 || ufoY > 250 + 70) /*devia da lua*/) {
-			fireUfo();
+		if (_countTick % 15 === 0 && /*skip moon*/ (ufoY < 250 - 70 || ufoY > 250 + 70)) {
+			fireUfo()
 		}
 	}
 
 	function loadUfo() {
 		if (_lasers.length > 0) {
-			_laser = _lasers[0];
-			_laser.setPosition(_ufo.getPosition().x, _ufo.getPosition().y);
-			_lasers.splice(0, 1);
+			_laser = _lasers[0]
+			_laser.setPosition(_ufo.getPosition().x, _ufo.getPosition().y)
+			_lasers.splice(0, 1)
 
 			_laserLink = worldManager.createLink({
 				entityA: _ufo,
 				entityB: _laser,
 				type: 'weld'
-			});
+			})
 		}
-		else
-			_laser = null;
+		else {
+			_laser = null
+		}
 	}
 
 	function willHit(missile, p) {
-		var color;
-		var posUfo = {
+		const posUfo = {
 			x: _ufo.getPosition().x,
 			y: _ufo.getPosition().y,
 		}
-		var posMissile = {
+		const posMissile = {
 			x: missile.getPosition().x,
 			y: missile.getPosition().y,
 		}
-		var velMissile = {
+		const velMissile = {
 			x: missile.b2body.GetLinearVelocity().x * worldManager.getScale(),
 			y: missile.b2body.GetLinearVelocity().y * worldManager.getScale()
 		}
-		var xF = velMissile.x / p + posMissile.x;
-		var yF = velMissile.y / p + posMissile.y;
+		const xF = velMissile.x / p + posMissile.x
+		const yF = velMissile.y / p + posMissile.y
 
-		if (p == 0.5)
-			color = 'cyan';
-		else if (p == 1)
-			color = 'yellow';
-		else if (p == 2)
-			color = 'orange';
-		else
-			color = 'red';
+		let color
+		if (p === 0.5) {
+			color = 'cyan'
+		}
+		else if (p === 1) {
+			color = 'yellow'
+		}
+		else if (p === 2) {
+			color = 'orange'
+		}
+		else {
+			color = 'red'
+		}
 
-		//drawMissilePrev(xF, yF, color);
+		// -- Uncomment if you want to see the missile path
+		// drawMissilePrev(xF, yF, color)
 
-		var dir = 0;
+		let dir = 0
 		if ((xF >= posUfo.x - 30) && (xF <= posUfo.x + 30) && (yF <= posUfo.y + 30) && (yF >= posUfo.y - 30)) {
-			if (velMissile.y < 0)
-				dir = -1;
-			else if (velMissile.y > 0)
-				dir = 1;
+			if (velMissile.y < 0) {
+				dir = -1
+			}
+			else if (velMissile.y > 0) {
+				dir = 1
+			}
 			else {
-				//Ufo acima do meio da canvas
-				if (posUfo.y < 250)
-					dir = 1;
-				else
-					dir = -1;
+				//Ufo above middle of canvas
+				if (posUfo.y < 250) {
+					dir = 1
+				}
+				else {
+					dir = -1
+				}
 			}
 		}
 
-		return dir;
+		return dir
 	}
 
 	function moveUfo(dir, force) {
-		_ufo.b2body.ApplyForce(new box2d.b2Vec2(0, dir * force), _ufo.b2body.GetWorldCenter());
-	}
-
-	function stopUfo() {
-		var force = new box2d.b2Vec2(0, 0);
-		force.x = -(_ufo.b2body.GetMass() * _ufo.b2body.GetLinearVelocity().x);
-		force.y = -(_ufo.b2body.GetMass() * _ufo.b2body.GetLinearVelocity().y);
-		_ufo.b2body.ApplyForce(force, _ufo.b2body.GetWorldCenter());
+		_ufo.b2body.ApplyForce(new box2d.b2Vec2(0, dir * force), _ufo.b2body.GetWorldCenter())
 	}
 
 	function fireUfo() {
-		if (_freeFire && _laser != null) {
-			worldManager.getWorld().DestroyJoint(_laserLink.getJoint());
-			_laser.b2body.SetLinearVelocity({ x: -15, y: 0 });
-
-			_soundHandler.createSoundInstance({
-				id: 'laser'
-			}).myPlay({
-				volume: 0.2
-			});
-
-			loadUfo();
+		if (_freeFire && _laser !== null) {
+			worldManager.getWorld().DestroyJoint(_laserLink.getJoint())
+			_laser.b2body.SetLinearVelocity({ x: -15, y: 0 })
+			_soundHandler.createSoundInstance({ id: 'laser' }).myPlay({ volume: 0.2 })
+			loadUfo()
 		}
 	}
 
 	function drawMissilePrev(x, y, color) {
-		var c = worldManager.getBox2dCanvasCtx();
-		var radius = 2;
+		const c = worldManager.getBox2dCanvasCtx()
+		const radius = 2
 
-		c.beginPath();
-		c.lineWidth = '2';
-		c.strokeStyle = color;
-		c.arc(x, y, radius, 0, Math.PI * 2, true);
-		c.stroke();
+		c.beginPath()
+		c.lineWidth = '2'
+		c.strokeStyle = color
+		c.arc(x, y, radius, 0, Math.PI * 2, true)
+		c.stroke()
 	}
 
-}());
+}())

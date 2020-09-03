@@ -102,27 +102,27 @@
 
 	<script>
 		function init() {
-			var browserOSHandler = new MyGameBuilder.BrowserOSHandler();
-			var os = browserOSHandler.getOS();
+			const browserOSHandler = new MyGameBuilder.BrowserOSHandler()
+			const os = browserOSHandler.getOS()
 
-			var thisApp = null;
+			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
 			if (os === "iOS" || os === "Android") {
-				document.getElementById("message").style.display = 'block';
-				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false);
+				document.getElementById("message").style.display = 'block'
+				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false)
 				function handleTouch(event) {
-					document.getElementById("message").style.display = 'none';
-					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false);
-					thisApp = new MyGameBuilder.MyApp();
+					document.getElementById("message").style.display = 'none'
+					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false)
+					thisApp = new MyGameBuilder.MyApp()
 				}
 			}
 			else {
-				document.getElementById("keytable").style.display = 'block';
-				thisApp = new MyGameBuilder.MyApp();
+				document.getElementById("keytable").style.display = 'block'
+				thisApp = new MyGameBuilder.MyApp()
 			}
 		}
 
-		window.addEventListener("load", init);
+		window.addEventListener("load", init)
 	</script>
 
 </head>
