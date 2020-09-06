@@ -27,39 +27,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_easeljsStage = worldManager.getEaseljsStage()
 		_normalFPS = _actualFPS = worldManager.getFPS()
 
-		timeStepHandler.view = null
-		if (details && details.layer && details.layer.render) {
-			if (details.layer.x === undefined) {
-				details.layer.x = _easeljsCanvas.width / 2
-			}
-
-			if (details.layer.y === undefined) {
-				details.layer.y = _easeljsCanvas.height / 2
-			}
-
-			if (details.layer.angle === undefined) {
-				details.layer.angle = 0
-			}
-
-			if (details.layer.shape === undefined) {
-				details.layer.shape = 'box'
-				details.layer.boxOpts = {
-					width: _easeljsCanvas.width,
-					height: _easeljsCanvas.height
-				}
-			}
-
-			const positionShape = {}
-			positionShape.x = details.layer.x
-			positionShape.y = details.layer.y
-			positionShape.angle = details.layer.angle
-			positionShape.shape = details.layer.shape
-			positionShape.circleOpts = details.layer.circleOpts
-			positionShape.boxOpts = details.layer.boxOpts
-			positionShape.polygonOpts = details.layer.polygonOpts
-
-			timeStepHandler.view = MyGameBuilder.Render.createView(worldManager, positionShape, details.layer.render)
-		}
+		timeStepHandler.view = createView(details)
 
 		timeStepHandler.isPaused = function () {
 			return createjs.Ticker.paused
@@ -111,6 +79,72 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 
+	function createView(details) {
+		const defaultValues = {
+			layer: {
+				x: _easeljsCanvas.width / 2,
+				y: _easeljsCanvas.height / 2,
+				angle: 0,
+				shape: 'box',
+				boxOpts: {
+					width: _easeljsCanvas.width,
+					height: _easeljsCanvas.height
+				},
+				render: {
+					type: 'draw',
+					opacity: 0.5,
+					drawOpts: {
+						bgColorStyle: 'solid',
+						textOpts: {
+							text: 'Paused',
+							font: 'bold 38px Verdana',
+							color: 'white'
+						}
+					}
+				}
+			}
+		}
+
+		const timeStepHandlerDetails = defaultValues
+		if (details && details.layer) {
+			if (details.layer.x !== undefined) {
+				timeStepHandlerDetails.layer.x = details.layer.x
+			}
+			if (details.layer.y !== undefined) {
+				timeStepHandlerDetails.layer.y = details.layer.y
+			}
+			if (details.layer.angle !== undefined) {
+				timeStepHandlerDetails.layer.angle = details.layer.angle
+			}
+			if (details.layer.shape !== undefined) {
+				timeStepHandlerDetails.layer.shape = details.layer.shape
+			}
+			if (details.layer.circleOpts !== undefined) {
+				timeStepHandlerDetails.layer.circleOpts = details.layer.circleOpts
+			}
+			if (details.layer.boxOpts !== undefined) {
+				timeStepHandlerDetails.layer.boxOpts = details.layer.boxOpts
+			}
+			if (details.layer.polygonOpts !== undefined) {
+				timeStepHandlerDetails.layer.polygonOpts = details.layer.polygonOpts
+			}
+			if (details.layer.render !== undefined) {
+				timeStepHandlerDetails.layer.render = details.layer.render
+			}
+		}
+
+		const positionShape = {}
+		positionShape.x = timeStepHandlerDetails.layer.x
+		positionShape.y = timeStepHandlerDetails.layer.y
+		positionShape.angle = timeStepHandlerDetails.layer.angle
+		positionShape.shape = timeStepHandlerDetails.layer.shape
+		positionShape.circleOpts = timeStepHandlerDetails.layer.circleOpts
+		positionShape.boxOpts = timeStepHandlerDetails.layer.boxOpts
+		positionShape.polygonOpts = timeStepHandlerDetails.layer.polygonOpts
+
+		return MyGameBuilder.Render.createView(_worldManager, positionShape, timeStepHandlerDetails.layer.render)
+	}
+
 	function setSpriteSheetFrequency(fps) {
 		_worldManager.getEntities()
 			.filter(entity => entity.b2body.view && entity.b2body.view.type === "spritesheet")
@@ -124,12 +158,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			})
 	}
 
-	function validate(worldManager, details) {
+	function validate(worldManager, details) {		
 		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 
-		if (details !== undefined) {
+		if (details) {
 			if (typeof details !== 'object') {
 				throw new Error(arguments.callee.name + " : The TimeStepHandler details must be informed!")
 			}
@@ -140,6 +174,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 
 			if (details.layer) {
+				for (let def in details.layer) {
+					if (_validTimeStepHandlerLayerDef.indexOf(def) < 0) {
+						throw new Error(arguments.callee.name + " : the detail (" + def + ") for layer is not supported! Valid definitions: " + _validTimeStepHandlerLayerDef)
+					}
+				}
 				if (details.layer.x !== undefined && typeof details.layer.x !== 'number') {
 					throw new Error(arguments.callee.name + " : layer.x must be a number!")
 				}
@@ -149,7 +188,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				if (details.layer.angle !== undefined && typeof details.layer.angle !== 'number') {
 					throw new Error(arguments.callee.name + " : layer.angle must be a number!")
 				}
-
 				if (details.layer.shape !== undefined) {
 					if (_validTimeStepHandlerShapeDef.indexOf(details.layer.shape) < 0) {
 						throw new Error(arguments.callee.name + " : layer.shape must be " + _validTimeStepHandlerShapeDef)
@@ -239,7 +277,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						}
 					}
 				}
-
 				if (details.layer.render !== undefined && typeof details.layer.render !== 'object') {
 					throw new Error(arguments.callee.name + " : layer.render must be an object!")
 				}

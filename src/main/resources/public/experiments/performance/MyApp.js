@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+	
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -11,7 +12,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -34,26 +35,27 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function testPerformance() {
 
-		createLandscapeAndWorldLimits()
+		createLandscape()
+		createWorldLimits()
 
 		const balls = createBalls(250)
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			65: { // a
-				onkeydown: () => worldManager.getZoomHandler().zoomIn()
+				onkeydown: () => _worldManager.getZoomHandler().zoomIn()
 			},
 			83: { // s
-				onkeydown: () => worldManager.getZoomHandler().zoomOut()
+				onkeydown: () => _worldManager.getZoomHandler().zoomOut()
 			},
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			70: {
 				onkeydown: () => {
-					const screenHandler = worldManager.getScreenHandler()
+					const screenHandler = _worldManager.getScreenHandler()
 					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
 				}
 			},
@@ -65,21 +67,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createMultiTouchHandler()
-		worldManager.createZoomHandler()
-		worldManager.createScreenHandler()
+		_worldManager.createMultiTouchHandler()
+		_worldManager.createZoomHandler()
+		_worldManager.createScreenHandler()
 	}
 
-	function createLandscapeAndWorldLimits() {
-		// Not working
-		const greyScaleFilter = new createjs.ColorMatrixFilter([
-			0.33, 0.33, 0.33, 0, 0, // red
-			0.33, 0.33, 0.33, 0, 0, // green
-			0.33, 0.33, 0.33, 0, 0, // blue
-			0, 0, 0, 1, 0  // alpha
-		])
+	function createLandscape() {
+		// EaselJS filter not working
+		//--
+		// const greyScaleFilter = new createjs.ColorMatrixFilter([
+		// 	0.33, 0.33, 0.33, 0, 0, // red
+		// 	0.33, 0.33, 0.33, 0, 0, // green
+		// 	0.33, 0.33, 0.33, 0, 0, // blue
+		// 	0, 0, 0, 1, 0  // alpha
+		// ])
+		//--
+		const colorMatrix = new createjs.ColorMatrix()
+		colorMatrix.adjustSaturation(-100)
+		colorMatrix.adjustContrast(50)
+		const greyScaleFilter = new createjs.ColorMatrixFilter(colorMatrix)
+		//--
 
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 490, y: 250,
 			shape: 'box',
 			boxOpts: {
@@ -95,16 +104,18 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filters: [greyScaleFilter]
 			}
 		})
+	}
 
+	function createWorldLimits() {
 		const staticRender = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#000' }
+				bgSolidColorOpts: { color: 'black' }
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -112,7 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -120,7 +131,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -128,7 +139,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 750, y: 100,
 			shape: 'box',
@@ -136,7 +147,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 880, y: 280, angle: -15,
 			shape: 'box',
@@ -148,7 +159,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function createBalls(number) {
 		const balls = []
 		for (let i = 0; i < number; i++) {
-			const ball = worldManager.createEntity({
+			const ball = _worldManager.createEntity({
 				type: 'dynamic',
 				x: 980 - (Math.random() * 200),
 				y: Math.random() * 150,

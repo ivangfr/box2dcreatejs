@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -21,13 +22,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		testWater()
-		worldManager.start()
+		_worldManager.start()
 	}
 
 	function testWater() {
 		createWorldLimits()
 
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 490, y: 250,
 			shape: 'box',
 			boxOpts: { width: 980, height: 500 },
@@ -43,7 +44,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createToys()
 
 		// Water
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 300, y: 395,
 			shape: 'box',
@@ -64,7 +65,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Pool border
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 595, y: 390,
 			shape: 'box',
@@ -74,26 +75,26 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				opacity: 0.8,
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#000' }
+					bgSolidColorOpts: { color: 'black' }
 				},
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			}
 		})
 
-		worldManager.createMultiTouchHandler({
+		_worldManager.createMultiTouchHandler({
 			enableSlice: true,
 			sliceOpts: { lineWidth: 3 }
 		})
 
-		worldManager.createContactHandler({
+		_worldManager.createContactHandler({
 			enabledBuoyancy: true,
 			buoyancyOpts: { complexDragFunction: true }
 		})
@@ -104,11 +105,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: '#000' }
+				bgSolidColorOpts: { color: 'black' }
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -116,7 +117,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -124,7 +125,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -132,7 +133,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -142,7 +143,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createToys() {
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 50, y: 250,
 			shape: 'polygon',
@@ -165,7 +166,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			sliceable: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 120, y: 100, angle: 15,
 			shape: 'box',
@@ -182,7 +183,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			sliceable: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 100, angle: 90,
 			shape: 'box',
@@ -200,7 +201,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			sliceable: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 440, y: 250, angle: 15,
 			shape: 'box',
@@ -217,7 +218,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			sliceable: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 550, y: 200,
 			shape: 'circle',
@@ -233,7 +234,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { density: 0.7 }
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 800, y: 250,
 			shape: 'box',

@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -40,7 +41,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createWorldLimits()
 		createSmallBalls(250)
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 810, y: 478,
 			shape: 'box',
 			boxOpts: { width: 100, height: 35 },
@@ -58,7 +59,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			keepPressed: true
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 920, y: 478,
 			shape: 'box',
 			boxOpts: { width: 100, height: 35 },
@@ -75,12 +76,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: () => createSoccerBall()
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			49: { // 1
 				onkeydown: () => createSoccerBall(),
@@ -91,13 +92,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const multiTouchHandler = worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			pointerRadius: 20,
 			pointerAccurate: false,
 			drawPointerLocation: true,
 			onmousedown: function (e) {
 				multiTouchHandler.getEntitiesAtMouseTouch(e)
-					.forEach(entity => worldManager.deleteEntity(entity))
+					.forEach(entity => _worldManager.deleteEntity(entity))
 			},
 			onmousemove: function (e) {
 				const x = e.x || e.clientX
@@ -108,7 +109,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					return
 				}
 				multiTouchHandler.getEntitiesAtMouseTouch(e)
-					.forEach(entity => worldManager.deleteEntity(entity))
+					.forEach(entity => _worldManager.deleteEntity(entity))
 			}
 		})
 	}
@@ -122,7 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 450,
 			shape: 'box',
@@ -130,7 +131,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -138,7 +139,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -146,7 +147,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -157,7 +158,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function createSmallBalls(number) {
 		for (let i = 0; i < number; i++) {
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'dynamic',
 				x: Math.random() * 960 + 10,
 				y: Math.random() * 400 + 20,
@@ -176,7 +177,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createSoccerBall() {
-		const ball = worldManager.createEntity({
+		const ball = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 50, y: 100,
 			shape: 'circle',

@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -41,12 +42,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testGravitation() {
 		createLandscapeAndWorldLimits()
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			37: { // left arrow
 				onkeydown: () => player.left(),
@@ -66,7 +67,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createContactHandler({
+		_worldManager.createContactHandler({
 			beginContact: function (contact) {
 				const bodyA = contact.GetFixtureA().GetBody()
 				const bodyB = contact.GetFixtureB().GetBody()
@@ -77,12 +78,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					(bodyAUserData.name === 'asteroid' && bodyBUserData.name === 'earth')) {
 					let earth, asteroid
 					if (bodyAUserData.name === 'earth') {
-						earth = worldManager.getEntityByItsBody(bodyA)
-						asteroid = worldManager.getEntityByItsBody(bodyB)
+						earth = _worldManager.getEntityByItsBody(bodyA)
+						asteroid = _worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						earth = worldManager.getEntityByItsBody(bodyB)
-						asteroid = worldManager.getEntityByItsBody(bodyA)
+						earth = _worldManager.getEntityByItsBody(bodyB)
+						asteroid = _worldManager.getEntityByItsBody(bodyA)
 					}
 
 					const dirX = asteroid.getPosition().x - earth.getPosition().x
@@ -94,7 +95,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					const angle = theta * (180 / Math.PI)
 
 					let up = true
-					const explosion = worldManager.createLandscape({
+					const explosion = _worldManager.createLandscape({
 						x: asteroid.getPosition().x,
 						y: asteroid.getPosition().y,
 						angle: angle + 90,
@@ -131,15 +132,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					(bodyAUserData.name === 'asteroid' && bodyBUserData.name === 'moon')) {
 					let moon, asteroid
 					if (bodyAUserData.name === 'moon') {
-						moon = worldManager.getEntityByItsBody(bodyA)
-						asteroid = worldManager.getEntityByItsBody(bodyB)
+						moon = _worldManager.getEntityByItsBody(bodyA)
+						asteroid = _worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						moon = worldManager.getEntityByItsBody(bodyB)
-						asteroid = worldManager.getEntityByItsBody(bodyA)
+						moon = _worldManager.getEntityByItsBody(bodyB)
+						asteroid = _worldManager.getEntityByItsBody(bodyA)
 					}
 
-					worldManager.createLandscape({
+					_worldManager.createLandscape({
 						x: asteroid.getPosition().x,
 						y: asteroid.getPosition().y,
 						shape: 'circle',
@@ -162,7 +163,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const asteroid = worldManager.createEntity({
+		const asteroid = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 750, y: 120,
 			shape: 'circle',
@@ -177,7 +178,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'asteroid'
 		})
 
-		const player = worldManager.createPlayer(asteroid, {
+		const player = _worldManager.createPlayer(asteroid, {
 			camera: { xAxisOn: false, yAxisOn: false },
 			events: {
 				up: function () {
@@ -196,7 +197,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		let mainEarthRender = true
-		const multiTouchHandler = worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			onmousedown: function (e) {
 				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
 				entities.forEach(entity => {
@@ -225,7 +226,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const earth = worldManager.createEntity({
+		const earth = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 250,
 			shape: 'circle',
@@ -235,7 +236,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'earth'
 		})
 
-		worldManager.createGravitation(earth, {
+		_worldManager.createGravitation(earth, {
 			gravityRadius: 300,
 			attractionPower: 5,
 			render: {
@@ -252,7 +253,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const moon = worldManager.createEntity({
+		const moon = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 750, y: 250,
 			shape: 'circle',
@@ -268,7 +269,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'moon'
 		})
 
-		worldManager.createGravitation(moon, {
+		_worldManager.createGravitation(moon, {
 			attractionPower: 5,
 			render: {
 				opacity: 0.3,
@@ -286,7 +287,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createLandscapeAndWorldLimits() {
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 490, y: 250,
 			shape: 'box',
 			boxOpts: { width: 980, height: 500 },
@@ -307,7 +308,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -315,7 +316,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -323,7 +324,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -331,7 +332,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticReander
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',

@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -35,7 +36,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testImpluseForce() {
 		createWorldLimits()
 
-		const tire = worldManager.createEntity({
+		const tire = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 250,
 			shape: 'circle',
@@ -49,15 +50,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createMultiTouchHandler()
+		_worldManager.createMultiTouchHandler()
 
 		let direction = 1
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			49: { // 1
 				onkeydown: () => tire.getB2Body().ApplyForce(new box2d.b2Vec2(direction * 5000, 0), tire.b2body.GetWorldCenter()),
@@ -91,7 +92,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -99,7 +100,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: renderStatic
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -107,7 +108,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: renderStatic
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -115,7 +116,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: renderStatic
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',

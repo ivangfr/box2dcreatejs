@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: true,
 			showFPSIndicator: true,
@@ -38,7 +39,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function testBackground() {
 
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 490, y: 250,
 			shape: 'box',
 			boxOpts: { width: 980, height: 500 },
@@ -53,7 +54,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const cloud1 = worldManager.createLandscape({
+		const cloud1 = _worldManager.createLandscape({
 			x: 300, y: 200,
 			shape: 'box',
 			boxOpts: { width: 200, height: 150 },
@@ -67,7 +68,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const hill = worldManager.createLandscape({
+		const hill = _worldManager.createLandscape({
 			x: 500, y: 320,
 			shape: 'box',
 			boxOpts: { width: 600, height: 264 },
@@ -78,7 +79,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const cloud2 = worldManager.createLandscape({
+		const cloud2 = _worldManager.createLandscape({
 			x: 750, y: 220,
 			shape: 'box',
 			boxOpts: { width: 415, height: 343 },
@@ -92,7 +93,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const grass = worldManager.createLandscape({
+		const grass = _worldManager.createLandscape({
 			x: 1000, y: 250,
 			shape: 'box',
 			boxOpts: { width: 1990, height: 500 },

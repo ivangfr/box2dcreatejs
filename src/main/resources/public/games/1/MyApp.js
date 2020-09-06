@@ -108,15 +108,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			createButtonsForMobile(player)
 		}
 
-		const timeStepHandler = _worldManager.createTimeStepHandler({
-			layer: {
-				render: {
-					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.1
-				}
-			}
-		})
+		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_soundHandler = _worldManager.createSoundHandler()
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 0.3 })
@@ -610,7 +602,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					type: 'draw',
 					drawOpts: {
 						bgColorStyle: 'solid',
-						bgSolidColorOpts: { color: '#000' }
+						bgSolidColorOpts: { color: 'black' }
 					}
 				},
 				fixtureDefOpts: {
@@ -701,7 +693,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					type: 'draw',
 					drawOpts: {
 						bgColorStyle: 'solid',
-						bgSolidColorOpts: { color: '#000' },
+						bgSolidColorOpts: { color: 'black' },
 						borderWidth: 2
 					}
 				},

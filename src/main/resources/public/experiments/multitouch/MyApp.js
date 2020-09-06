@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: true,
 			showFPSIndicator: true,
@@ -40,7 +41,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		createWorldLimits()
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'circle',
@@ -54,7 +55,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 250,
 			shape: 'circle',
@@ -68,7 +69,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const explosive = worldManager.createEntity({
+		const explosive = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 250,
 			shape: 'circle',
@@ -87,7 +88,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			bodyDefOpts: { fixedRotation: true }
 		})
 
-		worldManager.createMultiTouchHandler({
+		_worldManager.createMultiTouchHandler({
 			drawPointerLocation: true,
 			onmousedown: function () {
 				document.getElementById("output").innerHTML = 'MOUSEDOWN'
@@ -97,12 +98,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			}
 		})
 
@@ -129,7 +130,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const explodeBtn = worldManager.createScreenButton({
+		const explodeBtn = _worldManager.createScreenButton({
 			x: 57, y: 477,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -145,7 +146,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 830, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -162,7 +163,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			keepPressed: true
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 930, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -179,7 +180,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			keepPressed: true
 		})
 
-		const bo = worldManager.createBrowserOSHandler()
+		const bo = _worldManager.createBrowserOSHandler()
 		const text = bo.getBrowserName() + ' ' + bo.getBrowserVersion() + ', ' + bo.getOS()
 		document.getElementById("browser_os").innerHTML = text
 	}
@@ -193,7 +194,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 450,
 			shape: 'box',
@@ -201,7 +202,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -209,7 +210,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -217,7 +218,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',

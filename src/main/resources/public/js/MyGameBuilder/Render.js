@@ -6,26 +6,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function Render() { }
 
+	// NOTE: 'filters' property is not working
+
 	const _validRenderDef = ['z', 'type', 'opacity', 'action', 'filters', 'drawOpts', 'imageOpts', 'spriteSheetOpts']
-
 	const _validRenderTypeDef = ['draw', 'image', 'spritesheet']
-
-	const _validRenderDrawOptsDef = ['borderWidth', 'borderColor', 'borderRadius', 'bgColorStyle',
-		'bgSolidColorOpts', 'bgLinearGradientOpts', 'bgRadialGradientOpts',
-		'bgImage', 'repeatBgImage', 'adjustBgImageSize', 'cache', 'textOpts']
-
+	const _validRenderDrawOptsDef = ['borderWidth', 'borderColor', 'borderRadius', 'bgColorStyle', 'bgSolidColorOpts', 'bgLinearGradientOpts', 'bgRadialGradientOpts', 'bgImage', 'repeatBgImage', 'adjustBgImageSize', 'cache', 'textOpts']
 	const _validRenderImageOptsDef = ['image', 'adjustImageSize']
-
 	const _validRenderRepeatBgImageDef = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y']
 	const _validRenderBgColorStyleDef = ['transparent', 'solid', 'linearGradient', 'radialGradient']
-
 	const _validRenderBgColorStyleSolidColorOptsDef = ['color']
 	const _validRenderBgColorStyleLinearGradientOptsDef = ['colors', 'ratios', 'x0', 'y0', 'x1', 'y1']
 	const _validRenderBgColorStyleRadialGradientOptsDef = ['colors', 'ratios', 'x0', 'y0', 'r0', 'x1', 'y1', 'r1']
-
 	const _validRenderSpriteSheetOptsDef = ['startAnimation', 'spriteData', 'adjustImageSize']
 	const _validRenderSpriteSheetDataDef = ['animations', 'frames', 'images']
-
 	const _validRenderTextOptsDef = ['text', 'font', 'color']
 
 	let _worldManager
@@ -51,7 +44,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		let view = null
 		if (details.type === 'draw') {
-			view = (details.drawOpts.textOpts === undefined) ? createShapeView(positionShape, details) : createContainerView(positionShape, details)
+			view = (details.drawOpts.textOpts === undefined) ?
+				createShapeView(positionShape, details) : createContainerView(positionShape, details)
 		}
 		else if (details.type === 'image') {
 			view = createImageView(positionShape, details)
@@ -114,7 +108,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			image = new Image()
 			image.src = details.imageOpts.image
 			image.onload = function () {
-				console.log('Render image \'' + details.imageOpts.image + '\' loaded at the time!')
+				console.log('Render image \'' + details.imageOpts.image + '\' loaded at time!')
 				onLoadImage(view, image)
 			}
 		}
@@ -172,10 +166,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		const spriteSheet = new createjs.SpriteSheet(spriteData)
-		spriteSheet.animations.forEach(animation => {
-			const spriteSheetAnimation = spriteSheet.getAnimation(animation)
-			spriteSheetAnimation.speed0 = 1
-		})
+		spriteSheet.animations.forEach(animation => animation.speed0 = 1)
 
 		const view = new createjs.Sprite(spriteSheet)
 		view.render0 = details
@@ -317,7 +308,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				container.x - container.dimension.width / 2,
 				container.y - container.dimension.height / 2,
 				container.dimension.width,
-				container.dimension.height)
+				container.dimension.height
+			)
 		}
 
 		return container
@@ -459,7 +451,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				image = new Image()
 				image.src = details.drawOpts.bgImage
 				image.onload = function () {
-					console.log('Render bgImage \'' + details.drawOpts.bgImage + '\' loaded at the time!')
+					console.log('Render bgImage \'' + details.drawOpts.bgImage + '\' loaded at time!')
 					onLoadImage(view, image)
 				}
 			}
@@ -491,10 +483,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 		else if (view.type === 'image') {
-			if (view.filters !== null) {
-				view.cache(0, 0, image.width, image.height)
-			}
-
 			view.regX = image.width / 2
 			view.regY = image.height / 2
 
@@ -502,42 +490,36 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				view.scaleX = view.dimension.width / image.width
 				view.scaleY = view.dimension.height / image.height
 			}
+
+			if (view.filters !== null) {
+				view.cache(0, 0, image.width, image.height)
+			}
 		}
 	}
 
 	function drawShape(view) {
-		switch (view.shape) {
-			case 'circle':
-				view.graphics.drawCircle(view.x, view.y, view.circleOpts.radius)
-				break
-
-			case 'box':
-				view.graphics.drawRoundRect(view.x - view.boxOpts.width / 2, view.y - view.boxOpts.height / 2, view.boxOpts.width, view.boxOpts.height, view.borderRadius)
-				break
-
-			case 'polygon':
-				const points = view.polygonOpts.points
-				view.graphics.moveTo(points[0].x, points[0].y)
-				points.forEach(point => view.graphics.lineTo(point.x, point.y))
-				view.graphics.lineTo(points[0].x, points[0].y)
-				break
-
-			default:
-				break
+		if (view.shape === 'circle') {
+			view.graphics.drawCircle(view.x, view.y, view.circleOpts.radius)
+		} else if (view.shape === 'box') {
+			view.graphics.drawRoundRect(view.x - view.boxOpts.width / 2, view.y - view.boxOpts.height / 2, view.boxOpts.width, view.boxOpts.height, view.borderRadius)
+		} else if (view.shape === 'polygon') {
+			const points = view.polygonOpts.points
+			view.graphics.moveTo(points[0].x, points[0].y)
+			points.forEach(point => view.graphics.lineTo(point.x, point.y))
+			view.graphics.lineTo(points[0].x, points[0].y)
 		}
 	}
 
 	function getDimension(view) {
-		const shape = view.shape
 		let width, height
-		if (shape === 'circle') {
+		if (view.shape === 'circle') {
 			width = height = view.circleOpts.radius * 2
 		}
-		else if (shape === 'box') {
+		else if (view.shape === 'box') {
 			width = view.boxOpts.width
 			height = view.boxOpts.height
 		}
-		else if (shape === 'polygon') {
+		else if (view.shape === 'polygon') {
 			const v = view.polygonOpts.points
 			let dist = 0
 			for (let i = 1; i < v.length; i++) {
@@ -586,26 +568,29 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		if (details.filters !== undefined && details.filters !== null) {
 			if (!(details.filters instanceof Array)) {
-				throw new Error(arguments.callee.name + " : filters must be an Array! See: http://www.createjs.com/Docs/EaselJS/classes/Filter.html")
+				throw new Error(arguments.callee.name + " : filters must be an Array! See: https://www.createjs.com/docs/easeljs/classes/Filter.html")
 			}
 
 			for (let i = 0; i < details.filters.length; i++) {
 				const filter = details.filters[i]
-
 				let validInstance = false
-				if (!validInstance && createjs.AlphaMapFilter !== undefined && filter instanceof createjs.AlphaMapFilter)
+				if (!validInstance && createjs.AlphaMapFilter !== undefined && filter instanceof createjs.AlphaMapFilter) {
 					validInstance = true
-				if (!validInstance && createjs.AlphaMaskFilter !== undefined && filter instanceof createjs.AlphaMaskFilter)
+				}
+				if (!validInstance && createjs.AlphaMaskFilter !== undefined && filter instanceof createjs.AlphaMaskFilter) {
 					validInstance = true
-				if (!validInstance && createjs.BoxBlurFilter !== undefined && filter instanceof createjs.BoxBlurFilter)
+				}
+				if (!validInstance && createjs.BoxBlurFilter !== undefined && filter instanceof createjs.BoxBlurFilter) {
 					validInstance = true
-				if (!validInstance && createjs.ColorFilter !== undefined && filter instanceof createjs.ColorFilter)
+				}
+				if (!validInstance && createjs.ColorFilter !== undefined && filter instanceof createjs.ColorFilter) {
 					validInstance = true
-				if (!validInstance && createjs.ColorMatrixFilter !== undefined && filter instanceof createjs.ColorMatrixFilter)
+				}
+				if (!validInstance && createjs.ColorMatrixFilter !== undefined && filter instanceof createjs.ColorMatrixFilter) {
 					validInstance = true
-
+				}
 				if (!validInstance) {
-					throw new Error(arguments.callee.name + " : filters element must be instanceof: AlphaMapFilter, AlphaMaskFilter, BoxBlurFilter, ColorFilter or ColorMatrixFilter! See: http://www.createjs.com/Docs/EaselJS/classes/Filter.html")
+					throw new Error(arguments.callee.name + " : filters element must be instanceof: AlphaMapFilter, AlphaMaskFilter, BoxBlurFilter, ColorFilter or ColorMatrixFilter! See: https://www.createjs.com/docs/easeljs/classes/Filter.html")
 				}
 			}
 		}
@@ -779,10 +764,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					throw new Error(arguments.callee.name + " : drawOpts.textOpts.text must be a string!")
 				}
 				if (details.drawOpts.textOpts.font !== undefined && typeof details.drawOpts.textOpts.font !== 'string') {
-					throw new Error(arguments.callee.name + " : drawOpts.textOpts.font must be a string! See EaselJS documentation: http://www.createjs.com/Docs/EaselJS/classes/Text.html")
+					throw new Error(arguments.callee.name + " : drawOpts.textOpts.font must be a string! See EaselJS documentation: https://www.createjs.com/docs/easeljs/classes/Text.html")
 				}
 				if (details.drawOpts.textOpts.color !== undefined && typeof details.drawOpts.textOpts.color !== 'string') {
-					throw new Error(arguments.callee.name + " : drawOpts.textOpts.color must be a string! See EaselJS documentation: http://www.createjs.com/Docs/EaselJS/classes/Text.html")
+					throw new Error(arguments.callee.name + " : drawOpts.textOpts.color must be a string! See EaselJS documentation: https://www.createjs.com/docs/easeljs/classes/Text.html")
 				}
 			}
 		}
@@ -834,7 +819,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.spriteSheetOpts.spriteData.images === undefined ||
 				details.spriteSheetOpts.spriteData.animations === undefined ||
 				details.spriteSheetOpts.spriteData.frames === undefined) {
-				throw new Error(arguments.callee.name + " : the spriteSheetOpts.spriteData must have images, animations and frames. See EaselJS documentation: http://www.createjs.com/Docs/EaselJS/classes/SpriteSheet.html")
+				throw new Error(arguments.callee.name + " : the spriteSheetOpts.spriteData must have images, animations and frames. See EaselJS documentation: https://www.createjs.com/docs/easeljs/classes/SpriteSheet.html")
 			}
 
 			if (!(details.spriteSheetOpts.spriteData.images instanceof Array)) {

@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+	
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -38,11 +39,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testBreak() {
 		createWorldLimits()
 
-		const multiTouchHandler = worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			onmousedown: function (e) {
 				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
 				if (entities.length > 0) {
-					const breakHandler = new MyGameBuilder.BreakHandler(worldManager, {
+					const breakHandler = new MyGameBuilder.BreakHandler(_worldManager, {
 						numCuts: 2,
 						explosion: false
 					})
@@ -57,17 +58,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const timeStepHandler = worldManager.createTimeStepHandler({
-			layer: {
-				render: {
-					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.3
-				}
-			}
-		})
+		const timeStepHandler = _worldManager.createTimeStepHandler()
 
-		const contactHandler = worldManager.createContactHandler({
+		const contactHandler = _worldManager.createContactHandler({
 			breakOpts: { numCuts: 2 },
 			beginContact: function (contact) {
 				const bodyA = contact.GetFixtureA().GetBody()
@@ -79,12 +72,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
 					let block, projectile
 					if (bodyAUserData.group === 'breakable') {
-						block = worldManager.getEntityByItsBody(bodyA)
-						projectile = worldManager.getEntityByItsBody(bodyB)
+						block = _worldManager.getEntityByItsBody(bodyA)
+						projectile = _worldManager.getEntityByItsBody(bodyB)
 					}
 					else {
-						block = worldManager.getEntityByItsBody(bodyB)
-						projectile = worldManager.getEntityByItsBody(bodyA)
+						block = _worldManager.getEntityByItsBody(bodyB)
+						projectile = _worldManager.getEntityByItsBody(bodyA)
 					}
 
 					const worldManifold = new Box2D.Collision.b2WorldManifold()
@@ -109,13 +102,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						if (worldManifold.m_points[1].x > 0) {
 							x = (x + worldManifold.m_points[1].x) / 2
 						}
-						x *= worldManager.getScale()
+						x *= _worldManager.getScale()
 
 						let y = worldManifold.m_points[0].y
 						if (worldManifold.m_points[1].y > 0) {
 							y = (y + worldManifold.m_points[1].y) / 2
 						}
-						y *= worldManager.getScale()
+						y *= _worldManager.getScale()
 
 						const numCuts = Math.round(impulse / 20)
 
@@ -162,12 +155,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			80: { // p
 				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
@@ -195,7 +188,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		createToys()
 
-		const projectile = worldManager.createEntity({
+		const projectile = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 100, y: 250,
 			shape: 'box',
@@ -215,7 +208,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'projectile'
 		})
 
-		const player = worldManager.createPlayer(projectile, {
+		const player = _worldManager.createPlayer(projectile, {
 			events: {
 				up: function () {
 					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -100), this.getB2Body().GetWorldCenter())
@@ -242,7 +235,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -250,7 +243,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -258,7 +251,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -266,7 +259,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -276,7 +269,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createToys() {
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 325,
 			shape: 'box',
@@ -296,7 +289,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 100,
 			shape: 'box',
@@ -321,7 +314,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 400,
 			shape: 'box',
@@ -338,7 +331,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 100,
 			shape: 'box',
@@ -357,7 +350,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 700, y: 200, angle: 30,
 			shape: 'polygon',
@@ -387,7 +380,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			draggable: false
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 900, y: 100,
 			shape: 'circle',
@@ -412,7 +405,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 900, y: 300,
 			shape: 'circle',

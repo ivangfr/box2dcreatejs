@@ -2,7 +2,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	let worldManager
+	let _worldManager
 	let _hintElem, _helpElem, _scoreElem, _freeBlocks
 	let _soundHandler
 	let _countTick = 0, _numBreaks = 0
@@ -29,7 +29,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_hintElem = document.getElementById("hint")
 		_scoreElem = document.getElementById("score")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -90,11 +90,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function startWorld() {
 
-		_soundHandler = worldManager.createSoundHandler()
+		_soundHandler = _worldManager.createSoundHandler()
 		_soundHandler.createSoundInstance({ id: 'stream' }).myPlay({ loop: -1, volume: 0.3 })
 		_soundHandler.createSoundInstance({ id: 'birds' }).myPlay({ loop: -1, volume: 0.1 })
 
-		const multiTouchHandler = worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			enableDrag: false,
 			enableSlice: true,
 			sliceOpts: {
@@ -111,7 +111,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				multiTouchHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
 					const entityUserData = entity.b2body.GetUserData()
 					if (entityUserData.group === 'breakable') {
-						breakHandler = new MyGameBuilder.BreakHandler(worldManager, { numCuts: 1 })
+						breakHandler = new MyGameBuilder.BreakHandler(_worldManager, { numCuts: 1 })
 						breakHandler.breakEntity(entity, x, y)
 						createExplosion(x, y)
 					}
@@ -126,13 +126,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { //d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			}
 		})
 
-		worldManager.createTimeStepHandler({
+		_worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
@@ -142,7 +142,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createContactHandler({
+		_worldManager.createContactHandler({
 			enabledBuoyancy: true,
 			enabledStickyTarget: false,
 			beginContact: function (contact) {
@@ -160,7 +160,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.setUserOnTick(function () {
+		_worldManager.setUserOnTick(function () {
 			_countTick++
 			if (_countTick % 120 === 0) {
 
@@ -197,7 +197,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					setTimeout(function () {
 						_hintElem.innerHTML = "Try again!!!"
 						setTimeout(function () {
-							worldManager.getTimeStepHandler().pause()
+							_worldManager.getTimeStepHandler().pause()
 						}, 3000)
 					}, 4000)
 				}
@@ -212,7 +212,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function buildBackground() {
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 490, y: 250,
 			shape: 'box',
 			boxOpts: { width: 980, height: 500 },
@@ -226,7 +226,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const cloud1 = worldManager.createLandscape({
+		const cloud1 = _worldManager.createLandscape({
 			x: 0, y: 200,
 			shape: 'box',
 			boxOpts: { width: 200, height: 150 },
@@ -240,7 +240,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const cloud2 = worldManager.createLandscape({
+		const cloud2 = _worldManager.createLandscape({
 			x: 200, y: 100,
 			shape: 'box',
 			boxOpts: { width: 315, height: 243 },
@@ -251,7 +251,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_fish = worldManager.createEntity({
+		_fish = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 800, y: 430,
 			shape: 'box',
@@ -299,7 +299,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		aWalls.push({ x: 1090, y: 440 })
 
 		aWalls.forEach(wall => {
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'static',
 				x: wall.x, y: wall.y,
 				shape: 'box',
@@ -321,7 +321,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function buildFloor() {
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -330,7 +330,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: '#000' }
+					bgSolidColorOpts: { color: 'black' }
 				}
 			},
 			fixtureDefOpts: {
@@ -342,7 +342,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function buildWater() {
-		_water = worldManager.createEntity({
+		_water = _worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 440,
 			shape: 'box',
@@ -373,7 +373,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			const dir = randomInt === 0 ? -1 : 1
 			const angVel = randomIntFromInterval(0, 2) * 5
 
-			block.entity = worldManager.createEntity({
+			block.entity = _worldManager.createEntity({
 				type: 'dynamic',
 				x: x, y: y,
 				shape: 'box',
@@ -428,7 +428,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createExplosion(x, y) {
-		const shot = worldManager.createEntity({
+		const shot = _worldManager.createEntity({
 			type: 'static',
 			x: x, y: y,
 			shape: 'circle',
@@ -447,7 +447,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler.createSoundInstance({ id: 'explosion' }).play()
 
 		setTimeout(function () {
-			worldManager.deleteEntity(shot)
+			_worldManager.deleteEntity(shot)
 		}, 300)
 	}
 

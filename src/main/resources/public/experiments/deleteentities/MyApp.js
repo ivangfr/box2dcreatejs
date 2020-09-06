@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+	
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -21,7 +22,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		testDeleteEntities()
-		worldManager.start()
+		_worldManager.start()
 	}
 
 	function testDeleteEntities() {
@@ -30,7 +31,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		createToys(30)
 
-		const square = worldManager.createEntity({
+		const square = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'box',
@@ -47,7 +48,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		const ball = worldManager.createEntity({
+		const ball = _worldManager.createEntity({
 			type: 'dynamic',
 			x: Math.random() * 980,
 			y: Math.random() * 500,
@@ -66,31 +67,31 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: square,
 			entityB: ball,
 			type: 'revolute',
 			localAnchorA: { x: 0, y: 2 }
 		})
 
-		const multiTouchHandler = worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			drawPointerLocation: true,
 			onmousedown: (e) => {
 				multiTouchHandler.getEntitiesAtMouseTouch(e)
 					.filter(entity => entity.getGroup() === 'ball')
-					.forEach(entity => worldManager.deleteEntity(entity))
+					.forEach(entity => _worldManager.deleteEntity(entity))
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			65: { // a
-				onkeydown: () => worldManager.deleteEntity(square)
+				onkeydown: () => _worldManager.deleteEntity(square)
 			}
 		})
 	}
@@ -104,7 +105,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -112,7 +113,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -120,7 +121,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -128,7 +129,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -139,7 +140,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function createToys(number) {
 		for (let i = 0; i < number; i++) {
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'dynamic',
 				x: Math.random() * 980,
 				y: Math.random() * 500,

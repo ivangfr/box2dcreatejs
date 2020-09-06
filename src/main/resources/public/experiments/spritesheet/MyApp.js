@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -40,7 +41,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testSpriteSheet() {
 		createWorldLimits()
 
-		const boy = worldManager.createEntity({
+		const boy = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'box',
@@ -61,7 +62,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { friction: 0.2 }
 		})
 
-		const ball = worldManager.createEntity({
+		const ball = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 300, y: 250,
 			shape: 'circle',
@@ -80,11 +81,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			bodyDefOpts: { fixedRotation: true }
 		})
 
-		worldManager.createMultiTouchHandler()
+		_worldManager.createMultiTouchHandler()
 
-		worldManager.createScreenHandler()
+		_worldManager.createScreenHandler()
 
-		const timeStepHandler = worldManager.createTimeStepHandler({
+		const timeStepHandler = _worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
@@ -94,12 +95,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			80: { // p
 				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
@@ -109,7 +110,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			70: { // f
 				onkeydown: () => {
-					const screenHandler = worldManager.getScreenHandler()
+					const screenHandler = _worldManager.getScreenHandler()
 					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
 				}
 			},
@@ -129,7 +130,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 57, y: 477,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -148,7 +149,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 830, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -165,7 +166,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			keepPressed: true
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 930, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -182,7 +183,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			keepPressed: true
 		})
 
-		const bo = worldManager.createBrowserOSHandler()
+		const bo = _worldManager.createBrowserOSHandler()
 		const text = bo.getBrowserName() + ' ' + bo.getBrowserVersion() + ', ' + bo.getOS()
 		document.getElementById("browser_os").innerHTML = text
 	}
@@ -196,7 +197,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 450,
 			shape: 'box',
@@ -204,7 +205,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -212,7 +213,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -220,7 +221,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',

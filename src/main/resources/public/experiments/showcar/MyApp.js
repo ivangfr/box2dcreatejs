@@ -43,16 +43,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function showCar() {
 
-		createLandscapeAndWorldLimits()
+		createLandscape()
+		createWorldLimits()
 
 		const car = createCar()
 
 		const timeStepHandler = _worldManager.createTimeStepHandler({
 			layer: {
+				shape: 'circle',
+				circleOpts: {
+					radius: _worldManager.getEaseljsCanvas().height / 2
+				},
 				render: {
 					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.3
+					opacity: 0.5,
+					drawOpts: {
+						bgColorStyle: 'solid',
+						textOpts: {
+							text: 'Paused',
+							font: 'bold 38px Verdana',
+							color: 'white'
+						}
+					}
 				}
 			}
 		})
@@ -111,10 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_worldManager.createMultiTouchHandler({
-			enableSlice: true,
-			drawPointerLocation: true
-		})
+		_worldManager.createMultiTouchHandler({ drawPointerLocation: false })
 
 		const player = _worldManager.createPlayer(car.chassis, {
 			camera: {
@@ -196,15 +205,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 	}
 
-	function createLandscapeAndWorldLimits() {
-
-		// Not Working!
-		const greyScaleFilter = new createjs.ColorMatrixFilter([
-			0.33, 0.33, 0.33, 0, 0, // red
-			0.33, 0.33, 0.33, 0, 0, // green
-			0.33, 0.33, 0.33, 0, 0, // blue
-			0, 0, 0, 1, 0  // alpha
-		])
+	function createLandscape() {
+		// EaselJS filter not working
+		//--
+		// const greyScaleFilter = new createjs.ColorMatrixFilter([
+		// 	0.33, 0.33, 0.33, 0, 0, // red
+		// 	0.33, 0.33, 0.33, 0, 0, // green
+		// 	0.33, 0.33, 0.33, 0, 0, // blue
+		// 	0, 0, 0, 1, 0  // alpha
+		// ])
+		//--
+		const colorMatrix = new createjs.ColorMatrix()
+		colorMatrix.adjustSaturation(-100)
+		colorMatrix.adjustContrast(50)
+		const greyScaleFilter = new createjs.ColorMatrixFilter(colorMatrix)
+		//--
 
 		_worldManager.createLandscape({
 			x: 5000, y: -100,
@@ -219,7 +234,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				filters: [greyScaleFilter]
 			}
 		})
+	}
 
+	function createWorldLimits() {
 		const staticRender = {
 			type: 'draw',
 			drawOpts: {

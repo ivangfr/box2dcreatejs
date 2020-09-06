@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: true,
 			showFPSIndicator: true,
@@ -21,32 +22,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		testWind()
-		worldManager.start()
+		_worldManager.start()
 	}
 
 	function testWind() {
 		createWorldLimits()
 		createToys()
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			65: { // a
 				onkeydown: () => {
-					const wind = worldManager.getWind()
+					const wind = _worldManager.getWind()
 					wind.isOn() ? wind.stop() : wind.start()
 				}
 			}
 		})
 
-		worldManager.createMultiTouchHandler()
+		_worldManager.createMultiTouchHandler()
 
 		// Wind
-		worldManager.createWind({
+		_worldManager.createWind({
 			numRays: 50,
 			power: 1000,
 			on: true,
@@ -64,7 +65,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -72,7 +73,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -80,7 +81,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -88,7 +89,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -98,7 +99,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createToys() {
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 800, y: 100,
 			shape: 'box',
@@ -113,7 +114,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { density: 10 }
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 100,
 			shape: 'box',
@@ -127,7 +128,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 650, y: 450,
 			shape: 'box',
@@ -141,7 +142,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 600, y: 100,
 			shape: 'circle',
@@ -155,7 +156,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'polygon',

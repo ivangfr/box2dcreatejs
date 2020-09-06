@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -37,7 +38,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function testSound() {
-		const soundHandler = worldManager.createSoundHandler()
+		const soundHandler = _worldManager.createSoundHandler()
 
 		// Create music just with id, as the preload has the src
 		const music = soundHandler.createSoundInstance({ id: 'music' })
@@ -49,9 +50,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		// Note: shotgun is not created yet, just preload
 
-		worldManager.createMultiTouchHandler()
+		_worldManager.createMultiTouchHandler()
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 100, y: 100,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
@@ -67,7 +68,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: () => music.myPlay({ loop: -1 })
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 100, y: 160,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
@@ -83,7 +84,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: () => music.stop()
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 300, y: 100,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
@@ -99,7 +100,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: () => music.paused = false
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 300, y: 160,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
@@ -138,7 +139,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const shotgunBtn = worldManager.createScreenButton({
+		const shotgunBtn = _worldManager.createScreenButton({
 			x: 300, y: 240,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
@@ -152,7 +153,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmouseup: () => shotgunBtn.changeRender(shotgunRender1)
 		})
 
-		worldManager.createScreenButton({
+		_worldManager.createScreenButton({
 			x: 300, y: 300,
 			shape: 'box',
 			boxOpts: { width: 80, height: 40 },
