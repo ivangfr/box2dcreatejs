@@ -2,83 +2,75 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	MyGameBuilder.BrowserOSHandler = BrowserOSHandler;
+	MyGameBuilder.BrowserOSHandler = BrowserOSHandler
 
 	function BrowserOSHandler() {
-		initialize(this);
+		initialize(this)
 	}
 
 	function initialize(browserOSHandler) {
-		var browser, os, version,
-			ua = window.navigator.userAgent,
-			platform = window.navigator.platform;
+		let browser, os, version
+		const ua = window.navigator.userAgent
+		const platform = window.navigator.platform
 
 		if (/MSIE/.test(ua)) {
-			browser = 'Internet Explorer';
+			browser = 'Internet Explorer'
 			if (/IEMobile/.test(ua)) {
-				browser += ' Mobile';
+				browser += ' Mobile'
 			}
-			version = /MSIE \d+[.]\d+/.exec(ua)[0].split(' ')[1];
+			version = /MSIE \d+[.]\d+/.exec(ua)[0].split(' ')[1]
 		} else if (/Chrome/.test(ua)) {
-			browser = 'Chrome';
-			version = /Chrome\/[\d\.]+/.exec(ua)[0].split('/')[1];
+			browser = 'Chrome'
+			version = /Chrome\/[\d\.]+/.exec(ua)[0].split('/')[1]
 		} else if (/Opera/.test(ua)) {
-			browser = 'Opera';
+			browser = 'Opera'
 			if (/mini/.test(ua)) {
-				browser += ' Mini';
+				browser += ' Mini'
 			} else if (/Mobile/.test(ua)) {
-				browser += ' Mobile';
+				browser += ' Mobile'
 			}
 		} else if (/Android/.test(ua)) {
-			browser = 'Android Webkit Browser';
-			mobile = true;
-			os = /Android\s[\.\d]+/.exec(ua);
+			browser = 'Android Webkit Browser'
+			mobile = true
+			os = /Android\s[\.\d]+/.exec(ua)
 		} else if (/Firefox/.test(ua)) {
-			browser = 'Firefox';
+			browser = 'Firefox'
 			if (/Fennec/.test(ua)) {
-				browser += ' Mobile';
+				browser += ' Mobile'
 			}
-			version = /Firefox\/[\.\d]+/.exec(ua)[0].split('/')[1];
+			version = /Firefox\/[\.\d]+/.exec(ua)[0].split('/')[1]
 		} else if (/Safari/.test(ua)) {
-			browser = 'Safari';
+			browser = 'Safari'
 			if ((/iPhone/.test(ua)) || (/iPad/.test(ua)) || (/iPod/.test(ua))) {
-				os = 'iOS';
+				os = 'iOS'
 			}
 		}
 		if (!version) {
-			version = /Version\/[\.\d]+/.exec(ua);
+			version = /Version\/[\.\d]+/.exec(ua)
 			if (version) {
-				version = version[0].split('/')[1];
+				version = version[0].split('/')[1]
 			} else {
 				version = /Opera\/[\.\d]+/.exec(ua)[0].split('/')[1]
 			}
 		}
 		if (platform === 'MacIntel' || platform === 'MacPPC') {
-			os = 'Mac OS X ' + /10[\.\_\d]+/.exec(ua)[0];
+			os = 'Mac OS X ' + /10[\.\_\d]+/.exec(ua)[0]
 			if (/[\_]/.test(os)) {
-				os = os.split('_').join('.');
+				os = os.split('_').join('.')
 			}
 		} else if (platform === 'Win32') {
-			os = 'Windows 32 bit';
-		} else if (platform == 'Win64') {
-			os = 'Windows 64 bit';
+			os = 'Windows 32 bit'
+		} else if (platform === 'Win64') {
+			os = 'Windows 64 bit'
 		} else if (!os && /Linux/.test(platform)) {
-			os = 'Linux';
+			os = 'Linux'
 		} else if (!os && /Windows/.test(ua)) {
-			os = 'Windows';
+			os = 'Windows'
 		}
 
-		browserOSHandler.getBrowserName = function () {
-			return browser;
-		}
-
-		browserOSHandler.getBrowserVersion = function () {
-			return version;
-		}
-
-		browserOSHandler.getOS = function () {
-			return os;
-		}
+		browserOSHandler.getBrowserName = function () { return browser }
+		browserOSHandler.getBrowserVersion = function () { return version }
+		browserOSHandler.getOS = function () { return os }
 	}
 
-}());
+}())

@@ -84,12 +84,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		worldManager.createScreenHandler()
 
+		const timeStepHandler = worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.3
+				}
+			}
+		})
+
 		worldManager.createKeyboardHandler({
 			68: { // d
 				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
 				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
 			},
 			70: { // f
 				onkeydown: () => {

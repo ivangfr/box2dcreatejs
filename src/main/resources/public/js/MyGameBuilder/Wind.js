@@ -4,7 +4,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	MyGameBuilder.Wind = Wind
 
-	function Wind(worldManager, details) { initialize(this, worldManager, details) }
+	function Wind(worldManager, details) {
+		initialize(this, worldManager, details)
+	}
 
 	const _validWindDef = ['numRays', 'power', 'on', 'directionTo', 'width', 'height', 'adjustX', 'adjustY']
 	const _validWindDirectionToDef = ['left', 'right']
@@ -16,27 +18,27 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager = worldManager
 
-		const canvas = worldManager.getBox2dCanvas()
+		const box2dCanvas = worldManager.getBox2dCanvas()
 
-		let numRays = (details && details.numRays) ? details.numRays : 20
+		let numRays = (details && details.numRays !== undefined) ? details.numRays : 20
 		wind.getNumRays = function () { return numRays }
 
-		let power = (details && details.power) ? details.power : 1000
+		let power = (details && details.power !== undefined) ? details.power : 1000
 		wind.getPower = function () { return power }
 
 		let on = (details && details.on !== undefined) ? details.on : true
 		wind.isOn = function () { return on }
 
 		let directionTo = -1 //left
-		if (details && details.directionTo) {
+		if (details && details.directionTo !== undefined) {
 			if (details.directionTo.toLowerCase() === 'right') {
 				directionTo = 1
 			}
 		}
 		wind.getDirectionTo = function () { return directionTo }
 
-		const width = (details && details.width) ? details.width : canvas.width
-		const height = (details && details.height) ? details.height : canvas.width
+		const width = (details && details.width) ? details.width : box2dCanvas.width
+		const height = (details && details.height) ? details.height : box2dCanvas.width
 		const adjustX = (details && details.adjustX) ? details.adjustX : 0
 		const adjustY = (details && details.adjustY) ? details.adjustY : 0
 
@@ -45,8 +47,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		for (let i = d + adjustY; i < height; i += d) {
 			let xBegin, xEnd, y
 			if (directionTo === -1) {
-				xBegin = (canvas.width - adjustX) / _worldManager.getScale()
-				xEnd = (canvas.width - width) / _worldManager.getScale()
+				xBegin = (box2dCanvas.width - adjustX) / _worldManager.getScale()
+				xEnd = (box2dCanvas.width - width) / _worldManager.getScale()
 			}
 			else {
 				xBegin = adjustX / _worldManager.getScale()
@@ -154,51 +156,43 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 
-		if (details) {
+		if (details !== undefined) {
 			if (typeof details !== 'object') {
 				throw new Error(arguments.callee.name + " : The Wind details must be an object!")
 			}
-
 			for (let def in details) {
 				if (_validWindDef.indexOf(def) < 0) {
 					throw new Error(arguments.callee.name + " : the detail (" + def + ") for Wind is not supported! Valid definitions: " + _validWindDef)
 				}
 			}
 
-			if (details.numRays && (typeof details.numRays !== 'number' || details.numRays <= 0)) {
+			if (details.numRays !== undefined && (typeof details.numRays !== 'number' || details.numRays <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid value for numRays!")
 			}
-
-			if (details.power && (typeof details.power !== 'number' || details.power <= 0)) {
+			if (details.power !== undefined && (typeof details.power !== 'number' || details.power <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid value for power!")
 			}
-
-			if (details.on && typeof details.on !== 'boolean') {
+			if (details.on !== undefined && typeof details.on !== 'boolean') {
 				throw new Error(arguments.callee.name + " : on must be true/false!")
 			}
-
-			if (details.directionTo) {
+			if (details.directionTo !== undefined) {
 				if (typeof details.directionTo !== 'string') {
 					throw new Error(arguments.callee.name + " : directionTo must be a string!")
 				}
-				else if (_validWindDirectionToDef.indexOf(details.directionTo.toLowerCase()) < 0) {
+				if (_validWindDirectionToDef.indexOf(details.directionTo.toLowerCase()) < 0) {
 					throw new Error(arguments.callee.name + " : directionTo must be " + _validWindDirectionToDef)
 				}
 			}
-
-			if (details.width && (typeof details.width !== 'number' || details.width <= 0)) {
+			if (details.width !== undefined && (typeof details.width !== 'number' || details.width <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid value for width!")
 			}
-
-			if (details.height && (typeof details.height !== 'number' || details.height <= 0)) {
+			if (details.height !== undefined && (typeof details.height !== 'number' || details.height <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid value for height!")
 			}
-
-			if (details.adjustX && typeof details.adjustX !== 'number') {
+			if (details.adjustX !== undefined && typeof details.adjustX !== 'number') {
 				throw new Error(arguments.callee.name + " : adjustX must be a number!")
 			}
-
-			if (details.adjustY && typeof details.adjustY !== 'number') {
+			if (details.adjustY !== undefined && typeof details.adjustY !== 'number') {
 				throw new Error(arguments.callee.name + " : adjustY must be a number!")
 			}
 		}

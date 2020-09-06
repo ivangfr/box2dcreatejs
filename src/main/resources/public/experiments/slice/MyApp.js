@@ -38,7 +38,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testSlice() {
 		createWorldLimits()
 
-		worldManager.createMultiTouchHandler({
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
 			enableSlice: true,
 			sliceOpts: {
 				lineColor: 'yellow',
@@ -46,8 +46,18 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		let valDrag = worldManager.getMultiTouchHandler().getEnableDrag()
-		let valSlice = worldManager.getMultiTouchHandler().getEnableSlice()
+		const timeStepHandler = worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.3
+				}
+			}
+		})
+
+		let valDrag = multiTouchHandler.getEnableDrag()
+		let valSlice = multiTouchHandler.getEnableSlice()
 
 		const output = document.getElementById("output")
 		output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
@@ -59,9 +69,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			82: { // r
 				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
+			},
 			65: { // a
 				onkeydown: () => {
-					const multiTouchHandler = worldManager.getMultiTouchHandler()
 					valDrag = !multiTouchHandler.getEnableDrag()
 					multiTouchHandler.setEnableDrag(valDrag)
 					output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
@@ -69,7 +84,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			83: { // s
 				onkeydown: () => {
-					const multiTouchHandler = worldManager.getMultiTouchHandler()
 					valSlice = !multiTouchHandler.getEnableSlice()
 					multiTouchHandler.setEnableSlice(valSlice)
 					output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
@@ -230,7 +244,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'dynamic',
 			x: 600, y: 300,
 			shape: 'polygon',
-			polygonOpts: { points: [{ x: -80, y: 0 }, { x: 0, y: -80 }, { x: 80, y: 0 }] },
+			polygonOpts: {
+				points: [
+					{ x: -80, y: 0 },
+					{ x: 0, y: -80 },
+					{ x: 80, y: 0 }
+				]
+			},
 			render: {
 				type: 'draw',
 				drawOpts: {

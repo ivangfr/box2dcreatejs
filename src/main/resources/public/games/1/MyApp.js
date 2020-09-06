@@ -9,7 +9,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	const CAR_WIDTH = 170, CAR_HEIGHT = 55, CAR_X = 360, CAR_Y = 330
 	const FINISHLINE_X = 18000
 
-	let worldManager
+	let _worldManager
 
 	let _os
 	let _hintElem, _timeElem
@@ -32,7 +32,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_hintElem = document.getElementById("hint")
 		_timeElem = document.getElementById("time")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -64,7 +64,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_os = worldManager.createBrowserOSHandler().getOS()
+		_os = _worldManager.createBrowserOSHandler().getOS()
 	}
 
 	function startWorld() {
@@ -77,7 +77,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		const car = createCar()
 
-		const player = worldManager.createPlayer(car.chassis, {
+		const player = _worldManager.createPlayer(car.chassis, {
 			camera: {
 				adjustX: 300,
 				adjustY: 90,
@@ -100,15 +100,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		createHoldPointToCar(car)
 
-		const zoomHandler = worldManager.createZoomHandler({ max: 1, min: 0.8, step: 0.008 })
+		const zoomHandler = _worldManager.createZoomHandler({ max: 1, min: 0.8, step: 0.008 })
 
-		worldManager.createMultiTouchHandler({ enableDrag: false })
+		_worldManager.createMultiTouchHandler({ enableDrag: false })
 
 		if (_os === "iOS" || _os === "Android") {
 			createButtonsForMobile(player)
 		}
 
-		worldManager.createTimeStepHandler({
+		const timeStepHandler = _worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
@@ -118,10 +118,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_soundHandler = worldManager.createSoundHandler()
+		_soundHandler = _worldManager.createSoundHandler()
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 0.3 })
 
-		worldManager.setUserOnTick(function () {
+		_worldManager.setUserOnTick(function () {
 			if (_os !== "iOS" && _os !== "Android") {
 				car.chassis.getPosition().y < 100 ? zoomHandler.zoomOut() : zoomHandler.zoomIn()
 			}
@@ -151,27 +151,25 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				_overallTime = (new Date()).getTime() - _startTime
 				updateTimeInfo(_overallTime, true)
 
-				_soundHandler.createSoundInstance({
-					id: 'applause'
-				}).play()
+				_soundHandler.createSoundInstance({ id: 'applause' }).play()
 
-				worldManager.getTimeStepHandler().setFPS(980)
+				_worldManager.getTimeStepHandler().setFPS(980)
 
 				setTimeout(function () {
-					worldManager.getTimeStepHandler().restoreFPS()
+					_worldManager.getTimeStepHandler().restoreFPS()
 				}, 1000)
 
 				setTimeout(function () {
 					_hintElem.innerHTML = "Try again!!!"
 					setTimeout(function () {
-						worldManager.getTimeStepHandler().pause()
+						_worldManager.getTimeStepHandler().pause()
 					}, 3000)
 				}, 4000)
 			}
 		})
 
 		if (_os !== "iOS" && _os !== "Android") {
-			worldManager.createLandscape({
+			_worldManager.createLandscape({
 				x: 10000, y: 115,
 				shape: 'box',
 				boxOpts: { width: 20000, height: 575 },
@@ -186,9 +184,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			})
 		}
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
 			},
 			37: { // left arrow
 				onkeydown: (e) => player.anticlockwise(e)
@@ -203,22 +207,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			40: { // down arrow
 				onkeydown: (e) => player.backward(e),
 				keepPressed: true
-			},
-			69: { // e
-				onkeydown: () => {
-					const timeStepHandler = worldManager.getTimeStepHandler()
-					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-				}
-			},
-			81: { // q
-				onkeydown: () => worldManager.getTimeStepHandler().setFPS(980)
-			},
-			87: { // w
-				onkeydown: () => worldManager.getTimeStepHandler().restoreFPS()
 			}
 		})
 
-		worldManager.createContactHandler({
+		_worldManager.createContactHandler({
 			enabledBuoyancy: false,
 			enabledStickyTarget: false,
 			beginContact: function (contact) {
@@ -277,7 +269,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				_timeElem.style.display = 'block'
 				startTime()
 
-				worldManager.deleteEntity(_holdPoint)
+				_worldManager.deleteEntity(_holdPoint)
 
 				setTimeout(function () {
 					_hintElem.style.display = 'none'
@@ -302,7 +294,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createCar() {
-		const chassis = worldManager.createEntity({
+		const chassis = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X, y: CAR_Y,
 			shape: 'box',
@@ -324,7 +316,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'chassis'
 		})
 
-		const backAxis = worldManager.createEntity({
+		const backAxis = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X - 55, y: CAR_Y + 30,
 			shape: 'box',
@@ -341,7 +333,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const frontAxis = worldManager.createEntity({
+		const frontAxis = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X + 55, y: CAR_Y + 30,
 			shape: 'box',
@@ -366,7 +358,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const backTire = worldManager.createEntity({
+		const backTire = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X - 55, y: CAR_Y + 30,
 			shape: 'circle',
@@ -382,7 +374,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			group: 'tire'
 		})
 
-		const frontTire = worldManager.createEntity({
+		const frontTire = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X + 55, y: CAR_Y + 30,
 			shape: 'circle',
@@ -399,7 +391,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			group: 'tire'
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: chassis,
 			entityB: backAxis,
 			type: 'line',
@@ -415,7 +407,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: chassis,
 			entityB: frontAxis,
 			type: 'line',
@@ -431,13 +423,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: backAxis,
 			entityB: backTire,
 			type: 'revolute'
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: frontAxis,
 			entityB: frontTire,
 			type: 'revolute'
@@ -447,7 +439,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createHoldPointToCar(car) {
-		_holdPoint = worldManager.createEntity({
+		_holdPoint = _worldManager.createEntity({
 			type: 'static',
 			x: 300, y: 340,
 			shape: 'box',
@@ -458,7 +450,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createLink({
+		_worldManager.createLink({
 			entityA: _holdPoint,
 			entityB: car.frontTire,
 			type: 'distance'
@@ -485,7 +477,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const leftBtn = worldManager.createScreenButton({
+		const leftBtn = _worldManager.createScreenButton({
 			x: 830, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -519,7 +511,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const rightBtn = worldManager.createScreenButton({
+		const rightBtn = _worldManager.createScreenButton({
 			x: 930, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -553,7 +545,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const upBtn = worldManager.createScreenButton({
+		const upBtn = _worldManager.createScreenButton({
 			x: 50, y: 440,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -587,7 +579,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const downBtn = worldManager.createScreenButton({
+		const downBtn = _worldManager.createScreenButton({
 			x: 50, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -609,7 +601,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		aWalls.push({ x: 20000, y: 0 })
 
 		aWalls.forEach(wall => {
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'static',
 				x: wall.x, y: wall.y,
 				shape: 'box',
@@ -692,12 +684,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			const p1 = aPoints[i]
 			const p2 = aPoints[i + 1]
 
-			const ps = [{ x: p1.x, y: 200 }, { x: p1.x, y: -p1.y }, { x: p2.x, y: -p2.y }, { x: p2.x, y: 200 }]
-			const c = findCentroid(ps)
+			const ps = [
+				{ x: p1.x, y: 200 },
+				{ x: p1.x, y: -p1.y },
+				{ x: p2.x, y: -p2.y },
+				{ x: p2.x, y: 200 }
+			]
+			const center = findCentroid(ps).center
 
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'static',
-				x: c.x, y: c.y + 400,
+				x: center.x, y: center.y + 400,
 				shape: 'polygon',
 				polygonOpts: { points: ps },
 				render: {
@@ -715,7 +712,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function buildFinishLine() {
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: FINISHLINE_X, y: 190,
 			shape: 'box',
@@ -728,7 +725,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			}
 		})
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: FINISHLINE_X, y: 180,
 			shape: 'box',
@@ -766,14 +763,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		if (worldManifold.m_points[1].x > 0) {
 			x = (x + worldManifold.m_points[1].x) / 2
 		}
-		x *= worldManager.getScale()
+		x *= _worldManager.getScale()
 
 		let y = worldManifold.m_points[0].y
 		if (worldManifold.m_points[1].y > 0) {
 			y = (y + worldManifold.m_points[1].y) / 2
 		}
 		y -= 0.2
-		y *= worldManager.getScale()
+		y *= _worldManager.getScale()
 
 		const numParticles = 1
 		for (let j = 0; j < numParticles; j++) {
@@ -808,7 +805,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			const angleDir = new box2d.b2Vec2(Math.sin(angle * Math.PI / 180), Math.cos(angle * Math.PI / 180))
 			const timeDisappear = randomIntFromInterval(1, 2) * 1000
 
-			const particle = worldManager.createEntity({
+			const particle = _worldManager.createEntity({
 				type: 'dynamic',
 				x: x, y: y,
 				shape: 'circle',
@@ -841,7 +838,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			})
 
 			setTimeout(function () {
-				worldManager.deleteEntity(particle)
+				_worldManager.deleteEntity(particle)
 			}, timeDisappear)
 		}
 	}

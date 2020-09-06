@@ -2,127 +2,128 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	MyGameBuilder.KeyboardHandler = KeyboardHandler;
+	MyGameBuilder.KeyboardHandler = KeyboardHandler
 
 	function KeyboardHandler(worldManager, details) {
 		initialize(worldManager, details)
 	}
 
-	var _validKeyboardHandlerDef = ['onkeydown', 'onkeyup', 'keepPressed'];
+	const _validKeyboardHandlerDef = ['onkeydown', 'onkeyup', 'keepPressed']
 
-	var _worldManager;
-
-	var _keys, _keysDown;
+	let _worldManager
+	let _keys, _keysDown
 
 	function initialize(worldManager, details) {
-		validate(worldManager, details);
+		validate(worldManager, details)
 
-		_worldManager = worldManager;
+		_worldManager = worldManager
 
-		_keys = [];
-		_keysDown = {};
+		_keys = []
+		_keysDown = {}
 
 		if (details !== undefined) {
-			for (var k in details) {
-				var key = {};
+			for (let k in details) {
+				const key = {}
 
-				key.keyCode = k;
-				key.isKeyDown = false;
+				key.keyCode = k
+				key.isKeyDown = false
+				key.keepPressed = (details[k].keepPressed !== undefined) ? details[k].keepPressed : false
 
-				key.keepPressed = false;
-				if (details[k].keepPressed !== undefined)
-					key.keepPressed = details[k].keepPressed;
+				if (details[k].onkeydown !== undefined) {
+					key.onKeyDown = details[k].onkeydown
+				}
+				if (details[k].onkeyup !== undefined) {
+					key.onKeyUp = details[k].onkeyup
+				}
 
-				if (details[k].onkeydown !== undefined)
-					key.onKeyDown = details[k].onkeydown;
-
-				if (details[k].onkeyup !== undefined)
-					key.onKeyUp = details[k].onkeyup;
-
-				_keys.push(key);
+				_keys.push(key)
 			}
 		}
 
-		window.addEventListener("keydown", keyDownHandler);
-		window.addEventListener("keyup", keyUpHandler);
+		window.addEventListener("keydown", keyDownHandler)
+		window.addEventListener("keyup", keyUpHandler)
 	}
 
 	KeyboardHandler.prototype.update = function (countTick) {
-		for (var i = 0; i < _keys.length; i++) {
-			var key = _keys[i];
-
-			for (p in _keysDown) {
-				if (key.keyCode == p) {
+		_keys.forEach(key => {
+			for (let p in _keysDown) {
+				if (key.keyCode === p) {
 					if (!key.isKeyDown) {
-						key.isKeyDown = true;
-						if (key.onKeyDown !== undefined)
-							key.onKeyDown(_keysDown[p]);
+						key.isKeyDown = true
+						if (key.onKeyDown !== undefined) {
+							key.onKeyDown(_keysDown[p])
+						}
 					}
-					else if (key.keepPressed && countTick % _worldManager.getTickMod() == 0)
-						key.onKeyDown(_keysDown[p]);
+					else if (key.keepPressed && countTick % _worldManager.getTickMod() === 0) {
+						key.onKeyDown(_keysDown[p])
+					}
 				}
 			}
-		}
+		})
 	}
 
 	function keyDownHandler(e) {
-		e = e || window.event;
+		e = e || window.event
 
-		for (var i = 0; i < _keys.length; i++) {
-			var key = _keys[i];
+		for (let i = 0; i < _keys.length; i++) {
+			const key = _keys[i]
 			if (key.keyCode == e.which) {
-				_keysDown[e.which] = e;
-				break;
+				_keysDown[e.which] = e
+				break
 			}
 		}
 	}
 
 	function keyUpHandler(e) {
-		e = e || window.event;
+		e = e || window.event
 
-		for (var i = 0; i < _keys.length; i++) {
-			var key = _keys[i];
+		for (let i = 0; i < _keys.length; i++) {
+			const key = _keys[i]
 			if (key.keyCode == e.which) {
-				key.isKeyDown = false;
-				if (key.onKeyUp !== undefined)
-					key.onKeyUp(e);
-
-				delete _keysDown[e.which];
-				break;
+				key.isKeyDown = false
+				if (key.onKeyUp !== undefined) {
+					key.onKeyUp(e)
+				}
+				delete _keysDown[e.which]
+				break
 			}
 		}
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager))
-			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!");
+		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
+		}
 
 		if (details !== undefined) {
-			if (typeof details != 'object')
-				throw new Error(arguments.callee.name + " : The KeyboardHandler details must be an object!");
+			if (typeof details !== 'object') {
+				throw new Error(arguments.callee.name + " : The KeyboardHandler details must be an object!")
+			}
 
-			for (var key in details) {
-				if (!isPositiveInteger(key))
-					throw new Error(arguments.callee.name + " : incorrect value for keyboard keycode (" + key + ")!");
-
-				for (var def in details[key])
-					if (_validKeyboardHandlerDef.indexOf(def) < 0)
-						throw new Error(arguments.callee.name + " : the detail (" + def + ") is not supported! Valid definitions: " + _validKeyboardHandlerDef);
-
-				if (details[key].keepPressed !== undefined && typeof details[key].keepPressed != 'boolean')
-					throw new Error(arguments.callee.name + " : keepPressed must be a true/false!");
-
-				if (details[key].onkeydown !== undefined && typeof details[key].onkeydown != 'function')
-					throw new Error(arguments.callee.name + " : onkeydown must be a function!");
-
-				if (details[key].onkeyup !== undefined && typeof details[key].onkeyup != 'function')
-					throw new Error(arguments.callee.name + " : onkeyup must be a function!");
+			for (let key in details) {
+				if (!isPositiveInteger(key)) {
+					throw new Error(arguments.callee.name + " : incorrect value for keyboard keycode (" + key + ")!")
+				}
+				for (let def in details[key]) {
+					if (_validKeyboardHandlerDef.indexOf(def) < 0) {
+						throw new Error(arguments.callee.name + " : the detail (" + def + ") is not supported! Valid definitions: " + _validKeyboardHandlerDef)
+					}
+				}
+				if (details[key].keepPressed !== undefined && typeof details[key].keepPressed !== 'boolean') {
+					throw new Error(arguments.callee.name + " : keepPressed must be a true/false!")
+				}
+				if (details[key].onkeydown !== undefined && typeof details[key].onkeydown !== 'function') {
+					throw new Error(arguments.callee.name + " : onkeydown must be a function!")
+				}
+				if (details[key].onkeyup !== undefined && typeof details[key].onkeyup !== 'function') {
+					throw new Error(arguments.callee.name + " : onkeyup must be a function!")
+				}
 			}
 		}
 
 		function isPositiveInteger(value) {
-			return value == "0" || ((value | 0) > 0 && value % 1 == 0);
+			return value === "0" || ((value | 0) > 0 && value % 1 === 0)
 		}
 	}
 
-})();
+})()

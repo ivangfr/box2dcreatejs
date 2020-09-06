@@ -88,7 +88,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		worldManager.createMultiTouchHandler({
-			drawLocation: true,
+			drawPointerLocation: true,
 			onmousedown: function () {
 				document.getElementById("output").innerHTML = 'MOUSEDOWN'
 			},
@@ -100,6 +100,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		worldManager.createKeyboardHandler({
 			68: { // d
 				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+			},
+			82: { // r
+				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
 			}
 		})
 

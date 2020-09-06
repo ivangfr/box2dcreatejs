@@ -38,22 +38,31 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testBreak() {
 		createWorldLimits()
 
-		worldManager.createMultiTouchHandler({
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
 			onmousedown: function (e) {
-				const entities = worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e)
+				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
 				if (entities.length > 0) {
 					const breakHandler = new MyGameBuilder.BreakHandler(worldManager, {
 						numCuts: 2,
 						explosion: false
 					})
 
-					entities.forEach(entity => {
-						if (entity.b2body.GetUserData().group === 'breakable') {
+					entities.filter(entity => entity.b2body.GetUserData().group === 'breakable')
+						.forEach(entity => {
 							const x = e.x || e.clientX
 							const y = e.y || e.clientY
 							breakHandler.breakEntity(entity, x, y)
-						}
-					})
+						})
+				}
+			}
+		})
+
+		const timeStepHandler = worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.3
 				}
 			}
 		})
@@ -119,37 +128,37 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			preSolve: function (contact) {
-				const bodyA = contact.GetFixtureA().GetBody()
-				const bodyB = contact.GetFixtureB().GetBody()
-				const bodyAUserData = bodyA.GetUserData()
-				const bodyBUserData = bodyB.GetUserData()
+				// const bodyA = contact.GetFixtureA().GetBody()
+				// const bodyB = contact.GetFixtureB().GetBody()
+				// const bodyAUserData = bodyA.GetUserData()
+				// const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-					console.log('preSolve')
-				}
+				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
+				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
+				// 	console.log('preSolve')
+				// }
 			},
 			postSolve: function (contact, impulse) {
-				const bodyA = contact.GetFixtureA().GetBody()
-				const bodyB = contact.GetFixtureB().GetBody()
-				const bodyAUserData = bodyA.GetUserData()
-				const bodyBUserData = bodyB.GetUserData()
+				// const bodyA = contact.GetFixtureA().GetBody()
+				// const bodyB = contact.GetFixtureB().GetBody()
+				// const bodyAUserData = bodyA.GetUserData()
+				// const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-					console.log('postSolve')
-				}
+				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
+				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
+				// 	console.log('postSolve')
+				// }
 			},
 			endContact: function (contact) {
-				const bodyA = contact.GetFixtureA().GetBody()
-				const bodyB = contact.GetFixtureB().GetBody()
-				const bodyAUserData = bodyA.GetUserData()
-				const bodyBUserData = bodyB.GetUserData()
+				// const bodyA = contact.GetFixtureA().GetBody()
+				// const bodyB = contact.GetFixtureB().GetBody()
+				// const bodyAUserData = bodyA.GetUserData()
+				// const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-					console.log('endContact')
-				}
+				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
+				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
+				// 	console.log('endContact')
+				// }
 			}
 		})
 
@@ -159,6 +168,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			82: { // r
 				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
 			},
 			37: { // left arrow
 				onkeydown: () => player.left(),
@@ -322,7 +337,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			draggable: false,
 			noGravity: true
 		})
-		
+
 		worldManager.createEntity({
 			type: 'dynamic',
 			x: 500, y: 100,
@@ -346,7 +361,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'dynamic',
 			x: 700, y: 200, angle: 30,
 			shape: 'polygon',
-			polygonOpts: { points: [{ x: -50, y: 0 }, { x: 0, y: -50 }, { x: 50, y: 0 }, { x: 0, y: 50 }] },
+			polygonOpts: {
+				points: [
+					{ x: -50, y: 0 },
+					{ x: 0, y: -50 },
+					{ x: 50, y: 0 },
+					{ x: 0, y: 50 }
+				]
+			},
 			render: {
 				type: 'draw',
 				drawOpts: {

@@ -172,9 +172,22 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler = worldManager.createSoundHandler()
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 1 })
 
+		const timeStepHandler = worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.1
+				}
+			}
+		})
+
 		worldManager.createKeyboardHandler({
 			68: { //d
 				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
 			},
 			38: { //up arrow
 				onkeydown: () => _player.up(),
@@ -188,22 +201,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			65: { //a
 				onkeydown: () => _player.fire()
-			},
-			83: { //s
-				onkeydown: function (e) {
-					const timeStepHandler = worldManager.getTimeStepHandler()
-					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-				}
-			}
-		})
-
-		worldManager.createTimeStepHandler({
-			layer: {
-				render: {
-					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.1
-				}
 			}
 		})
 
@@ -445,7 +442,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createMoon() {
-		var moon = worldManager.createEntity({
+		const moon = worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 250,
 			shape: 'circle',
@@ -581,7 +578,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				},
 				fire: () => {
 					if (_freeFire) {
-						if (_missile !== null) {
+						if (_missile) {
 							worldManager.getWorld().DestroyJoint(_missileLink.getJoint())
 							_missile.b2body.SetLinearVelocity({ x: 10, y: 0 })
 							_soundHandler.createSoundInstance({ id: 'missile' }).myPlay({ volume: 0.2 })
@@ -783,7 +780,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function fireUfo() {
-		if (_freeFire && _laser !== null) {
+		if (_freeFire && _laser) {
 			worldManager.getWorld().DestroyJoint(_laserLink.getJoint())
 			_laser.b2body.SetLinearVelocity({ x: -15, y: 0 })
 			_soundHandler.createSoundInstance({ id: 'laser' }).myPlay({ volume: 0.2 })
@@ -792,9 +789,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function drawMissilePrev(x, y, color) {
-		const c = worldManager.getBox2dCanvasCtx()
 		const radius = 2
-
+		const c = worldManager.getBox2dCanvasCtx()
 		c.beginPath()
 		c.lineWidth = '2'
 		c.strokeStyle = color

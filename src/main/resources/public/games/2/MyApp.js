@@ -94,7 +94,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler.createSoundInstance({ id: 'stream' }).myPlay({ loop: -1, volume: 0.3 })
 		_soundHandler.createSoundInstance({ id: 'birds' }).myPlay({ loop: -1, volume: 0.1 })
 
-		worldManager.createMultiTouchHandler({
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
 			enableDrag: false,
 			enableSlice: true,
 			sliceOpts: {
@@ -106,9 +106,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				const x = e.x || e.clientX
 				const y = e.y || e.clientY
 
-				const entities = worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e)
+				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
 
-				worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e).forEach(entity => {
+				multiTouchHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
 					const entityUserData = entity.b2body.GetUserData()
 					if (entityUserData.group === 'breakable') {
 						breakHandler = new MyGameBuilder.BreakHandler(worldManager, { numCuts: 1 })
@@ -365,11 +365,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createBlocks(num) {
-		var x, dir, angVel
-
 		for (let i = 0; i < num; i++) {
 			const block = {}
-
 			const y = randomIntFromInterval(BLOCK_SIZE / 2, 500 - 130 - BLOCK_SIZE / 2)
 			const randomInt = randomIntFromInterval(0, 1)
 			const x = randomInt === 0 ? 980 + BLOCK_SIZE / 2 : 0 - BLOCK_SIZE / 2
@@ -413,40 +410,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 
-	function fnOnBreak(e1, e2) {
-		const aE = []
-		if (e1) {
-			aE.push(e1)
-		}
-		if (e2) {
-			aE.push(e2)
-		}
-
-		let dir = 1
-		for (let i = 0; i < aE.length; i++) {
-			const area = getArea(aE[i].b2body.GetFixtureList().GetShape().GetVertices())
-			if (area < 0.02) {
-				console.log('entity deleted, very small : ' + area)
-				worldManager.deleteEntity(aE[i])
-				continue
-			}
-
+	function fnOnBreak(pieces) {
+		pieces.forEach(piece => {
 			const vel = {}
-			vel.x = aE[i].b2body.GetLinearVelocity().x / 2
-			vel.y = 3 * dir
-
-			aE[i].b2body.GetUserData().noGravity = false
-			aE[i].b2body.SetLinearVelocity(vel)
-
-			dir = -1
-		}
-
+			vel.x = piece.b2body.GetLinearVelocity().x / 2
+			vel.y = 3
+			piece.b2body.SetLinearVelocity(vel)
+			piece.b2body.GetUserData().noGravity = false
+		})
 		_numBreaks++
 		_scoreElem.innerHTML = _numBreaks
 	}
 
 	function fnOnSlice(e1, e2) {
-		fnOnBreak(e1, e2)
+		fnOnBreak([e1, e2])
 		_soundHandler.createSoundInstance({ id: 'slice' }).play()
 	}
 

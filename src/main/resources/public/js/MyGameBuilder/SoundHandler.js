@@ -78,11 +78,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(details) {
-		if (details) {
+		if (details !== undefined) {
 			if (typeof details !== 'object') {
 				throw new Error(arguments.callee.name + " : the sound details must be informed!")
 			}
-
 			for (let def in details) {
 				if (_validSoundHandlerDef.indexOf(def) < 0) {
 					throw new Error(arguments.callee.name + " : the detail (" + def + ") for soundHandler is not supported! Valid definitions: " + _validSoundHandlerDef)
@@ -93,7 +92,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				if (!(details.registerFiles instanceof Array)) {
 					throw new Error(arguments.callee.name + " : registerFiles must be an Array!")
 				}
-				else if (details.registerFiles.length === 0) {
+				if (details.registerFiles.length === 0) {
 					throw new Error(arguments.callee.name + " : registerFiles must have at least 1 file!")
 				}
 				details.registerFiles.forEach(soundInstance => validateSoundInstance(soundInstance))
@@ -105,22 +104,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		if (typeof details !== 'object') {
 			throw new Error(arguments.callee.name + " : the sound details must be informed!")
 		}
-
 		for (let def in details) {
 			if (_validSoundInstanceDef.indexOf(def) < 0) {
 				throw new Error(arguments.callee.name + " : the detail (" + def + ") for soundInstance is not supported! Valid definitions: " + _validSoundInstanceDef)
 			}
 		}
-
-		if (!details.src && !details.id) {
+		
+		if (details.src === undefined && details.id === undefined) {
 			throw new Error(arguments.callee.name + " : src or id must be informed!")
 		}
-
-		if (details.src && typeof details.src !== 'string') {
+		if (details.src !== undefined && typeof details.src !== 'string') {
 			throw new Error(arguments.callee.name + " : src must be a string!")
 		}
-
-		if (details.id && typeof details.id !== 'string') {
+		if (details.id !== undefined && typeof details.id !== 'string') {
 			throw new Error(arguments.callee.name + " : id must be a string!")
 		}
 	}

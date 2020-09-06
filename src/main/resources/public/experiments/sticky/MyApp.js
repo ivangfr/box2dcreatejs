@@ -33,7 +33,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			x: 20, y: 250,
 			shape: 'polygon',
 			polygonOpts: {
-				points: [{ x: -10, y: 0 }, { x: 0, y: -10 }, { x: 10, y: 0 }, { x: 0, y: 10 }]
+				points: [
+					{ x: -10, y: 0 },
+					{ x: 0, y: -10 },
+					{ x: 10, y: 0 },
+					{ x: 0, y: 10 }
+				]
 			},
 			boxOpts: { width: 20, height: 20 },
 			render: {
@@ -53,12 +58,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
+		const timeStepHandler = worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.3
+				}
+			}
+		})
+
 		worldManager.createKeyboardHandler({
 			68: { // d
 				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
 			},
 			82: { // r
 				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960)
 			},
 			37: { // left arrow
 				onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(-100, 0), shooter.b2body.GetWorldCenter()),
@@ -80,7 +101,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		let mouseX, mouseY
 		worldManager.createMultiTouchHandler({
-			drawLocation: false,
+			drawPointerLocation: true,
 			onmousedown: function () {
 				const shooterX = shooter.getPosition().x
 				const shooterY = shooter.getPosition().y
@@ -98,7 +119,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					x: shooterX, y: shooterY, angle: angle,
 					shape: 'box',
 					polygonOpts: {
-						points: [{ x: -40, y: 0 }, { x: 0, y: -2 }, { x: 10, y: 0 }, { x: 0, y: 2 }]
+						points: [
+							{ x: -40, y: 0 },
+							{ x: 0, y: -2 },
+							{ x: 10, y: 0 },
+							{ x: 0, y: 2 }
+						]
 					},
 					circleOpts: { radius: 5 },
 					boxOpts: { width: 10, height: 10 },

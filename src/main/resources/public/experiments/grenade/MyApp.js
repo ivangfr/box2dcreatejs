@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+	
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -41,30 +42,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createWorldLimitsAndPlatform()
 		createToys()
 
-		worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
-			},
-			65: { // a
-				onkeydown: () => grenade1.explode()
-			},
-			83: { // s
-				onkeydown: () => grenade2.explode()
-			},
-			80: { // p
-				onkeydown: () => {
-					const timeStepHandler = worldManager.getTimeStepHandler()
-					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-				}
-			}
-		})
-
-		worldManager.createMultiTouchHandler()
-
-		worldManager.createTimeStepHandler({
+		const timeStepHandler = _worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
@@ -74,9 +52,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		var soundHandler = worldManager.createSoundHandler()
+		_worldManager.createKeyboardHandler({
+			68: { // d
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			},
+			82: { // r
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960)
+			},
+			65: { // a
+				onkeydown: () => grenade1.explode()
+			},
+			83: { // s
+				onkeydown: () => grenade2.explode()
+			}
+		})
 
-		var ball1 = worldManager.createEntity({
+		_worldManager.createMultiTouchHandler()
+
+		const soundHandler = _worldManager.createSoundHandler()
+
+		const ball1 = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 400,
 			shape: 'box',
@@ -96,7 +97,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 }
 		})
 
-		var grenade1 = worldManager.createGrenade(ball1, {
+		const grenade1 = _worldManager.createGrenade(ball1, {
 			numParticles: 32,
 			blastPower: 1000,
 			particleOpts: {
@@ -119,7 +120,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		var ball2 = worldManager.createEntity({
+		const ball2 = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 600, y: 400,
 			shape: 'circle',
@@ -139,7 +140,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { density: 1, friction: 0, restitution: 0.25 }
 		})
 
-		var grenade2 = worldManager.createGrenade(ball2, {
+		const grenade2 = _worldManager.createGrenade(ball2, {
 			numParticles: 32,
 			blastPower: 1000,
 			particleOpts: {
@@ -177,7 +178,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 500,
 			shape: 'box',
@@ -185,7 +186,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 0,
 			shape: 'box',
@@ -193,7 +194,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -201,7 +202,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
@@ -210,7 +211,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Platform
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 490, y: 350,
 			shape: 'box',
@@ -230,7 +231,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 600, y: 300,
 			shape: 'box',
@@ -238,7 +239,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: toysRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 400, y: 300,
 			shape: 'box',
@@ -246,7 +247,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: toysRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 150, y: 400,
 			shape: 'box',
@@ -254,7 +255,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: toysRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 850, y: 400,
 			shape: 'box',

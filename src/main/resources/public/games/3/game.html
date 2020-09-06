@@ -86,10 +86,10 @@
 
 	<script>
 		function init() {
-			var browserOSHandler = new MyGameBuilder.BrowserOSHandler()
-			var os = browserOSHandler.getOS()
+			const browserOSHandler = new MyGameBuilder.BrowserOSHandler()
+			const os = browserOSHandler.getOS()
 
-			var thisApp = null
+			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
 			if (os === "iOS" || os === "Android") {
 				document.getElementById("message").style.display = 'block'
@@ -112,7 +112,6 @@
 </head>
 
 <body>
-
 	<canvas id="easeljsCanvas" width="980" height="500"></canvas>
 	<canvas id="box2dCanvas" width="980" height="500"></canvas>
 	<p id="message">Touch the canvas to start!</p>
@@ -122,9 +121,8 @@
 		<p><b>Up Arrow</b> : go up;</p>
 		<p><b>Down Arrow</b> : go down;</p>
 		<p><b>a</b> : fire;</p>
-		<p><b>s</b> : pause;
+		<p><b>p</b> : pause;
 	</div>
-
 </body>
 
 </html>

@@ -91,13 +91,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createMultiTouchHandler({
-			radius: 20,
-			accurate: false,
-			drawLocation: true,
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
+			pointerRadius: 20,
+			pointerAccurate: false,
+			drawPointerLocation: true,
 			onmousedown: function (e) {
-				worldManager.getMultiTouchHandler()
-					.getEntitiesAtMouseTouch(e)
+				multiTouchHandler.getEntitiesAtMouseTouch(e)
 					.forEach(entity => worldManager.deleteEntity(entity))
 			},
 			onmousemove: function (e) {
@@ -105,7 +104,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				const y = e.y || e.clientY
 				document.getElementById("output").innerHTML = x + ':' + y
 
-				const multiTouchHandler = worldManager.getMultiTouchHandler()
 				if (!multiTouchHandler.isTouchable() && !multiTouchHandler.isMouseDown()) {
 					return
 				}

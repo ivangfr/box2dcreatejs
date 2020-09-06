@@ -73,13 +73,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			localAnchorA: { x: 0, y: 2 }
 		})
 
-		worldManager.createMultiTouchHandler({
+		const multiTouchHandler = worldManager.createMultiTouchHandler({
+			drawPointerLocation: true,
 			onmousedown: (e) => {
-				worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e).forEach(entity => {
-					if (entity.getGroup() === 'ball') {
-						worldManager.deleteEntity(entity)
-					}
-				})
+				multiTouchHandler.getEntitiesAtMouseTouch(e)
+					.filter(entity => entity.getGroup() === 'ball')
+					.forEach(entity => worldManager.deleteEntity(entity))
 			}
 		})
 

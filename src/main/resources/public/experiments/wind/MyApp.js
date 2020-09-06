@@ -27,7 +27,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testWind() {
 		createWorldLimits()
 		createToys()
-		
+
 		worldManager.createKeyboardHandler({
 			68: { // d
 				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
@@ -159,7 +159,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'dynamic',
 			x: 400, y: 250,
 			shape: 'polygon',
-			polygonOpts: { points: [{ x: -40, y: 0 }, { x: 0, y: -40 }, { x: 40, y: 0 }] },
+			polygonOpts: {
+				points: [
+					{ x: -40, y: 0 },
+					{ x: 0, y: -40 },
+					{ x: 40, y: 0 }
+				]
+			},
 			render: {
 				type: 'draw',
 				drawOpts: {

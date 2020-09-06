@@ -2,386 +2,274 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	MyGameBuilder.BreakHandler = BreakHandler;
+	MyGameBuilder.BreakHandler = BreakHandler
 
 	function BreakHandler(worldManager, details) {
-		initialize(this, worldManager, details);
+		initialize(this, worldManager, details)
 	}
 
-	var _validBreakHandlerDef = ['numCuts', 'explosion', 'explosionRadius'];
+	const _validBreakHandlerDef = ['numCuts', 'explosion', 'explosionRadius']
+	const _MIN_PIECE_AREA = 0.1
 
-	var _worldManager;
-
-	var _breakCenterX, _breakCenterY;
-	var _entryPoint, _breakBodies, _affectedByLaser;
-	var _range, _numPiece;
+	let _worldManager
+	let _breakCenterX, _breakCenterY
+	let _entryPoint, _breakBodies, _affectedByLaser
+	let _range, _numPieces
 
 	function initialize(breakHandler, worldManager, details) {
-		validate(worldManager, details);
+		validate(worldManager, details)
 
-		_worldManager = worldManager;
+		_worldManager = worldManager
 
-		var numCuts = 5;
-		if (details && details.numCuts !== undefined)
-			numCuts = details.numCuts;
-		breakHandler.getNumCuts = function () {
-			return numCuts;
-		}
-		breakHandler.setNumCuts = function (value) {
-			numCuts = value;
-		}
+		let numCuts = (details && details.numCuts !== undefined) ? details.numCuts : 5
+		breakHandler.getNumCuts = function () { return numCuts }
+		breakHandler.setNumCuts = function (value) { numCuts = value }
 
-		var explosion = false;
-		if (details && details.explosion !== undefined)
-			explosion = details.explosion;
-		breakHandler.hasExplosion = function () {
-			return explosion;
-		}
-		breakHandler.setExplosion = function (value) {
-			explosion = value;
-		}
+		let explosion = (details && details.explosion !== undefined) ? details.explosion : false
+		breakHandler.hasExplosion = function () { return explosion }
+		breakHandler.setExplosion = function (value) { explosion = value }
 
-		var explosionRadius;
-		if (!explosion)
-			explosionRadius = 0;
-		else {
-			explosionRadius = 50;
-			if (details && details.explosionRadius !== undefined)
-				explosionRadius = details.explosionRadius;
+		let explosionRadius = 0
+		if (explosion) {
+			explosionRadius = (details && details.explosionRadius !== undefined) ? details.explosionRadius : 50
 		}
-		breakHandler.getExplosionRadius = function () {
-			return explosionRadius;
-		}
-		breakHandler.setExplosionRadius = function (value) {
-			explosionRadius = value;
-		}
+		breakHandler.getExplosionRadius = function () { return explosionRadius }
+		breakHandler.setExplosionRadius = function (value) { explosionRadius = value }
 
-		_range = worldManager.getEaseljsCanvas().width / 2;
+		_range = worldManager.getEaseljsCanvas().width / 2
 	}
 
 	BreakHandler.prototype.breakEntity = function (entity, x, y, angles) {
-		fnBreakEntity(this, entity, x, y, angles);
+		fnBreakEntity(this, entity, x, y, angles)
 	}
 
 	function fnBreakEntity(breakHandler, entity, x, y, angles) {
+		if (_worldManager.getTimeStep() === 0) { // Do not execute when it's paused
+			return
+		}
 
-		//Nao executa o break se estiver pausado!
-		if (_worldManager.getTimeStep() == 0)
-			return;
+		if (!(entity instanceof MyGameBuilder.Entity)) {
+			throw new Error(arguments.callee.name + " : entity must be an instance of Entity!")
+		}
 
-		if (!(entity instanceof MyGameBuilder.Entity))
-			throw new Error(arguments.callee.name + " : entity must be an instance of Entity!");
-
-		var entityBody = entity.b2body;
-
+		const entityBody = entity.b2body
 		if (entityBody.GetType() !== box2d.b2Body.b2_dynamicBody) {
-			console.warn('A non-dynamic entity cannot be broken!');
-			return;
+			console.warn('A non-dynamic entity cannot be broken!')
+			return
 		}
-		else if (entityBody.GetFixtureList() === null) {
-			return;
+		if (!entityBody.GetFixtureList()) {
+			return
 		}
-		else if (entityBody.GetFixtureList().GetShape().GetType() != Box2D.Collision.Shapes.b2Shape.e_polygonShape) {
-			console.warn('An entity that has a non-polygonal shape can not be broken! Type == ' + entityBody.GetFixtureList().GetShape().GetType());
-			return;
+		if (entityBody.GetFixtureList().GetShape().GetType() !== Box2D.Collision.Shapes.b2Shape.e_polygonShape) {
+			console.warn('An entity that has a non-polygonal shape can not be broken! Type == ' + entityBody.GetFixtureList().GetShape().GetType())
+			return
 		}
 
-		if (angles !== undefined && !(angles instanceof Array))
-			throw new Error(arguments.callee.name + " : angles must be an Array!");
+		if (angles !== undefined && !(angles instanceof Array)) {
+			throw new Error(arguments.callee.name + " : angles must be an Array!")
+		}
 
-		var player = _worldManager.getPlayer();
-		var adjustX = 0, adjustY = 0;
+		const player = _worldManager.getPlayer()
+		let adjustX = 0, adjustY = 0
 		if (player) {
-			adjustX = player.getCameraAdjust().adjustX;
-			adjustY = player.getCameraAdjust().adjustY;
+			adjustX = player.getCameraAdjust().adjustX
+			adjustY = player.getCameraAdjust().adjustY
 		}
 
-		_breakCenterX = x + adjustX;
-		_breakCenterY = y + adjustY;
-		_breakBodies = [];
+		_breakCenterX = x + adjustX
+		_breakCenterY = y + adjustY
 
-		var cutAngles = [];
-		var nCuts = 0;
-
-		// Informed angles
-		if (angles !== undefined) {
-			for (var i = 0; i < angles.length; i++) {
-				cutAngles.push(angles[i] * Math.PI / 180);
-				nCuts++;
-			}
+		const cutAngles = []
+		let nCuts = 0
+		if (angles) { // Informed angles
+			angles.forEach(angle => cutAngles.push(angle * Math.PI / 180))
+			nCuts += angles.length
 		}
-		// Random angles
-		while (nCuts < breakHandler.getNumCuts()) {
-			var cutAngle = Math.random() * Math.PI * 2;
-			cutAngles.push(cutAngle);
-			nCuts++;
+		while (nCuts < breakHandler.getNumCuts()) { // Random angles
+			cutAngles.push(Math.random() * Math.PI * 2)
+			nCuts++
 		}
+		
+		_breakBodies = []
+		if (entityBody !== null) {
+			_breakBodies.push(entityBody)
 
-		if (entityBody != null) {
-			_breakBodies.push(entityBody);
-			for (var i = 0; i < breakHandler.getNumCuts(); i++) {
-				var cutAngle = cutAngles[i];
-				//				console.log('angle: ' + cutAngle*180/Math.PI);
-
-				var laserSegment = new Box2D.Collision.b2Segment();
-
+			cutAngles.forEach(cutAngle => {
+				const laserSegment = new Box2D.Collision.b2Segment()
 				laserSegment.p1 = new box2d.b2Vec2(
 					(_breakCenterX + i / 10 - _range * Math.cos(cutAngle)) / _worldManager.getScale(),
 					(_breakCenterY - _range * Math.sin(cutAngle)) / _worldManager.getScale()
-				);
+				)
 				laserSegment.p2 = new box2d.b2Vec2(
 					(_breakCenterX + _range * Math.cos(cutAngle)) / _worldManager.getScale(),
 					(_breakCenterY + _range * Math.sin(cutAngle)) / _worldManager.getScale()
-				);
+				)
 
-				_affectedByLaser = [];
-				_entryPoint = [];
-
+				_affectedByLaser = []
+				_entryPoint = []
 
 				_worldManager.getWorld().RayCast(
 					function (fixture, point, normal, fraction) {
-						laserFired(breakHandler, fixture, point, normal, fraction);
+						laserFired(breakHandler, fixture, point, normal, fraction)
 					},
 					laserSegment.p1,
 					laserSegment.p2
-				);
+				)
 
 				_worldManager.getWorld().RayCast(
 					function (fixture, point, normal, fraction) {
-						laserFired(breakHandler, fixture, point, normal, fraction);
+						laserFired(breakHandler, fixture, point, normal, fraction)
 					},
 					laserSegment.p2,
 					laserSegment.p1
-				);
-			}
+				)
+			})
 		}
 	}
 
-	function laserFired(breakHandler, fixture, point, normal, fraction) {
-		var affectedBody = fixture.GetBody();
-		if (_breakBodies.indexOf(affectedBody) != -1) {
-			var affectedPolygon = fixture.GetShape();
-			var fixtureIndex = _affectedByLaser.indexOf(affectedBody);
-			if (fixtureIndex == -1) {
-				_affectedByLaser.push(affectedBody);
-				_entryPoint.push(point);
+	function laserFired(breakHandler, fixture, point) {
+		const affectedBody = fixture.GetBody()
+		if (_breakBodies.indexOf(affectedBody) !== -1) {
+			const affectedPolygon = fixture.GetShape()
+			const fixtureIndex = _affectedByLaser.indexOf(affectedBody)
+
+			if (fixtureIndex === -1) {
+				_affectedByLaser.push(affectedBody)
+				_entryPoint.push(point)
 			}
 			else {
-				var rayCenter = new box2d.b2Vec2((point.x + _entryPoint[fixtureIndex].x) / 2, (point.y + _entryPoint[fixtureIndex].y) / 2);
-				var rayAngle = Math.atan2(_entryPoint[fixtureIndex].y - point.y, _entryPoint[fixtureIndex].x - point.x);
-				var polyVertices = affectedPolygon.GetVertices();
-				var newPolyVertices1 = [];
-				var newPolyVertices2 = [];
-				var currentPoly = 0;
-				var cutPlaced1 = false;
-				var cutPlaced2 = false;
-				for (var i = 0; i < polyVertices.length; i++) {
-					var worldPoint = affectedBody.GetWorldPoint(polyVertices[i]);
-					var cutAngle = Math.atan2(worldPoint.y - rayCenter.y, worldPoint.x - rayCenter.x) - rayAngle;
+				// -- BEGIN
+				// -- Code identical in SliceHandler.js
+				const rayCenter = new box2d.b2Vec2((point.x + _entryPoint[fixtureIndex].x) / 2, (point.y + _entryPoint[fixtureIndex].y) / 2)
+				const rayAngle = Math.atan2(_entryPoint[fixtureIndex].y - point.y, _entryPoint[fixtureIndex].x - point.x)
+				const polyVertices = affectedPolygon.GetVertices()
+				const newPolyVertices1 = []
+				const newPolyVertices2 = []
+
+				let currentPoly = 0
+				let cutPlaced1 = false
+				let cutPlaced2 = false
+
+				polyVertices.forEach(polyVertice => {
+					const worldPoint = affectedBody.GetWorldPoint(polyVertice)
+					let cutAngle = Math.atan2(worldPoint.y - rayCenter.y, worldPoint.x - rayCenter.x) - rayAngle
 					if (cutAngle < Math.PI * -1) {
-						cutAngle += 2 * Math.PI;
+						cutAngle += 2 * Math.PI
 					}
 					if (cutAngle > 0 && cutAngle <= Math.PI) {
-						if (currentPoly == 2) {
-							cutPlaced1 = true;
-							newPolyVertices1.push(point);
-							newPolyVertices1.push(_entryPoint[fixtureIndex]);
+						if (currentPoly === 2) {
+							cutPlaced1 = true
+							newPolyVertices1.push(point)
+							newPolyVertices1.push(_entryPoint[fixtureIndex])
 						}
-						newPolyVertices1.push(worldPoint);
-						currentPoly = 1;
+						newPolyVertices1.push(worldPoint)
+						currentPoly = 1
 					}
 					else {
-						if (currentPoly == 1) {
-							cutPlaced2 = true;
-							newPolyVertices2.push(_entryPoint[fixtureIndex]);
-							newPolyVertices2.push(point);
+						if (currentPoly === 1) {
+							cutPlaced2 = true
+							newPolyVertices2.push(_entryPoint[fixtureIndex])
+							newPolyVertices2.push(point)
 						}
-						newPolyVertices2.push(worldPoint);
-						currentPoly = 2;
-
+						newPolyVertices2.push(worldPoint)
+						currentPoly = 2
 					}
-				}
+				})
+
 				if (!cutPlaced1) {
-					newPolyVertices1.push(point);
-					newPolyVertices1.push(_entryPoint[fixtureIndex]);
+					newPolyVertices1.push(point)
+					newPolyVertices1.push(_entryPoint[fixtureIndex])
 				}
 				if (!cutPlaced2) {
-					newPolyVertices2.push(_entryPoint[fixtureIndex]);
-					newPolyVertices2.push(point);
+					newPolyVertices2.push(_entryPoint[fixtureIndex])
+					newPolyVertices2.push(point)
+				}
+				// -- Code identical in SliceHandler.js
+				// -- END
+
+				_numPieces = 0
+				const entity = _worldManager.getEntityByItsBody(affectedBody)
+
+				const pieces = []
+				if ( getArea(newPolyVertices1) >= _MIN_PIECE_AREA) {
+					pieces.push(createPiece(breakHandler, entity, newPolyVertices1))
+				}
+				if (getArea(newPolyVertices2) >= _MIN_PIECE_AREA) {
+					pieces.push(createPiece(breakHandler, entity, newPolyVertices2))
 				}
 
-				_numPiece = 0;
-				var entity = _worldManager.getEntityByItsBody(affectedBody);
+				if (entity.onbreak !== undefined) {
+					entity.onbreak(pieces)
+				}
 
-				var newEntity2 = createPiece(breakHandler, entity, newPolyVertices2);
-				var newEntity1 = createPiece(breakHandler, entity, newPolyVertices1);
-
-				if (entity.onbreak !== undefined)
-					entity.onbreak(newEntity1, newEntity2);
-
-				_worldManager.deleteEntity(entity);
+				_worldManager.deleteEntity(entity)
 
 				//affectedBody must be destroyed now in order to not interfere in the next laserFired calls
-				_worldManager.getWorld().DestroyBody(affectedBody);
+				_worldManager.getWorld().DestroyBody(affectedBody)
 			}
 		}
-		return 1;
-	}
-
-	function findCentroid(vs) {
-		var c = new box2d.b2Vec2();
-		var area = 0.0;
-		var p1X = 0.0;
-		var p1Y = 0.0;
-		var inv3 = 1.0 / 3.0;
-		var count = vs.length;
-
-		for (var i = 0; i < count; ++i) {
-			var p2 = vs[i];
-			var p3 = i + 1 < count ? vs[i + 1] : vs[0];
-			var e1X = p2.x - p1X;
-			var e1Y = p2.y - p1Y;
-			var e2X = p3.x - p1X;
-			var e2Y = p3.y - p1Y;
-			var D = (e1X * e2Y - e1Y * e2X);
-			var triangleArea = 0.5 * D;
-			area += triangleArea;
-			c.x += triangleArea * inv3 * (p1X + p2.x + p3.x);
-			c.y += triangleArea * inv3 * (p1Y + p2.y + p3.y);
-		}
-
-		c.x *= 1.0 / area;
-		c.y *= 1.0 / area;
-
-		return c;
-	}
-
-	function getArea(vs) {
-		var count = vs.length;
-		var area = 0.0;
-		var p1X = 0.0;
-		var p1Y = 0.0;
-		var inv3 = 1.0 / 3.0;
-		for (var i = 0; i < count; ++i) {
-			var p2 = vs[i];
-			var p3 = i + 1 < count ? vs[i + 1] : vs[0];
-			var e1X = p2.x - p1X;
-			var e1Y = p2.y - p1Y;
-			var e2X = p3.x - p1X;
-			var e2Y = p3.y - p1Y;
-			var D = (e1X * e2Y - e1Y * e2X);
-			var triangleArea = 0.5 * D;
-			area += triangleArea;
-		}
-		return area;
+		return 1
 	}
 
 	function createPiece(breakHandler, entity, vertices) {
-		var numVertices = vertices.length;
-		if (getArea(vertices) >= 0.01) {
-			var centre = findCentroid(vertices);
-			for (var i = 0; i < numVertices; i++) {
-				vertices[i].Subtract(centre);
-			}
+		const center = findCentroid(vertices).center
+		vertices.forEach(vertice => vertice.Subtract(center))
 
-			var piece = createEntityPiece(entity, vertices, centre);
+		const piece = createEntityPiece(entity, vertices, center)
 
-			for (i = 0; i < numVertices; i++) {
-				vertices[i].Add(centre);
-			}
+		vertices.forEach(vertice => vertice.Add(center))
 
-			if (breakHandler.hasExplosion()) {
-				var explosionVelocity = getExplosionVelocity(breakHandler, piece.b2body);
-				piece.b2body.SetLinearVelocity(explosionVelocity);
-			}
-			_breakBodies.push(piece.b2body);
+		if (breakHandler.hasExplosion()) {
+			const explosionVelocity = getExplosionVelocity(breakHandler, piece.b2body)
+			piece.b2body.SetLinearVelocity(explosionVelocity)
 		}
 
-		return piece;
+		_breakBodies.push(piece.b2body)
+		return piece
 	}
 
-	function getExplosionVelocity(breakHandler, b) {
-		var explosionRadius = breakHandler.getExplosionRadius();
-		var distX = b.GetWorldCenter().x * _worldManager.getScale() - _breakCenterX;
-		if (distX < 0) {
-			if (distX < -explosionRadius) {
-				distX = 0;
-			}
-			else {
-				distX = -explosionRadius - distX;
-			}
-		}
-		else {
-			if (distX > explosionRadius) {
-				distX = 0;
-			}
-			else {
-				distX = explosionRadius - distX;
-			}
-		}
-		var distY = b.GetWorldCenter().y * _worldManager.getScale() - _breakCenterY;
-		if (distY < 0) {
-			if (distY < -explosionRadius) {
-				distY = 0;
-			}
-			else {
-				distY = -explosionRadius - distY;
-			}
-		}
-		else {
-			if (distY > explosionRadius) {
-				distY = 0;
-			}
-			else {
-				distY = explosionRadius - distY;
-			}
-		}
+	function createEntityPiece(entity, vertices, center) {
+		const scaledVertices = []
+		vertices.forEach(shapeVertice => {
+			const scaledVertice = new box2d.b2Vec2()
+			scaledVertice.x = shapeVertice.x * _worldManager.getScale()
+			scaledVertice.y = shapeVertice.y * _worldManager.getScale()
+			scaledVertices.push(scaledVertice)
+		})
 
-		distX *= 0.25;
-		distY *= 0.25;
+		const entityBody = entity.b2body
+		const entityFixture = entityBody.GetFixtureList()
+		const entityUserData = entityBody.GetUserData()
+		const entityRender = entityUserData.render
 
-		return new box2d.b2Vec2(distX, distY);
-	}
+		const render = {}
+		render.z = entityRender.z
+		render.type = entityRender.type
+		render.opacity = entityRender.opacity
+		render.filters = entityRender.filters
 
-	function createEntityPiece(entity, vertices, centre) {
-		var scaledVertices = []
-		for (var i = 0; i < vertices.length; i++) {
-			var scaledVertice = new box2d.b2Vec2();
-			scaledVertice.x = vertices[i].x * _worldManager.getScale();
-			scaledVertice.y = vertices[i].y * _worldManager.getScale();
-			scaledVertices.push(scaledVertice);
+		if (entityRender.action !== undefined) {
+			render.action = entityRender.action
+		}
+		if (entityRender.drawOpts !== undefined) {
+			render.drawOpts = entityRender.drawOpts
+		}
+		if (entityRender.imageOpts !== undefined) {
+			render.imageOpts = entityRender.imageOpts
+		}
+		if (entityRender.spriteSheetOpts !== undefined) {
+			render.spriteSheetOpts = entityRender.spriteSheetOpts
+		}
+		if (entityRender.textOpts !== undefined) {
+			render.textOpts = entityRender.textOpts
 		}
 
-		var entityBody = entity.b2body;
-		var entityFixture = entityBody.GetFixtureList();
-		var entityUserData = entityBody.GetUserData();
+		_numPieces++
 
-		var render = {};
-		var entityRender = entityBody.GetUserData().render;
-
-		render.z = entityRender.z;
-		render.type = entityRender.type;
-		render.opacity = entityRender.opacity;
-		render.filters = entityRender.filters;
-
-		if (entityRender.action !== undefined)
-			render.action = entityRender.action;
-
-		if (entityRender.drawOpts !== undefined)
-			render.drawOpts = entityRender.drawOpts;
-		if (entityRender.imageOpts !== undefined)
-			render.imageOpts = entityRender.imageOpts;
-		if (entityRender.spriteSheetOpts !== undefined)
-			render.spriteSheetOpts = entityRender.spriteSheetOpts;
-		if (entityRender.textOpts !== undefined)
-			render.textOpts = entityRender.textOpts;
-
-		_numPiece++;
-
-		var piece = _worldManager.createEntity({
+		const newEntity = _worldManager.createEntity({
 			type: entityBody.GetType(),
-			x: centre.x * _worldManager.getScale(),
-			y: centre.y * _worldManager.getScale(),
+			x: center.x * _worldManager.getScale(),
+			y: center.y * _worldManager.getScale(),
 			//angle : doesn't need to be updated!
 			shape: 'polygon',
 			polygonOpts: { points: scaledVertices },
@@ -409,7 +297,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				isTarget: entityFixture.GetUserData().isTarget,
 				hardness: entityFixture.GetUserData().hardness
 			},
-			name: entityUserData.name + _numPiece,
+			name: `${entityUserData.name}_${_numPieces}`,
 			group: entityUserData.group,
 			draggable: entityUserData.draggable,
 			sliceable: entityUserData.sliceable,
@@ -419,33 +307,60 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				onbreak: entity.onbreak,
 				ontick: entity.ontick
 			}
-		});
+		})
 
-		return piece;
+		console.log("newEntity", newEntity)
+		return newEntity
+	}
+
+	function getExplosionVelocity(breakHandler, b) {
+		const explosionRadius = breakHandler.getExplosionRadius()
+
+		let distX = b.GetWorldCenter().x * _worldManager.getScale() - _breakCenterX
+		if (distX < 0) {
+			distX = (distX < -explosionRadius) ? 0 : -explosionRadius - distX
+		}
+		else {
+			distX = (distX > explosionRadius) ? 0 : explosionRadius - distX
+		}
+
+		let distY = b.GetWorldCenter().y * _worldManager.getScale() - _breakCenterY
+		if (distY < 0) {
+			distY = (distY < -explosionRadius) ? 0 : -explosionRadius - distY
+		}
+		else {
+			distY = (distY > explosionRadius) ? 0 : explosionRadius - distY
+		}
+
+		distX *= 0.25
+		distY *= 0.25
+		return new box2d.b2Vec2(distX, distY)
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager))
-			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!");
-
+		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
+		}
 
 		if (details !== undefined) {
-			if (typeof details != 'object')
-				throw new Error(arguments.callee.name + " : The BreakHandler details must be an object!");
-
-			for (var def in details)
-				if (_validBreakHandlerDef.indexOf(def) < 0)
-					throw new Error(arguments.callee.name + " : the detail (" + def + ") for BreakHandler is not supported! Valid definitions: " + _validBreakHandlerDef);
-
-			if (details.numCuts !== undefined && (typeof details.numCuts != 'number' || details.numCuts <= 0))
-				throw new Error(arguments.callee.name + " : invalid value for numCuts!");
-
-			if (details.explosion !== undefined && typeof details.explosion != 'boolean')
-				throw new Error(arguments.callee.name + " : explosion must be true/false!");
-
-			if (details.explosionRadius !== undefined && (typeof details.explosionRadius != 'number' || details.explosionRadius <= 0))
-				throw new Error(arguments.callee.name + " : invalid value for explosionRadius!");
+			if (typeof details !== 'object') {
+				throw new Error(arguments.callee.name + " : The BreakHandler details must be an object!")
+			}
+			for (let def in details) {
+				if (_validBreakHandlerDef.indexOf(def) < 0) {
+					throw new Error(arguments.callee.name + " : the detail (" + def + ") for BreakHandler is not supported! Valid definitions: " + _validBreakHandlerDef)
+				}
+			}
+			if (details.numCuts !== undefined && (typeof details.numCuts !== 'number' || details.numCuts <= 0)) {
+				throw new Error(arguments.callee.name + " : invalid value for numCuts!")
+			}
+			if (details.explosion !== undefined && typeof details.explosion !== 'boolean') {
+				throw new Error(arguments.callee.name + " : explosion must be true/false!")
+			}
+			if (details.explosionRadius !== undefined && (typeof details.explosionRadius !== 'number' || details.explosionRadius <= 0)) {
+				throw new Error(arguments.callee.name + " : invalid value for explosionRadius!")
+			}
 		}
 	}
 
-})();
+})()

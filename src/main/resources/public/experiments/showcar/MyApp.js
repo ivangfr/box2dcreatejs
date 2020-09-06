@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -41,71 +42,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function showCar() {
-		
+
 		createLandscapeAndWorldLimits()
-		
+
 		const car = createCar()
 
-		worldManager.createKeyboardHandler({
-			65: { // a
-				onkeydown: () => worldManager.getZoomHandler().zoomIn()
-			},
-			83: { // s
-				onkeydown: () => worldManager.getZoomHandler().zoomOut()
-			},
-			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
-			},
-			70: { // f
-				onkeydown: () => {
-					const screenHandler = worldManager.getScreenHandler()
-					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
-				}
-			},
-			37: { // left arrow
-				onkeydown: (e) => worldManager.getPlayer().left(e),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: (e) => worldManager.getPlayer().right(e),
-				keepPressed: true
-			},
-			80: { // p
-				onkeydown: () => {
-					const timeStepHandler = worldManager.getTimeStepHandler()
-					timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-				}
-			},
-			79: { // o
-				onkeydown: () => worldManager.getTimeStepHandler().setFPS(980)
-			},
-			73: { // i
-				onkeydown: () => worldManager.getTimeStepHandler().restoreFPS()
-			},
-			49: { // 1
-				onkeydown: () => {
-					car.chassis.changeScale(1.1)
-					car.tire1.changeScale(1.1)
-					car.tire2.changeScale(1.1)
-					car.link1.changeScale(1.1)
-					car.link2.changeScale(1.1)
-				}
-			},
-			50: { // 2
-				onkeydown: () => {
-					car.chassis.changeScale(0.9)
-					car.tire1.changeScale(0.9)
-					car.tire2.changeScale(0.9)
-					car.link1.changeScale(0.9)
-					car.link2.changeScale(0.9)
-				}
-			}
-		})
-
-		worldManager.createTimeStepHandler({
+		const timeStepHandler = _worldManager.createTimeStepHandler({
 			layer: {
 				render: {
 					type: 'draw',
@@ -115,29 +57,73 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		worldManager.createMultiTouchHandler({
-			enableSlice: true,
-			drawLocation: false,
+		const screenHandler = _worldManager.createScreenHandler()
+
+		const zoomHandler = _worldManager.createZoomHandler({ max: 1.1, min: 0.5, step: 0.1 })
+
+		_worldManager.createKeyboardHandler({
+			65: { // a
+				onkeydown: () => zoomHandler.zoomIn()
+			},
+			83: { // s
+				onkeydown: () => zoomHandler.zoomOut()
+			},
+			68: { // d
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			},
+			82: { // r
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
+			},
+			80: { // p
+				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
+			},
+			79: { // o
+				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
+			},
+			70: { // f
+				onkeydown: () => screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
+			},
+			37: { // left arrow
+				onkeydown: () => _worldManager.getPlayer().left(),
+				keepPressed: true
+			},
+			39: { // right arrow
+				onkeydown: () => _worldManager.getPlayer().right(),
+				keepPressed: true
+			},
+			49: { // 1
+				onkeydown: () => {
+					car.chassis.changeScale(1.1)
+					car.backTire.changeScale(1.1)
+					car.frontTire.changeScale(1.1)
+					car.link1.changeScale(1.1)
+					car.link2.changeScale(1.1)
+				}
+			},
+			50: { // 2
+				onkeydown: () => {
+					car.chassis.changeScale(0.9)
+					car.backTire.changeScale(0.9)
+					car.frontTire.changeScale(0.9)
+					car.link1.changeScale(0.9)
+					car.link2.changeScale(0.9)
+				}
+			}
 		})
 
-		worldManager.createZoomHandler({ max: 1.1, min: 0.5, step: 0.1 })
+		_worldManager.createMultiTouchHandler({
+			enableSlice: true,
+			drawPointerLocation: true
+		})
 
-		worldManager.createScreenHandler({ fullScreen: false })
-
-		const player = worldManager.createPlayer(car.chassis, {
+		const player = _worldManager.createPlayer(car.chassis, {
 			camera: {
 				adjustX: 490,
-				// adjustY: 400,
 				xAxisOn: true,
-				// yAxisOn: true
 			},
 			events: {
-				left: function (e) {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-1500, 0), this.getB2Body().GetWorldCenter())
-				},
-				right: function (e) {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(1500, 0), this.getB2Body().GetWorldCenter())
-				}
+				left: () => car.frontTire.getB2Body().SetAngularVelocity(-70),
+				right: () => car.frontTire.getB2Body().SetAngularVelocity(70)
 			}
 		})
 
@@ -160,7 +146,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const leftBtn = worldManager.createScreenButton({
+		const leftBtn = _worldManager.createScreenButton({
 			x: 830, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -194,7 +180,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const rightBtn = worldManager.createScreenButton({
+		const rightBtn = _worldManager.createScreenButton({
 			x: 930, y: 480,
 			shape: 'box',
 			boxOpts: { width: 100, height: 40 },
@@ -220,7 +206,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			0, 0, 0, 1, 0  // alpha
 		])
 
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 5000, y: -100,
 			shape: 'box',
 			boxOpts: { width: 10000, height: 1137 },
@@ -243,7 +229,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		// Floor
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 450,
 			shape: 'box',
@@ -252,7 +238,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Wall 1
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 0,
 			shape: 'box',
@@ -261,7 +247,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Wall 2
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 10000, y: 0,
 			shape: 'box',
@@ -270,7 +256,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Ramp 1
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 4000, y: 400, angle: 75,
 			shape: 'box',
@@ -279,7 +265,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		// Ramp 2
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 4390, y: 400, angle: -75,
 			shape: 'box',
@@ -289,10 +275,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createCar() {
-		const CAR_X = 360
-		const CAR_Y = 350
+		const CAR_X = 360, CAR_Y = 350
 
-		const chassis = worldManager.createEntity({
+		const chassis = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X, y: CAR_Y,
 			shape: 'box',
@@ -307,7 +292,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'chassis'
 		})
 
-		const renderTire = {
+		const tireRender = {
 			type: 'image',
 			imageOpts: {
 				image: '../../images/tire.png',
@@ -315,39 +300,39 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		const tire1 = worldManager.createEntity({
+		const backTire = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X - 30, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: renderTire
+			render: tireRender
 		})
 
-		const tire2 = worldManager.createEntity({
+		const frontTire = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X + 60, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: renderTire
+			render: tireRender
 		})
 
-		const link1 = worldManager.createLink({
+		const link1 = _worldManager.createLink({
 			entityA: chassis,
-			entityB: tire1,
+			entityB: backTire,
 			type: 'revolute',
-			localAnchorA: { x: -1.6, y: 1.1 },
+			localAnchorA: { x: -1.6, y: 0.9 },
 			localAnchorB: { x: 0, y: 0 }
 		})
 
-		const link2 = worldManager.createLink({
+		const link2 = _worldManager.createLink({
 			entityA: chassis,
-			entityB: tire2,
+			entityB: frontTire,
 			type: 'revolute',
-			localAnchorA: { x: 1.8, y: 1.1 },
+			localAnchorA: { x: 1.8, y: 0.9 },
 			localAnchorB: { x: 0, y: 0 }
 		})
 
-		return { chassis, tire1, tire2, link1, link2 }
+		return { chassis, backTire, frontTire, link1, link2 }
 	}
 
 }())

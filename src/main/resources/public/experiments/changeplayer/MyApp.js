@@ -1,7 +1,8 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	let worldManager
+
+	let _worldManager, _playerSelected, _prevPlayerSelected
 
 	function MyApp() {
 		this.initialize()
@@ -13,7 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
 		const box2dCanvas = document.getElementById("box2dCanvas")
 
-		worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			showFPSIndicator: true,
@@ -21,65 +22,41 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		testChangePlayer()
-
-		worldManager.start()
+		_worldManager.start()
 	}
 
 	function testChangePlayer() {
 
 		createLandscapeAndWorldLimits()
-
 		createBalls(10)
 
-		worldManager.createMultiTouchHandler({
+		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			onmousedown: function (e) {
-				const entities = worldManager.getMultiTouchHandler().getEntitiesAtMouseTouch(e)
-				if (entities.length > 0) {
+				multiTouchHandler.getEntitiesAtMouseTouch(e)
+					.filter(entity => entity.getGroup() === 'square')
+					.map(entity => _worldManager.getPlayerByItsEntity(entity))
+					.filter(player => player !== _playerSelected)
+					.forEach(player => {
+						_prevPlayerSelected = _playerSelected
+						_playerSelected = player
+						_worldManager.setPlayer(_playerSelected)
 
-					let selectedEntity
-					for (let i = 0; i < entities.length; i++) {
-						let entity = entities[i]
-						if (entity.getGroup() !== 'square') {
-							continue
-						}
-
-						if (!entity.isSelected) {
-							entity.changeRender(renderSelected)
-							entity.isSelected = true
-							selectedEntity = entity
-						}
-
-						const player = worldManager.getPlayerByItsEntity(entity)
-						worldManager.setPlayer(player)
-					}
-
-					const allEntities = worldManager.getEntities()
-					for (let i = 0; i < allEntities.length; i++) {
-						let ent = allEntities[i]
-						if (ent.getGroup() !== 'square') {
-							continue
-						}
-
-						if (worldManager.getPlayerByItsEntity(ent) && selectedEntity !== null && ent !== selectedEntity) {
-							ent.isSelected = false
-							ent.changeRender(renderUnselected)
-						}
-					}
-				}
+						_playerSelected.getEntity().changeRender(getPlayerSelectedRender())
+						_prevPlayerSelected.getEntity().changeRender(getPlayerUnselectedRender())
+					})
 			}
 		})
 
-		worldManager.createKeyboardHandler({
+		_worldManager.createKeyboardHandler({
 			68: { // d
-				onkeydown: () => worldManager.setEnableDebug(!worldManager.getEnableDebug())
+				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
 			82: { // r
-				onkeydown: () => worldManager.setEnableRender(!worldManager.getEnableRender())
+				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			49: { // 1
 				onkeydown: () => {
-					const player = worldManager.getPlayer()
-					const playerCamera = player.getCamera()
+					const playerCamera = _playerSelected.getCamera()
 					if (playerCamera.getXAxisOn()) {
 						playerCamera.setXAxisOn(false)
 						playerCamera.setAdjustX(490 - player.getPosition().x)
@@ -91,24 +68,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			37: { // left arrow
-				onkeydown: () => worldManager.getPlayer().left(),
+				onkeydown: () => _playerSelected.left(),
 				keepPressed: true
 			},
 			38: { // up arrow
-				onkeydown: () => worldManager.getPlayer().up(),
+				onkeydown: () => _playerSelected.up(),
 				keepPressed: true
 			},
 			39: { // right arrow
-				onkeydown: () => worldManager.getPlayer().right(),
+				onkeydown: () => _playerSelected.right(),
 				keepPressed: true
 			},
 			40: { // down arrow
-				onkeydown: () => worldManager.getPlayer().down(),
+				onkeydown: () => _playerSelected.down(),
 				keepPressed: true
 			}
 		})
 
-		const renderSelected = {
+		createPlayers()
+	}
+
+	function getPlayerSelectedRender() {
+		return {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
@@ -116,8 +97,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				borderWidth: 2, borderColor: 'black', borderRadius: 10
 			},
 		}
+	}
 
-		const renderUnselected = {
+	function getPlayerUnselectedRender() {
+		return {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
@@ -126,18 +109,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			opacity: 0.5
 		}
+	}
 
-		const entity1 = worldManager.createEntity({
+	function createPlayers() {
+
+		const entity1 = _worldManager.createEntity({
 			x: 100, y: 150,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
 			type: 'dynamic',
-			render: renderUnselected,
+			render: getPlayerSelectedRender(),
 			group: 'square'
 		})
-		entity1.isSelected = false
 
-		const player1 = worldManager.createPlayer(entity1, {
+		// Player 1
+		const player1 = _worldManager.createPlayer(entity1, {
 			camera: {
 				adjustX: 490,
 				xAxisOn: true
@@ -158,17 +144,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const entity2 = worldManager.createEntity({
+		const entity2 = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 100, y: 300,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
-			render: renderUnselected,
+			render: getPlayerUnselectedRender(),
 			group: 'square'
 		})
-		entity2.isSelected = false
 
-		const player2 = worldManager.createPlayer(entity2, {
+		// Player 2
+		_worldManager.createPlayer(entity2, {
 			camera: {
 				adjustX: 490,
 				xAxisOn: true
@@ -189,17 +175,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		const entity3 = worldManager.createEntity({
+		const entity3 = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 100, y: 450,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
-			render: renderSelected,
+			render: getPlayerUnselectedRender(),
 			group: 'square'
 		})
-		entity3.isSelected = true
 
-		const player3 = worldManager.createPlayer(entity3, {
+		// Player 3
+		_worldManager.createPlayer(entity3, {
 			camera: {
 				adjustX: 490,
 				xAxisOn: true
@@ -219,10 +205,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			}
 		})
+
+		_playerSelected = player1
+		_worldManager.setPlayer(_playerSelected)
 	}
 
 	function createLandscapeAndWorldLimits() {
-		worldManager.createLandscape({
+		_worldManager.createLandscape({
 			x: 980, y: 250,
 			shape: 'box',
 			boxOpts: { width: 1960, height: 500 },
@@ -243,7 +232,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 500,
 			shape: 'box',
@@ -252,7 +241,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			name: 'floor'
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 980, y: 0,
 			shape: 'box',
@@ -260,7 +249,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 0, y: 250,
 			shape: 'box',
@@ -268,7 +257,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: staticRender
 		})
 
-		worldManager.createEntity({
+		_worldManager.createEntity({
 			type: 'static',
 			x: 1960, y: 250,
 			shape: 'box',
@@ -279,7 +268,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function createBalls(number) {
 		for (let i = 0; i < number; i++) {
-			worldManager.createEntity({
+			_worldManager.createEntity({
 				type: 'dynamic',
 				x: Math.random() * 980,
 				y: Math.random() * 500,
