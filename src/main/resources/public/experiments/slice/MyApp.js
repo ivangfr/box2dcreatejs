@@ -253,8 +253,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderColor: 'black'
 				}
 			},
-			sliceable: true,
-			noGravity: true
+			sliceable: true
 		})
 
 		_worldManager.createEntity({

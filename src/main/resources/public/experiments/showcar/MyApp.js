@@ -131,8 +131,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				xAxisOn: true,
 			},
 			events: {
-				left: () => car.frontTire.getB2Body().SetAngularVelocity(-70),
-				right: () => car.frontTire.getB2Body().SetAngularVelocity(70)
+				left: () => {
+					car.frontTire.getB2Body().ApplyForce(new box2d.b2Vec2(-500, 0), { x: 1, y: 1 })
+					// car.frontTire.getB2Body().SetAngularVelocity(-70)
+				},
+				right: () => {
+					car.frontTire.getB2Body().ApplyForce(new box2d.b2Vec2(500, 0), { x: 1, y: 1 })
+					// car.frontTire.getB2Body().SetAngularVelocity(70)
+				}
 			}
 		})
 
@@ -206,20 +212,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createLandscape() {
-		// EaselJS filter not working
-		//--
-		// const greyScaleFilter = new createjs.ColorMatrixFilter([
-		// 	0.33, 0.33, 0.33, 0, 0, // red
-		// 	0.33, 0.33, 0.33, 0, 0, // green
-		// 	0.33, 0.33, 0.33, 0, 0, // blue
-		// 	0, 0, 0, 1, 0  // alpha
-		// ])
-		//--
-		const colorMatrix = new createjs.ColorMatrix()
-		colorMatrix.adjustSaturation(-100)
-		colorMatrix.adjustContrast(50)
+		const colorMatrix = new createjs.ColorMatrix().adjustColor(0, 0, -100, -100)
 		const greyScaleFilter = new createjs.ColorMatrixFilter(colorMatrix)
-		//--
 
 		_worldManager.createLandscape({
 			x: 5000, y: -100,
@@ -294,6 +288,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function createCar() {
 		const CAR_X = 360, CAR_Y = 350
 
+		const colorFilter = new createjs.ColorFilter(0.65, 0.84, 0.52, 1) // red, green, blue, alpha
+
 		const chassis = _worldManager.createEntity({
 			type: 'dynamic',
 			x: CAR_X, y: CAR_Y,
@@ -304,7 +300,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				imageOpts: {
 					image: '../../images/hummer.png',
 					adjustImageSize: true
-				}
+				},
+				filters: [colorFilter]
 			},
 			name: 'chassis'
 		})

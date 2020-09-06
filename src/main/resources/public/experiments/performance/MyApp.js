@@ -73,20 +73,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createLandscape() {
-		// EaselJS filter not working
-		//--
-		// const greyScaleFilter = new createjs.ColorMatrixFilter([
-		// 	0.33, 0.33, 0.33, 0, 0, // red
-		// 	0.33, 0.33, 0.33, 0, 0, // green
-		// 	0.33, 0.33, 0.33, 0, 0, // blue
-		// 	0, 0, 0, 1, 0  // alpha
-		// ])
-		//--
-		const colorMatrix = new createjs.ColorMatrix()
-		colorMatrix.adjustSaturation(-100)
-		colorMatrix.adjustContrast(50)
-		const greyScaleFilter = new createjs.ColorMatrixFilter(colorMatrix)
-		//--
+		const greyScaleFilter = new createjs.ColorMatrixFilter([
+			0.33, 0.33, 0.33, 0, 0, // red
+			0.33, 0.33, 0.33, 0, 0, // green
+			0.33, 0.33, 0.33, 0, 0, // blue
+			0, 0, 0, 1, 0  // alpha
+		])
 
 		_worldManager.createLandscape({
 			x: 490, y: 250,

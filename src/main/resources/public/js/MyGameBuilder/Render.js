@@ -6,8 +6,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function Render() { }
 
-	// NOTE: 'filters' property is not working
-
 	const _validRenderDef = ['z', 'type', 'opacity', 'action', 'filters', 'drawOpts', 'imageOpts', 'spriteSheetOpts']
 	const _validRenderTypeDef = ['draw', 'image', 'spritesheet']
 	const _validRenderDrawOptsDef = ['borderWidth', 'borderColor', 'borderRadius', 'bgColorStyle', 'bgSolidColorOpts', 'bgLinearGradientOpts', 'bgRadialGradientOpts', 'bgImage', 'repeatBgImage', 'adjustBgImageSize', 'cache', 'textOpts']
@@ -580,7 +578,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				if (!validInstance && createjs.AlphaMaskFilter !== undefined && filter instanceof createjs.AlphaMaskFilter) {
 					validInstance = true
 				}
-				if (!validInstance && createjs.BoxBlurFilter !== undefined && filter instanceof createjs.BoxBlurFilter) {
+				if (!validInstance && createjs.BlurFilter !== undefined && filter instanceof createjs.BlurFilter) {
 					validInstance = true
 				}
 				if (!validInstance && createjs.ColorFilter !== undefined && filter instanceof createjs.ColorFilter) {
@@ -590,7 +588,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					validInstance = true
 				}
 				if (!validInstance) {
-					throw new Error(arguments.callee.name + " : filters element must be instanceof: AlphaMapFilter, AlphaMaskFilter, BoxBlurFilter, ColorFilter or ColorMatrixFilter! See: https://www.createjs.com/docs/easeljs/classes/Filter.html")
+					throw new Error(arguments.callee.name + " : filters element must be instanceof: AlphaMapFilter, AlphaMaskFilter, BlurFilter, ColorFilter or ColorMatrixFilter! See: https://www.createjs.com/docs/easeljs/classes/Filter.html")
 				}
 			}
 		}
