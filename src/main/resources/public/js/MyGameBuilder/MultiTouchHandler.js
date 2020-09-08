@@ -123,12 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 				else if (_enableDrag && _touchesDownOnEntity[touch.identifier]) {
-					const player = _worldManager.getPlayer()
-					let adjustX = 0, adjustY = 0
-					if (player) {
-						adjustX = player.getCameraAdjust().adjustX
-						adjustY = player.getCameraAdjust().adjustY
-					}
+					const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
 					if (_touchesJoint[touch.identifier] === undefined) {
 						_touchesJoint[touch.identifier] = []
@@ -174,12 +169,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 				else if (_enableDrag && _mouseDownOnEntity) {
-					const player = _worldManager.getPlayer()
-					let adjustX = 0, adjustY = 0
-					if (player) {
-						adjustX = player.getCameraAdjust().adjustX
-						adjustY = player.getCameraAdjust().adjustY
-					}
+					const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
 					if (_mouseJoint.length === 0) {
 						const bodies = getBodyAtMouseTouch(_mouseX + adjustX, _mouseY + adjustY)
@@ -219,12 +209,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			y = e.y
 		}
 
-		const player = _worldManager.getPlayer()
-		let adjustX = 0, adjustY = 0
-		if (player) {
-			adjustX = player.getCameraAdjust().adjustX
-			adjustY = player.getCameraAdjust().adjustY
-		}
+		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
 		const bodies = getBodyAtMouseTouch(x + adjustX, y + adjustY)
 		const entities = []
@@ -247,12 +232,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
 
 			if (screenButton === null) {
-				const player = _worldManager.getPlayer()
-				let adjustX = 0, adjustY = 0
-				if (player) {
-					adjustX = player.getCameraAdjust().adjustX
-					adjustY = player.getCameraAdjust().adjustY
-				}
+				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
 				const bodies = getBodyAtMouseTouch(touch.clientX + adjustX, touch.clientY + adjustY)
 				if (bodies.length > 0) {
@@ -356,16 +336,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		const screenButton = downOnScreenButton(_mouseX, _mouseY)
 		if (screenButton === null) {
-
-			const player = _worldManager.getPlayer()
-			let adjustX = 0, adjustY = 0
-			if (player) {
-				adjustX = player.getCameraAdjust().adjustX
-				adjustY = player.getCameraAdjust().adjustY
-			}
-
+			const { adjustX, adjustY } = _worldManager.getCameraAdjust()
+			
 			const bodies = getBodyAtMouseTouch(_mouseX + adjustX, _mouseY + adjustY)
-
 			if (bodies.length > 0) {
 				_mouseDownOnEntity = true
 			}

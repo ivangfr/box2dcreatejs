@@ -1,7 +1,7 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	
+
 	let _worldManager
 
 	function MyApp() {
@@ -68,10 +68,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				const bodyAUserData = bodyA.GetUserData()
 				const bodyBUserData = bodyB.GetUserData()
 
-				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
+				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'block') ||
+					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'block')) {
 					let block, projectile
-					if (bodyAUserData.group === 'breakable') {
+					if (bodyAUserData.group === 'block') {
 						block = _worldManager.getEntityByItsBody(bodyA)
 						projectile = _worldManager.getEntityByItsBody(bodyB)
 					}
@@ -95,8 +95,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 						const angles = []
 						angles.push(angle)
-						angles.push(angle - 15)
-						angles.push(angle + 15)
+						angles.push(angle - 25)
+						angles.push(angle + 25)
 
 						let x = worldManifold.m_points[0].x
 						if (worldManifold.m_points[1].x > 0) {
@@ -120,39 +120,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					}
 				}
 			},
-			preSolve: function (contact) {
-				// const bodyA = contact.GetFixtureA().GetBody()
-				// const bodyB = contact.GetFixtureB().GetBody()
-				// const bodyAUserData = bodyA.GetUserData()
-				// const bodyBUserData = bodyB.GetUserData()
-
-				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-				// 	console.log('preSolve')
-				// }
-			},
-			postSolve: function (contact, impulse) {
-				// const bodyA = contact.GetFixtureA().GetBody()
-				// const bodyB = contact.GetFixtureB().GetBody()
-				// const bodyAUserData = bodyA.GetUserData()
-				// const bodyBUserData = bodyB.GetUserData()
-
-				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-				// 	console.log('postSolve')
-				// }
-			},
-			endContact: function (contact) {
-				// const bodyA = contact.GetFixtureA().GetBody()
-				// const bodyB = contact.GetFixtureB().GetBody()
-				// const bodyAUserData = bodyA.GetUserData()
-				// const bodyBUserData = bodyB.GetUserData()
-
-				// if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'breakable') ||
-				// 	(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'breakable')) {
-				// 	console.log('endContact')
-				// }
-			}
+			preSolve: function (contact) { },
+			postSolve: function (contact, impulse) { },
+			endContact: function (contact) { }
 		})
 
 		_worldManager.createKeyboardHandler({
@@ -190,9 +160,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		const projectile = _worldManager.createEntity({
 			type: 'dynamic',
-			x: 100, y: 250,
-			shape: 'box',
-			boxOpts: { width: 50, height: 50 },
+			x: 170, y: 450,
+			shape: 'circle',
+			circleOpts: { radius: 25 },
 			render: {
 				type: 'draw',
 				drawOpts: {
@@ -261,6 +231,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createEntity({
 			type: 'static',
+			x: 350, y: 250,
+			shape: 'box',
+			boxOpts: { width: 10, height: 500 },
+			render: staticRender
+		})
+
+		_worldManager.createEntity({
+			type: 'static',
 			x: 980, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
@@ -271,9 +249,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function createToys() {
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 300, y: 325,
+			x: 170, y: 100,
 			shape: 'box',
-			boxOpts: { width: 100, height: 200 },
+			boxOpts: { width: 250, height: 100 },
 			render: {
 				type: 'draw',
 				drawOpts: {
@@ -284,33 +262,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				},
 			},
 			fixtureDefOpts: { density: 1000 },
-			group: 'breakable',
-			draggable: false,
-			noGravity: true
-		})
-
-		_worldManager.createEntity({
-			type: 'dynamic',
-			x: 300, y: 100,
-			shape: 'box',
-			boxOpts: { width: 100, height: 100 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					textOpts: {
-						text: 'B',
-						font: 'bold 38px Arial',
-						color: 'yellow'
-					},
-					borderWidth: 4,
-					borderColor: 'white',
-					borderRadius: 10,
-					cache: true
-				}
-			},
-			group: 'breakable',
-			draggable: false,
+			group: 'block',
 			noGravity: true
 		})
 
@@ -345,6 +297,31 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			},
 			bodyDefOpts: { angularVelocity: 820 },
+			group: 'breakable',
+			draggable: false,
+			noGravity: true
+		})
+
+		_worldManager.createEntity({
+			type: 'dynamic',
+			x: 750, y: 100,
+			shape: 'box',
+			boxOpts: { width: 100, height: 100 },
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					textOpts: {
+						text: 'B',
+						font: 'bold 38px Arial',
+						color: 'yellow'
+					},
+					borderWidth: 4,
+					borderColor: 'white',
+					borderRadius: 10,
+					cache: true
+				}
+			},
 			group: 'breakable',
 			draggable: false,
 			noGravity: true

@@ -15,6 +15,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	let _worldManager
 
 	function initialize(contactHandler, worldManager, details) {
+		validate(worldManager, details)
+
 		_worldManager = worldManager
 
 		const contactListener = new Box2D.Dynamics.b2ContactListener
@@ -39,26 +41,22 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			userPostSolve = details.postSolve
 		}
 
-		const enabledBuoyancy = (details && details.enabledBuoyancy !== undefined) ?
-			details.enabledBuoyancy : true
+		const enabledBuoyancy = (details && details.enabledBuoyancy !== undefined) ? details.enabledBuoyancy : true
 		contactHandler.isEnabledBuoyancy = function () { return enabledBuoyancy }
 
 		let buoyancyHandler
 		if (enabledBuoyancy) {
-			const buoyancyOpts = (details !== undefined && details.buoyancyOpts !== undefined) ?
-				details.buoyancyOpts : {}
+			const buoyancyOpts = (details !== undefined && details.buoyancyOpts !== undefined) ? details.buoyancyOpts : {}
 			buoyancyHandler = new MyGameBuilder.BuoyancyHandler(worldManager, buoyancyOpts)
 		}
 		contactHandler.getBuoyancyHandler = function () { return buoyancyHandler }
 
-		const enabledStickyTarget = (details && details.enabledStickyTarget !== undefined) ?
-			details.enabledStickyTarget : true
+		const enabledStickyTarget = (details && details.enabledStickyTarget !== undefined) ? details.enabledStickyTarget : true
 		contactHandler.isEnabledStickyTarget = function () { return enabledStickyTarget }
 
 		let stickyTargetHandler
 		if (enabledStickyTarget) {
-			const stickyTargetOpts = (details !== undefined && details.stickyTargetOpts !== undefined) ?
-				details.stickyTargetOpts : {}
+			const stickyTargetOpts = (details !== undefined && details.stickyTargetOpts !== undefined) ? details.stickyTargetOpts : {}
 			stickyTargetHandler = new MyGameBuilder.StickyTargetHandler(worldManager, stickyTargetOpts)
 		}
 		contactHandler.getStickyTargetHandler = function () { return stickyTargetHandler }
@@ -80,82 +78,66 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		contactListener.BeginContact = function (contact) {
 
-			//-- Buoyancy ------------------------------------------------------------
+			//-- Buoyancy
 			if (enabledBuoyancy && buoyancyHandler.IsBuoyancyContactType(contact)) {
 				buoyancyHandler.beginContactBuoyancy(contact)
 			}
-			//------------------------------------------------------------------------
 
-			//-- User Event ----------------------------------------------------------
+			//-- User Event
 			if (userBeginContact !== undefined) {
 				userBeginContact(contact)
 			}
-			//------------------------------------------------------------------------			
 		}
-		//==========================================================================================		
-
 
 		//== EndContact ============================================================================
 
 		contactListener.EndContact = function (contact) {
 
-			//-- Buoyancy ------------------------------------------------------------			
+			//-- Buoyancy
 			if (enabledBuoyancy && buoyancyHandler.IsBuoyancyContactType(contact)) {
 				buoyancyHandler.endContactBuoyancy(contact)
 			}
-			//------------------------------------------------------------------------			
 
-			//-- StickyTarget---------------------------------------------------------			
+			//-- StickyTarget
 			if (enabledStickyTarget && stickyTargetHandler.IsStickyTargetContactType(contact)) {
 				stickyTargetHandler.endContactStickyTarget(contact)
 			}
-			//------------------------------------------------------------------------
 
-			//-- User Event ----------------------------------------------------------			
+			//-- User Event
 			if (userEndContact !== undefined) {
 				userEndContact(contact)
 			}
-			//------------------------------------------------------------------------
 		}
-		//==========================================================================================
-
 
 		//== PostSolve =============================================================================
 
 		contactListener.PostSolve = function (contact, impulse) {
 
-			//-- StickyTarget---------------------------------------------------------			
+			//-- StickyTarget
 			if (enabledStickyTarget && stickyTargetHandler.IsStickyTargetContactType(contact)) {
 				stickyTargetHandler.postSolveStickyTargetContact(contact, impulse)
 			}
-			//------------------------------------------------------------------------			
 
-			//-- User Event ----------------------------------------------------------
+			//-- User Event
 			if (userPostSolve !== undefined) {
 				userPostSolve(contact, impulse)
 			}
-			//------------------------------------------------------------------------
 		}
-		//==========================================================================================
-
 
 		//== PreSolve ==============================================================================
 
 		contactListener.PreSolve = function (contact, oldManifold) {
 
-			//-- StickyTarget---------------------------------------------------------			
+			//-- StickyTarget
 			if (enabledStickyTarget && stickyTargetHandler.IsStickyTargetContactType(contact)) {
 				stickyTargetHandler.preSolveStickyTargetContact(contact, oldManifold)
 			}
-			//------------------------------------------------------------------------			
 
-			//-- User Event ----------------------------------------------------------
+			//-- User Event
 			if (userPreSolve !== undefined) {
 				userPreSolve(contact, oldManifold)
 			}
-			//------------------------------------------------------------------------
 		}
-		//==========================================================================================
 
 		_worldManager.getWorld().SetContactListener(contactListener)
 	}
@@ -179,18 +161,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	ContactHandler.prototype.addEntityToBeBroken = function (entity, x, y, angle) {
-		const player = _worldManager.getPlayer()
-		let adjustX = 0, adjustY = 0
-		if (player) {
-			adjustX = player.getCameraAdjust().adjustX
-			adjustY = player.getCameraAdjust().adjustY
-		}
+		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
 		const breakEntity = {}
 		breakEntity.entity = entity
 		breakEntity.x = x - adjustX
 		breakEntity.y = y - adjustY
 		breakEntity.angle = angle
+		
 		this.getEntitiesToBeBroken().push(breakEntity)
 	}
 
@@ -218,6 +196,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.enabledBreak !== undefined && typeof details.enabledBreak !== 'boolean') {
 				throw new Error(arguments.callee.name + " : enabledBreak must be true/false!")
 			}
+
+			if (details.buoyancyOpts !== undefined && typeof details.buoyancyOpts !== 'object') {
+				throw new Error(arguments.callee.name + " : buoyancyOpts must be informed!")
+			}
+			if (details.stickyTargetOpts !== undefined && typeof details.stickyTargetOpts !== 'object') {
+				throw new Error(arguments.callee.name + " : stickyTargetOpts must be informed!")
+			}
+			if (details.breakOpts !== undefined && typeof details.breakOpts !== 'object') {
+				throw new Error(arguments.callee.name + " : breakOpts must be informed!")
+			}
+
 			if (details.beginContact !== undefined && typeof details.beginContact !== 'function') {
 				throw new Error(arguments.callee.name + " : beginContact must be a function!")
 			}

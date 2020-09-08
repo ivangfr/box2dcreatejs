@@ -38,11 +38,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			createjs.Ticker.paused = true
 
 			if (timeStepHandler.view) {
-				const player = worldManager.getPlayer()
-				if (player) {
-					timeStepHandler.view.x += player.getCameraAdjust().adjustX
-					timeStepHandler.view.y += player.getCameraAdjust().adjustY
-				}
+				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
+				timeStepHandler.view.x += adjustX
+				timeStepHandler.view.y += adjustY
 
 				_easeljsStage.addChild(timeStepHandler.view)
 				_easeljsStage.update()
@@ -54,11 +52,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			createjs.Ticker.paused = false
 
 			if (timeStepHandler.view) {
-				const player = worldManager.getPlayer()
-				if (player) {
-					timeStepHandler.view.x -= player.getCameraAdjust().adjustX
-					timeStepHandler.view.y -= player.getCameraAdjust().adjustY
-				}
+				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
+				timeStepHandler.view.x += adjustX
+				timeStepHandler.view.y += adjustY
+
 				_easeljsStage.removeChild(timeStepHandler.view)
 			}
 		}

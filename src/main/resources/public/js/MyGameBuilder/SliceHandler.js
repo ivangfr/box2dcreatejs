@@ -4,6 +4,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	MyGameBuilder.SliceHandler = SliceHandler
 
+	const _MIN_PIECE_AREA = 0.1
+
 	function SliceHandler(worldManager, details) {
 		initialize(this, worldManager, details)
 	}
@@ -12,9 +14,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	let _worldManager
 	let _affectedByLaser, _entryPoint
-	let _mouseBegX, _mouseBegY, _mouseEndX, _mouseEndY, _mouseDown, _mouseReleased, _mouseSliceDraw
-	let _touches
-	let _numPieces
+	let _mouse, _touches
 
 	function initialize(sliceHandler, worldManager, details) {
 		validate(worldManager, details)
@@ -24,9 +24,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_affectedByLaser = []
 		_entryPoint = []
 
+		_mouse = { down: false, released: false }
 		_touches = {}
-		_mouseDown = false
-		_mouseReleased = false
 
 		let drawLine = (details && details.drawLine !== undefined) ? details.drawLine : true
 		sliceHandler.getDrawLine = function () { return drawLine }
@@ -45,26 +44,26 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	SliceHandler.prototype.onMouseDown = function (e) {
-		_mouseBegX = e.x
-		_mouseBegY = e.y
-		_mouseDown = true
+		_mouse.begX = e.x
+		_mouse.begY = e.y
+		_mouse.down = true
 	}
 
 	SliceHandler.prototype.onMouseUp = function (e) {
-		_mouseEndX = e.x
-		_mouseEndY = e.y
-		_mouseDown = false
-		_mouseReleased = true
+		_mouse.endX = e.x
+		_mouse.endY = e.y
+		_mouse.down = false
+		_mouse.released = true
 
-		if (_mouseSliceDraw) {
-			_worldManager.getEaseljsStage().removeChild(_mouseSliceDraw)
-			_mouseSliceDraw = undefined
+		if (_mouse.sliceDraw) {
+			_worldManager.getEaseljsStage().removeChild(_mouse.sliceDraw)
+			_mouse.sliceDraw = undefined
 		}
 	}
 
 	SliceHandler.prototype.onMouseMove = function (e) {
-		_mouseEndX = e.x
-		_mouseEndY = e.y
+		_mouse.endX = e.x
+		_mouse.endY = e.y
 	}
 
 	SliceHandler.prototype.onTouchStart = function (e) {
@@ -94,48 +93,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_touches[e.identifier].endY = e.clientY
 	}
 
-	function drawTouchSlice(sliceHandler, touch) {
-		const player = _worldManager.getPlayer()
-		let adjustX = 0, adjustY = 0
-		if (player) {
-			adjustX = player.getCameraAdjust().adjustX
-			adjustY = player.getCameraAdjust().adjustY
-		}
+	function drawSlice(sliceHandler, pointer) {
+		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
-		if (touch.sliceDraw === undefined) {
-			touch.sliceDraw = new createjs.Shape()
-			_worldManager.getEaseljsStage().addChild(touch.sliceDraw)
+		if (pointer.sliceDraw === undefined) {
+			pointer.sliceDraw = new createjs.Shape()
+			_worldManager.getEaseljsStage().addChild(pointer.sliceDraw)
 		}
 		else {
-			touch.sliceDraw.graphics.clear()
+			pointer.sliceDraw.graphics.clear()
 		}
-		touch.sliceDraw.graphics.setStrokeStyle(sliceHandler.getLineWidth())
-		touch.sliceDraw.graphics.beginStroke(sliceHandler.getLineColor())
-		touch.sliceDraw.graphics.moveTo(touch.begX + adjustX, touch.begY + adjustY)
-		touch.sliceDraw.graphics.lineTo(touch.endX + adjustX, touch.endY + adjustY)
-		touch.sliceDraw.graphics.endStroke()
-	}
-
-	function drawMouseSlice(sliceHandler) {
-		const player = _worldManager.getPlayer()
-		let adjustX = 0, adjustY = 0
-		if (player) {
-			adjustX = player.getCameraAdjust().adjustX
-			adjustY = player.getCameraAdjust().adjustY
-		}
-
-		if (_mouseSliceDraw === undefined) {
-			_mouseSliceDraw = new createjs.Shape()
-			_worldManager.getEaseljsStage().addChild(_mouseSliceDraw)
-		}
-		else {
-			_mouseSliceDraw.graphics.clear()
-		}
-		_mouseSliceDraw.graphics.setStrokeStyle(sliceHandler.getLineWidth())
-		_mouseSliceDraw.graphics.beginStroke(sliceHandler.getLineColor())
-		_mouseSliceDraw.graphics.moveTo(_mouseBegX + adjustX, _mouseBegY + adjustY)
-		_mouseSliceDraw.graphics.lineTo(_mouseEndX + adjustX, _mouseEndY + adjustY)
-		_mouseSliceDraw.graphics.endStroke()
+		pointer.sliceDraw.graphics.setStrokeStyle(sliceHandler.getLineWidth())
+		pointer.sliceDraw.graphics.beginStroke(sliceHandler.getLineColor())
+		pointer.sliceDraw.graphics.moveTo(pointer.begX + adjustX, pointer.begY + adjustY)
+		pointer.sliceDraw.graphics.lineTo(pointer.endX + adjustX, pointer.endY + adjustY)
+		pointer.sliceDraw.graphics.endStroke()
 	}
 
 	SliceHandler.prototype.update = function () {
@@ -148,7 +120,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				const touch = _touches[id]
 
 				if (touch.down && this.getDrawLine()) {
-					drawTouchSlice(this, touch)
+					drawSlice(this, touch)
 				}
 
 				if (touch.released) {
@@ -157,26 +129,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						continue
 					}
 
-					const player = _worldManager.getPlayer()
-					let adjustX = 0, adjustY = 0
-					if (player) {
-						adjustX = player.getCameraAdjust().adjustX
-						adjustY = player.getCameraAdjust().adjustY
-					}
-
-					const p1 = new box2d.b2Vec2(
-						(touch.begX + adjustX) / _worldManager.getScale(),
-						(touch.begY + adjustY) / _worldManager.getScale()
-					)
-
-					const p2 = new box2d.b2Vec2(
-						(touch.endX + adjustX) / _worldManager.getScale(),
-						(touch.endY + adjustY) / _worldManager.getScale()
-					)
-
-					const v = arrangeClockwise([p1, p2])
-					_worldManager.getWorld().RayCast(laserFired, v[0], v[1])
-					_worldManager.getWorld().RayCast(laserFired, v[1], v[0])
+					executeRayCast(touch)
 
 					delete _touches[id]
 				}
@@ -185,47 +138,54 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			_entryPoint = []
 		}
 		else {
-			if (_mouseDown && this.getDrawLine()) {
-				drawMouseSlice(this)
+			if (_mouse.down && this.getDrawLine()) {
+				drawSlice(this, _mouse)
 			}
 
-			if (_mouseReleased) {
-				_mouseReleased = false
-
-				if (_mouseBegX === undefined || _mouseBegY === undefined) {
+			if (_mouse.released) {
+				_mouse.released = false
+				if (_mouse.begX === undefined || _mouse.begY === undefined) {
 					return
 				}
 
-				const player = _worldManager.getPlayer()
-				let adjustX = 0, adjustY = 0
-				if (player) {
-					adjustX = player.getCameraAdjust().adjustX
-					adjustY = player.getCameraAdjust().adjustY
-				}
-
-				const p1 = new box2d.b2Vec2(
-					(_mouseBegX + adjustX) / _worldManager.getScale(),
-					(_mouseBegY + adjustY) / _worldManager.getScale())
-
-				const p2 = new box2d.b2Vec2(
-					(_mouseEndX + adjustX) / _worldManager.getScale(),
-					(_mouseEndY + adjustY) / _worldManager.getScale())
-
-				const v = arrangeClockwise([p1, p2])
-				_worldManager.getWorld().RayCast(laserFired, v[0], v[1])
-				_worldManager.getWorld().RayCast(laserFired, v[1], v[0])
+				executeRayCast(_mouse)
 
 				_affectedByLaser = []
 				_entryPoint = []
-				_mouseBegX = _mouseBegY = undefined
+				_mouse.begX = _mouse.begY = undefined
 			}
 		}
 	}
 
-	function laserFired(fixture, point) {
-		const affectedBody = fixture.GetBody()
+	function executeRayCast(pointer) {
+		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
-		if (affectedBody.GetType() !== box2d.b2Body.b2_dynamicBody) {
+		const p1 = new box2d.b2Vec2(
+			(pointer.begX + adjustX) / _worldManager.getScale(),
+			(pointer.begY + adjustY) / _worldManager.getScale()
+		)
+
+		const p2 = new box2d.b2Vec2(
+			(pointer.endX + adjustX) / _worldManager.getScale(),
+			(pointer.endY + adjustY) / _worldManager.getScale()
+		)
+
+		const v = arrangeClockwise([p1, p2])
+		_worldManager.getWorld().RayCast(rayCastCallback, v[0], v[1])
+		_worldManager.getWorld().RayCast(rayCastCallback, v[1], v[0])
+	}
+
+	function rayCastCallback(fixture, point, normal, fraction) {
+		laserFired(fixture, point, normal, fraction)
+	}
+
+	function laserFired(fixture, point) {
+		const fixtureBody = fixture.GetBody()
+
+		if (!fixtureBody.GetUserData().sliceable) {
+			return
+		}
+		if (fixtureBody.GetType() !== box2d.b2Body.b2_dynamicBody) {
 			console.warn('A non-dynamic entity cannot be sliced!')
 			return
 		}
@@ -233,172 +193,41 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			console.warn('An entity that has a non-polygonal shape can not be sliced!')
 			return
 		}
-		if (!affectedBody.GetUserData().sliceable) {
-			return
-		}
 
-		const affectedPolygon = fixture.GetShape()
-		const fixtureIndex = _affectedByLaser.indexOf(affectedBody)
+		const fixtureIndex = _affectedByLaser.indexOf(fixtureBody)
 		if (fixtureIndex === -1) {
-			_affectedByLaser.push(affectedBody)
+			_affectedByLaser.push(fixtureBody)
 			_entryPoint.push(point)
 		}
 		else {
-			// -- BEGIN
-			// -- Code identical in BreakHandler.js
-			const rayCenter = new box2d.b2Vec2((point.x + _entryPoint[fixtureIndex].x) / 2, (point.y + _entryPoint[fixtureIndex].y) / 2)
-			const rayAngle = Math.atan2(_entryPoint[fixtureIndex].y - point.y, _entryPoint[fixtureIndex].x - point.x)
-			const polyVertices = affectedPolygon.GetVertices()
-			const newPolyVertices1 = []
-			const newPolyVertices2 = []
+			const { polygon1Vertices, polygon2Vertices } = getNew2PolygonVertices(fixture, point, _entryPoint[fixtureIndex])
 
-			let currentPoly = 0
-			let cutPlaced1 = false
-			let cutPlaced2 = false
+			const entity = _worldManager.getEntityByItsBody(fixtureBody)
 
-			polyVertices.forEach(polyVertice => {
-				const worldPoint = affectedBody.GetWorldPoint(polyVertice)
-				let cutAngle = Math.atan2(worldPoint.y - rayCenter.y, worldPoint.x - rayCenter.x) - rayAngle
-				if (cutAngle < Math.PI * -1) {
-					cutAngle += 2 * Math.PI
-				}
-				if (cutAngle > 0 && cutAngle <= Math.PI) {
-					if (currentPoly === 2) {
-						cutPlaced1 = true
-						newPolyVertices1.push(point)
-						newPolyVertices1.push(_entryPoint[fixtureIndex])
-					}
-					newPolyVertices1.push(worldPoint)
-					currentPoly = 1
-				}
-				else {
-					if (currentPoly === 1) {
-						cutPlaced2 = true
-						newPolyVertices2.push(_entryPoint[fixtureIndex])
-						newPolyVertices2.push(point)
-					}
-					newPolyVertices2.push(worldPoint)
-					currentPoly = 2
-				}
-			})
-
-			if (!cutPlaced1) {
-				newPolyVertices1.push(point)
-				newPolyVertices1.push(_entryPoint[fixtureIndex])
+			const pieces = []
+			if (getArea(polygon1Vertices) >= _MIN_PIECE_AREA) {
+				pieces.push(createPiece(entity, polygon1Vertices, 1))
 			}
-			if (!cutPlaced2) {
-				newPolyVertices2.push(_entryPoint[fixtureIndex])
-				newPolyVertices2.push(point)
+			if (getArea(polygon2Vertices) >= _MIN_PIECE_AREA) {
+				pieces.push(createPiece(entity, polygon2Vertices, 2))
 			}
-			// -- Code identical in BreakHandler.js
-			// -- END
 
-			_numPieces = 0
-			const entity = _worldManager.getEntityByItsBody(affectedBody)
-			const piece1 = createPiece(entity, newPolyVertices1)
-			const piece2 = createPiece(entity, newPolyVertices2)
-			
 			if (entity.onslice !== undefined) {
-				entity.onslice(piece1, piece2)
+				entity.onslice(pieces)
 			}
 
 			_worldManager.deleteEntity(entity)
 		}
-		return 1
 	}
 
-	function createPiece(entity, vertices) {
+	function createPiece(entity, vertices, id) {
 		const center = findCentroid(vertices).center
 		vertices.forEach(vertice => vertice.Subtract(center))
 
-		const piece = createEntityPiece(entity, vertices, center)
+		const piece = createEntityPiece(_worldManager, entity, vertices, center, id)
 
 		vertices.forEach(vertice => vertice.Add(center))
 		return piece
-	}
-
-	function createEntityPiece(entity, shapeVertices, center) {
-		const scaledVertices = []
-		shapeVertices.forEach(shapeVertice => {
-			const scaledVertice = new box2d.b2Vec2()
-			scaledVertice.x = shapeVertice.x * _worldManager.getScale()
-			scaledVertice.y = shapeVertice.y * _worldManager.getScale()
-			scaledVertices.push(scaledVertice)
-		})
-
-		const entityBody = entity.b2body
-		const entityFixture = entityBody.GetFixtureList()
-		const entityUserData = entityBody.GetUserData()
-		const entityRender = entityUserData.render
-
-		const render = {}
-		render.z = entityRender.z
-		render.type = entityRender.type
-		render.opacity = entityRender.opacity
-		render.filters = entityRender.filters
-
-		if (entityRender.action !== undefined) {
-			render.action = entityRender.action
-		}
-		if (entityRender.drawOpts !== undefined) {
-			render.drawOpts = entityRender.drawOpts
-		}
-		if (entityRender.imageOpts !== undefined) {
-			render.imageOpts = entityRender.imageOpts
-		}
-		if (entityRender.spriteSheetOpts !== undefined) {
-			render.spriteSheetOpts = entityRender.spriteSheetOpts
-		}
-		if (entityRender.textOpts !== undefined) {
-			render.textOpts = entityRender.textOpts
-		}
-
-		_numPieces++
-
-		const newEntity = _worldManager.createEntity({
-			type: entityBody.GetType(),
-			x: center.x * _worldManager.getScale(),
-			y: center.y * _worldManager.getScale(),
-			//angle : doesn't need to be updated!
-			shape: 'polygon',
-			polygonOpts: { points: scaledVertices },
-			render: render,
-			bodyDefOpts: {
-				fixedRotation: entityBody.IsFixedRotation(),
-				bullet: entityBody.IsBullet(),
-				linearDamping: entityBody.GetLinearDamping(),
-				linearVelocity: entityBody.GetLinearVelocity(),
-				angularDamping: entityBody.GetAngularDamping(),
-				angularVelocity: entityBody.GetAngularVelocity() * 180 / Math.PI
-			},
-			fixtureDefOpts: {
-				density: entityFixture.GetDensity(),
-				friction: entityFixture.GetFriction(),
-				restitution: entityFixture.GetRestitution(),
-				isSensor: entityFixture.IsSensor(),
-				filterCategoryBits: entityFixture.GetFilterData().categoryBits,
-				filterMaskBits: entityFixture.GetFilterData().maskBits,
-				filterGroupIndex: entityFixture.GetFilterData().groupIndex,
-				isFluid: entityFixture.GetUserData().isFluid,
-				dragConstant: entityFixture.GetUserData().dragConstant,
-				liftConstant: entityFixture.GetUserData().liftConstant,
-				isSticky: entityFixture.GetUserData().isSticky,
-				isTarget: entityFixture.GetUserData().isTarget,
-				hardness: entityFixture.GetUserData().hardness
-			},
-			name: `${entityUserData.name}_${_numPieces}`,
-			group: entityUserData.group,
-			draggable: entityUserData.draggable,
-			sliceable: entityUserData.sliceable,
-			noGravity: entityUserData.noGravity,
-			events: {
-				onslice: entity.onslice,
-				onbreak: entity.onbreak,
-				ontick: entity.ontick
-			}
-		})
-
-		return newEntity
 	}
 
 	function validate(worldManager, details) {

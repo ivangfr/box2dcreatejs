@@ -8,11 +8,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		initialize(worldManager, details)
 	}
 
+	// TODO - postSolveStick works better than preSolveStick
+	// Maybe, on the next changes, remove preSolveStick
 	const _validStickyTargetDef = ['preSolveStick']
 
 	let _worldManager
 	let _preSolveStick
 	let _targetStickyObjectContacts
+	let _debugHitDots
 
 	function initialize(worldManager, details) {
 		validate(worldManager, details)
@@ -20,6 +23,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_worldManager = worldManager
 		_targetStickyObjectContacts = []
 		_preSolveStick = (details && details.preSolveStick !== undefined) ? details.preSolveStick : false
+		_debugHitDots = []
 	}
 
 	StickyTargetHandler.prototype.IsStickyTargetContactType = function (contact) {
@@ -28,40 +32,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		return (fixAUserData.isSticky && fixBUserData.isTarget) || (fixBUserData.isSticky && fixAUserData.isTarget)
 	}
 
-	function getStickyTargetFromContact(contact) {
-		const fixA = contact.GetFixtureA()
-		const fixB = contact.GetFixtureB()
-
-		let stickyObject, target
-		if (fixA.GetUserData().isTarget) {
-			target = fixA
-			stickyObject = fixB
-		}
-		else {
-			target = fixB
-			stickyObject = fixA
-		}
-		return { stickyObject, target }
-	}
-
 	StickyTargetHandler.prototype.postSolveStickyTargetContact = function (contact, impulse) {
-		const objects = getStickyTargetFromContact(contact)
-		const stickyObject = objects.stickyObject
-		const target = objects.target
-
+		const { stickyObject, target } = getStickyTargetFromContact(contact)
 		if (impulse.normalImpulses[0] > target.GetUserData().hardness) {
-			console.log('Post - Fixed! ' + 'Impulse ' + impulse.normalImpulses[0] + ' ' + impulse.normalImpulses[1])
 			addTargetStickyObjectContact(target, stickyObject)
-		}
-		else {
-			console.log('Post - Not Fixed! ' + 'Impulse ' + impulse.normalImpulses[0] + ' ' + impulse.normalImpulses[1])
 		}
 	}
 
 	StickyTargetHandler.prototype.preSolveStickyTargetContact = function (contact, oldManifold) {
-		const objects = getStickyTargetFromContact(contact)
-		const stickyObject = objects.stickyObject
-		const target = objects.target
+		const { stickyObject, target } = getStickyTargetFromContact(contact)
 
 		stickyObject.GetBody().SetBullet(true)
 		stickyObject.SetRestitution(0)
@@ -80,11 +59,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			const approachVelocity = box2d.b2Math.Dot(worldManifold.m_normal, impactVelocity)
 			const impulse = Math.abs(approachVelocity * stickyObject.GetBody().GetMass())
 			if (impulse > target.GetUserData().hardness) {
-				console.log('Pre - Fixed! ' + 'Impulse ' + impulse)
 				addTargetStickyObjectContact(target, stickyObject)
-			}
-			else {
-				console.log('Pre - Not Fixed! ' + 'Impulse ' + impulse)
 			}
 
 			//This doesn't execute the PostSolve
@@ -93,7 +68,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	StickyTargetHandler.prototype.endContactStickyTarget = function (contact) {
-		const objects = getStickyTargetFromContact(contact)
 		const worldManifold = new Box2D.Collision.b2WorldManifold()
 		contact.GetWorldManifold(worldManifold)
 
@@ -109,22 +83,44 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 		y *= _worldManager.getScale()
 
-		console.log('end x:' + x + '- y:' + y)
+		_debugHitDots.push({ x, y })
+	}
 
-		// Create a small yellow dot
-		_worldManager.createLandscape({
-			x: x, y: y,
-			shape: 'circle',
-			circleOpts: { radius: 2 },
-			render: {
-				z: _worldManager.getEaseljsStage().numChildren,
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'yellow' }
-				}
-			}
+	StickyTargetHandler.prototype.update = function () {
+		if (_worldManager.getEnableDebug()) {
+			_debugHitDots.forEach(dot => drawDebugHitDot(dot))
+		}
+
+		_targetStickyObjectContacts.forEach(contact => {
+			//set the joint anchors at the arrow tip - should be good enough
+			const worldCoordsAnchorPoint = contact.stickyObject.GetBody().GetWorldPoint(new box2d.b2Vec2(0, 0))
+
+			const weldJointDef = new Box2D.Dynamics.Joints.b2WeldJointDef()
+			weldJointDef.bodyA = contact.target.GetBody()
+			weldJointDef.bodyB = contact.stickyObject.GetBody()
+			weldJointDef.localAnchorA = weldJointDef.bodyA.GetLocalPoint(worldCoordsAnchorPoint)
+			weldJointDef.localAnchorB = weldJointDef.bodyB.GetLocalPoint(worldCoordsAnchorPoint)
+			weldJointDef.referenceAngle = weldJointDef.bodyB.GetAngle() - weldJointDef.bodyA.GetAngle()
+
+			_worldManager.getWorld().CreateJoint(weldJointDef)
 		})
+		_targetStickyObjectContacts = []
+	}
+
+	function getStickyTargetFromContact(contact) {
+		const fixA = contact.GetFixtureA()
+		const fixB = contact.GetFixtureB()
+
+		let stickyObject, target
+		if (fixA.GetUserData().isTarget) {
+			target = fixA
+			stickyObject = fixB
+		}
+		else {
+			target = fixB
+			stickyObject = fixA
+		}
+		return { stickyObject, target }
 	}
 
 	function addTargetStickyObjectContact(target, stickyObject) {
@@ -145,21 +141,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 
-	StickyTargetHandler.prototype.update = function () {
-		_targetStickyObjectContacts.forEach(contact => {
-			//set the joint anchors at the arrow tip - should be good enough
-			const worldCoordsAnchorPoint = contact.stickyObject.GetBody().GetWorldPoint(new box2d.b2Vec2(0, 0))
-
-			const weldJointDef = new Box2D.Dynamics.Joints.b2WeldJointDef()
-			weldJointDef.bodyA = contact.target.GetBody()
-			weldJointDef.bodyB = contact.stickyObject.GetBody()
-			weldJointDef.localAnchorA = weldJointDef.bodyA.GetLocalPoint(worldCoordsAnchorPoint)
-			weldJointDef.localAnchorB = weldJointDef.bodyB.GetLocalPoint(worldCoordsAnchorPoint)
-			weldJointDef.referenceAngle = weldJointDef.bodyB.GetAngle() - weldJointDef.bodyA.GetAngle()
-
-			_worldManager.getWorld().CreateJoint(weldJointDef)
-		})
-		_targetStickyObjectContacts = []
+	function drawDebugHitDot(dot) {
+		const radius = 2
+		const c = _worldManager.getBox2dCanvasCtx()
+		c.beginPath()
+		c.fillStyle = "yellow"
+		c.arc(dot.x, dot.y, radius, 0, Math.PI * 2, true)
+		c.fill()
 	}
 
 	function validate(worldManager, details) {

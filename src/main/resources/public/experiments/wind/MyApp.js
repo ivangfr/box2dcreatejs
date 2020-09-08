@@ -3,6 +3,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 (function () {
 
 	let _worldManager
+	let _mouseX, _mouseY
 
 	function MyApp() {
 		this.initialize()
@@ -41,18 +42,27 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					const wind = _worldManager.getWind()
 					wind.isOn() ? wind.stop() : wind.start()
 				}
+			},
+			83: { // s
+				onkeydown: () => createNewToy()
 			}
 		})
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createMultiTouchHandler({
+			onmousemove: (e) => {
+				_mouseX = e.x
+				_mouseY = e.y
+			}
+		})
 
 		// Wind
 		_worldManager.createWind({
 			numRays: 50,
-			power: 1000,
+			power: 2000,
 			on: true,
 			directionTo: 'right',
-			height: 400
+			adjustY: 100,
+			height: 500
 		})
 	}
 
@@ -101,14 +111,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function createToys() {
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 800, y: 100,
+			x: 50, y: 400,
+			shape: 'box',
+			boxOpts: { width: 40, height: 40 },
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					bgSolidColorOpts: { color: 'white' },
+					borderWidth: 1,
+					borderColor: 'black'
+				}
+			}
+		})
+
+		_worldManager.createEntity({
+			type: 'dynamic',
+			x: 300, y: 450,
 			shape: 'box',
 			boxOpts: { width: 40, height: 100 },
 			render: {
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'blue' }
+					bgSolidColorOpts: { color: 'blue' },
+					borderWidth: 1,
+					borderColor: 'black'
 				}
 			},
 			fixtureDefOpts: { density: 10 }
@@ -116,23 +144,41 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 500, y: 100,
-			shape: 'box',
-			boxOpts: { width: 40, height: 40 },
+			x: 500, y: 350,
+			shape: 'circle',
+			circleOpts: { radius: 20 },
 			render: {
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' }
+					bgSolidColorOpts: { color: 'yellow' },
+					borderWidth: 1,
+					borderColor: 'black'
+				}
+			}
+		})
+
+		_worldManager.createEntity({
+			type: 'dynamic',
+			x: 700, y: 450,
+			shape: 'circle',
+			circleOpts: { radius: 20 },
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'solid',
+					bgSolidColorOpts: { color: 'yellow' },
+					borderWidth: 1,
+					borderColor: 'black'
 				}
 			}
 		})
 
 		_worldManager.createEntity({
 			type: 'static',
-			x: 650, y: 450,
+			x: 650, y: 430,
 			shape: 'box',
-			boxOpts: { width: 10, height: 100 },
+			boxOpts: { width: 10, height: 150 },
 			render: {
 				type: 'draw',
 				drawOpts: {
@@ -141,40 +187,24 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			}
 		})
+	}
 
+	function createNewToy(e) {
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 600, y: 100,
+			x: _mouseX,
+			y: _mouseY,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
 			render: {
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'yellow' }
+					bgSolidColorOpts: { color: 'orange' },
+					borderWidth: 1,
+					borderColor: 'black'
 				}
 			}
-		})
-
-		_worldManager.createEntity({
-			type: 'dynamic',
-			x: 400, y: 250,
-			shape: 'polygon',
-			polygonOpts: {
-				points: [
-					{ x: -40, y: 0 },
-					{ x: 0, y: -40 },
-					{ x: 40, y: 0 }
-				]
-			},
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'green' }
-				}
-			},
-			fixtureDefOpts: { density: 1.0 }
 		})
 	}
 

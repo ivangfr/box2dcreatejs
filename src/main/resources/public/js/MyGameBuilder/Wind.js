@@ -37,29 +37,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 		wind.getDirectionTo = function () { return directionTo }
 
-		const width = (details && details.width) ? details.width : box2dCanvas.width
-		const height = (details && details.height) ? details.height : box2dCanvas.width
 		const adjustX = (details && details.adjustX) ? details.adjustX : 0
 		const adjustY = (details && details.adjustY) ? details.adjustY : 0
+		const width = (details && details.width) ? details.width : box2dCanvas.width
+		const height = (details && details.height) ? details.height : box2dCanvas.width
 
-		const rays = []
-		const d = height / (numRays + 1)
-		for (let i = d + adjustY; i < height; i += d) {
-			let xBegin, xEnd, y
-			if (directionTo === -1) {
-				xBegin = (box2dCanvas.width - adjustX) / _worldManager.getScale()
-				xEnd = (box2dCanvas.width - width) / _worldManager.getScale()
-			}
-			else {
-				xBegin = adjustX / _worldManager.getScale()
-				xEnd = (width + adjustX) / _worldManager.getScale()
-			}
-			y = i / _worldManager.getScale()
-
-			const begin = new box2d.b2Vec2(xBegin, y)
-			const end = new box2d.b2Vec2(xEnd, y)
-			rays.push({ begin, end })
-		}
+		const rays = createRays(adjustX, adjustY, width, height, numRays, directionTo)
 		wind.getRays = function () { return rays }
 
 		wind.start = function () { on = true }
@@ -75,42 +58,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			return
 		}
 
-		const rays = this.getRays()
-		const directionTo = this.getDirectionTo()
-		const numRays = this.getNumRays()
-		const power = this.getPower()
-
-		for (let i = 0; i < rays.length; i++) {
-			const ray = rays[i]
-
+		this.getRays().forEach(ray => {
 			if (_worldManager.getEnableDebug()) {
 				drawRay(ray)
 			}
 
-			const wind = this
-			_worldManager.getWorld().RayCast(
-				function (fixture, point, normal, fraction) {
-					const rayBody = { body: fixture.GetBody(), point }
-					wind.getBodiesAffectedByRay().push(rayBody)
-				},
-				ray.begin,
-				ray.end
-			)
+			executeRayCast(this, ray)
 
 			const bodiesAffectedByRay = this.getBodiesAffectedByRay()
 			if (bodiesAffectedByRay.length > 0) {
-				const fnCompare = (directionTo === -1) ? compareDecrescent : compareCrescent
-				bodiesAffectedByRay.sort(fnCompare)
+				bodiesAffectedByRay.sort(this.getDirectionTo() === -1 ? compareDecrescent : compareCrescent)
 
 				for (let j = 0; j < bodiesAffectedByRay.length; j++) {
 					const body = bodiesAffectedByRay[j].body
+
+					// static bodies block the wind power
 					if (body.GetType() === box2d.b2Body.b2_staticBody) {
 						break
 					}
 
 					const point = bodiesAffectedByRay[j].point
 					if (countTick % _worldManager.getTickMod() === 0) {
-						const force = new box2d.b2Vec2(directionTo * power / numRays, 0)
+						const force = new box2d.b2Vec2(this.getDirectionTo() * this.getPower() / this.getNumRays(), 0)
 						body.ApplyForce(force, point)
 					}
 
@@ -120,7 +89,44 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 				this.clearBodiesAffectedByRay()
 			}
+		})
+	}
+
+	function createRays(adjustX, adjustY, width, height, numRays, directionTo) {
+		const rays = []
+		const d = height / (numRays + 1)
+		const scale = _worldManager.getScale()
+
+		for (let i = d + adjustY; i < height; i += d) {
+			let xBegin, xEnd
+			if (directionTo === -1) {
+				xBegin = (box2dCanvas.width - adjustX) / scale
+				xEnd = (box2dCanvas.width - width) / scale
+			}
+			else {
+				xBegin = adjustX / scale
+				xEnd = (width + adjustX) / scale
+			}
+			
+			const y = i / scale
+			const begin = new box2d.b2Vec2(xBegin, y)
+			const end = new box2d.b2Vec2(xEnd, y)
+
+			rays.push({ begin, end })
 		}
+
+		return rays
+	}
+
+	function executeRayCast(wind, ray) {
+		_worldManager.getWorld().RayCast(
+			function (fixture, point, normal, fraction) {
+				const rayBody = { body: fixture.GetBody(), point }
+				wind.getBodiesAffectedByRay().push(rayBody)
+			},
+			ray.begin,
+			ray.end
+		)
 	}
 
 	function compareDecrescent(a, b) {

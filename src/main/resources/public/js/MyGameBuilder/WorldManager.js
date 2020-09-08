@@ -91,6 +91,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	let _player
 	WorldManager.prototype.getPlayer = function () { return _player }
 	WorldManager.prototype.setPlayer = function (player) { _player = player }
+	WorldManager.prototype.getCameraAdjust = function () {
+		return _player ? _player.getCameraAdjust() : { adjustX: 0, adjustY: 0 }
+	}
 
 	const _players = []
 	WorldManager.prototype.getPlayers = function () { return _players }

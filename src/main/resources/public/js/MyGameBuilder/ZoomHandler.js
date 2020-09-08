@@ -48,7 +48,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function zoomScale(value) {
 		_worldManager.setCanvasCtxScale(value)
 
-		_worldManager.getBox2dCanvas().width = _worldManager.getBox2dCanvas().width //Clear box2dCanvas			
+		_worldManager.getBox2dCanvas().width = _worldManager.getBox2dCanvas().width // Clear box2dCanvas			
 		_worldManager.getBox2dCanvasCtx().scale(value, value)
 
 		_worldManager.getEaseljsStage().scaleX = value

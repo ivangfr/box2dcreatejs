@@ -1,7 +1,7 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	
+
 	let _worldManager
 
 	function MyApp() {
@@ -130,7 +130,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createToys() {
-		
+
 		_worldManager.createEntity({
 			type: 'dynamic',
 			x: 100, y: 100, angle: 5,
@@ -162,7 +162,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'teal' },
+					bgSolidColorOpts: { color: 'orange' },
 					borderWidth: 2, borderColor: 'black'
 				}
 			},
@@ -186,8 +186,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			sliceable: true,
 			noGravity: true,
 			events: {
-				onslice: function (e1, e2) {
-					e1.changeRender({
+				onslice: function (pieces) {
+					// TODO - There is a problem when slicing a entity with image or sprite
+					// one dirty way to overcome it is changing the render of the entity
+					pieces.forEach(piece => piece.changeRender({
 						type: 'draw',
 						drawOpts: {
 							bgColorStyle: 'solid',
@@ -195,16 +197,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 							borderWidth: 2,
 							borderColor: 'black'
 						}
-					})
-					e2.changeRender({
-						type: 'draw',
-						drawOpts: {
-							bgColorStyle: 'solid',
-							bgSolidColorOpts: { color: 'white' },
-							borderWidth: 2,
-							borderColor: 'black'
-						}
-					})
+					}))
 				}
 			}
 		})

@@ -52,25 +52,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					'../../images/background_river.jpg'
 				],
 				onComplete: () => {
-					showHelp()
+					startCountingDown()
 					startWorld()
 				}
 			}
 		})
 	}
 
-	function showHelp() {
-		_helpElem.style.display = 'block'
-		setTimeout(function () {
-			startCountingDown()
-		}, 3000)
-	}
-
 	function startCountingDown() {
 		_hintElem.innerHTML = 'Use the mouse to break or slice the blocks!!!'
 		_hintElem.style.display = 'block'
+		_helpElem.style.display = 'block'
 
 		setTimeout(function () {
+			_helpElem.style.display = 'none'
 			_hintElem.innerHTML = 'READY??'
 			setTimeout(function () {
 				_hintElem.innerHTML = 'GGGOOO!!!'
@@ -78,14 +73,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				_scoreElem.innerHTML = '0'
 				_scoreElem.style.display = 'block'
 
-				_helpElem.style.display = 'none'
-
 				setTimeout(function () {
 					_hintElem.style.display = 'none'
 					_freeBlocks = true
 				}, 2000)
 			}, 2000)
-		}, 5000)
+		}, 3000)
 	}
 
 	function startWorld() {
@@ -102,16 +95,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				lineColor: 'yellow'
 			},
 			onmousedown: function (e) {
-				let breakHandler
 				const x = e.x || e.clientX
 				const y = e.y || e.clientY
-
 				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
 
 				multiTouchHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
 					const entityUserData = entity.b2body.GetUserData()
 					if (entityUserData.group === 'breakable') {
-						breakHandler = new MyGameBuilder.BreakHandler(_worldManager, { numCuts: 1 })
+						const breakHandler = new MyGameBuilder.BreakHandler(_worldManager, {
+							numCuts: 2,
+							explosion: true
+						})
 						breakHandler.breakEntity(entity, x, y)
 						createExplosion(x, y)
 					}
@@ -411,19 +405,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function fnOnBreak(pieces) {
-		pieces.forEach(piece => {
-			const vel = {}
-			vel.x = piece.b2body.GetLinearVelocity().x / 2
-			vel.y = 3
-			piece.b2body.SetLinearVelocity(vel)
-			piece.b2body.GetUserData().noGravity = false
-		})
+		pieces.forEach(piece => piece.b2body.GetUserData().noGravity = false)
 		_numBreaks++
 		_scoreElem.innerHTML = _numBreaks
 	}
 
-	function fnOnSlice(e1, e2) {
-		fnOnBreak([e1, e2])
+	function fnOnSlice(pieces) {
+		fnOnBreak(pieces)
 		_soundHandler.createSoundInstance({ id: 'slice' }).play()
 	}
 

@@ -13,18 +13,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	const _validBuoyancyDef = ['complexDragFunction']
 
-	let _complexDragFunction
 	let _worldManager
-	let _fluidFloatingObjectContacts
+	let _complexDragFunction
+	let _floatingFluidFixturePairs
 
 	function initialize(worldManager, details) {
 		validate(worldManager, details)
 
 		_worldManager = worldManager
 
-		_fluidFloatingObjectContacts = []
-		_complexDragFunction = (details && details.complexDragFunction !== undefined) ?
-			details.complexDragFunction : true
+		_floatingFluidFixturePairs = []
+		_complexDragFunction = (details && details.complexDragFunction !== undefined) ? details.complexDragFunction : true
 	}
 
 	BuoyancyHandler.prototype.IsBuoyancyContactType = function (contact) {
@@ -35,181 +34,180 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	BuoyancyHandler.prototype.beginContactBuoyancy = function (contact) {
-		const objects = getFloatingFluidFromContact(contact)
-		const floatingObject = objects.floatingObject
-		const fluid = objects.fluid
-		addfluidFloatingObjectContact(fluid, floatingObject)
+		addFloatingFluidFixturePair(getFloatingFluidFixturePair(contact))
 	}
 
 	BuoyancyHandler.prototype.endContactBuoyancy = function (contact) {
-		const objects = getFloatingFluidFromContact(contact)
-		const floatingObject = objects.floatingObject
-		const fluid = objects.fluid
-		deletefluidFloatingObjectContact(fluid, floatingObject)
+		deleteFloatingFluidFixturePair(getFloatingFluidFixturePair(contact))
 	}
 
-	function getFloatingFluidFromContact(contact) {
+	BuoyancyHandler.prototype.update = function () {
+		for (let i = 0; i < _floatingFluidFixturePairs.length; i++) {
+			const { floatingFixture, fluidFixture } = _floatingFluidFixturePairs[i]
+
+			const intersectionPoints = findIntersectionOfFixtures(floatingFixture, fluidFixture)
+			if (intersectionPoints.length > 0) {
+				const { center, area } = findCentroid(intersectionPoints)
+
+				applyBuoyancy(floatingFixture, fluidFixture, center, area)
+
+				_complexDragFunction ?
+					applyComplexDrag(floatingFixture, fluidFixture, intersectionPoints, area) :
+					applySimpleDrag(floatingFixture, fluidFixture, center, area)
+			}
+		}
+	}
+
+	function getFloatingFluidFixturePair(contact) {
 		const fixA = contact.GetFixtureA()
 		const fixB = contact.GetFixtureB()
 
-		let fluid, floatingObject
+		let floatingFixture, fluidFixture
 		if (fixA.GetUserData().isFluid) {
-			fluid = fixA
-			floatingObject = fixB
+			fluidFixture = fixA
+			floatingFixture = fixB
 		}
 		else {
-			fluid = fixB
-			floatingObject = fixA
+			fluidFixture = fixB
+			floatingFixture = fixA
 		}
-		return { floatingObject, fluid }
+		return { floatingFixture, fluidFixture }
 	}
 
-	function addfluidFloatingObjectContact(fluid, floatingObject) {
-		_fluidFloatingObjectContacts.push({ fluid, floatingObject })
+	function addFloatingFluidFixturePair(floatingFluidFixturePair) {
+		_floatingFluidFixturePairs.push(floatingFluidFixturePair)
 	}
 
-	function deletefluidFloatingObjectContact(fluid, floatingObject) {
+	function deleteFloatingFluidFixturePair(floatingFluidFixturePair) {
 		let idx = -1
-		for (let i = 0; i < _fluidFloatingObjectContacts.length; i++) {
-			const contactPair = _fluidFloatingObjectContacts[i]
-			if (contactPair.fluid === fluid && contactPair.floatingObject === floatingObject) {
+		for (let i = 0; i < _floatingFluidFixturePairs.length; i++) {
+			const pair = _floatingFluidFixturePairs[i]
+			if (pair.fluidFixture === floatingFluidFixturePair.fluidFixture &&
+				pair.floatingFixture === floatingFluidFixturePair.floatingFixture) {
 				idx = i
 				break
 			}
 		}
-
 		if (idx >= 0) {
-			_fluidFloatingObjectContacts.remove(idx)
+			_floatingFluidFixturePairs.remove(idx)
 		}
 	}
 
-	BuoyancyHandler.prototype.update = function () {
-		for (let i = 0; i < _fluidFloatingObjectContacts.length; i++) {
-			const contactPair = _fluidFloatingObjectContacts[i]
-			const fluid = contactPair.fluid
-			const floatingObject = contactPair.floatingObject
+	function applyBuoyancy(floatingFixture, fluidFixture, center, area) {
+		const displacedMass = fluidFixture.GetDensity() * area
+		const gravity = _worldManager.getWorld().GetGravity()
 
-			const density = fluid.GetDensity()
+		const buoyancyForce = new box2d.b2Vec2(0, 0)
+		buoyancyForce.x = displacedMass * -gravity.x
+		buoyancyForce.y = displacedMass * -gravity.y
 
-			const intersectionPoints = findIntersectionOfFixtures(fluid, floatingObject)
-			if (intersectionPoints.length > 0) {
-				const centroid = findCentroid(intersectionPoints)
-				const center = centroid.center
-				const area = centroid.area
+		floatingFixture.GetBody().ApplyForce(buoyancyForce, center)
+	}
 
-				//apply buoyancy force
-				const displacedMass = fluid.GetDensity() * area
-				const gravity = _worldManager.getWorld().GetGravity()
+	function applySimpleDrag(floatingFixture, fluidFixture, center, area) {
+		// Find relative velocity between floatingFixture and fluidFixture
+		const velDir = box2d.b2Math.SubtractVV(
+			floatingFixture.GetBody().GetLinearVelocityFromWorldPoint(center),
+			fluidFixture.GetBody().GetLinearVelocityFromWorldPoint(center)
+		)
+		const vel = velDir.Normalize()
 
-				const buoyancyForce = new box2d.b2Vec2(0, 0)
-				buoyancyForce.x = displacedMass * -gravity.x
-				buoyancyForce.y = displacedMass * -gravity.y
-				floatingObject.GetBody().ApplyForce(buoyancyForce, center)
+		const dragMod = fluidFixture.GetUserData().dragConstant
+		const dragMag = fluidFixture.GetDensity() * vel * vel
 
-				if (!_complexDragFunction) {
-					//-- simple drag --------------------------------------------------------------
-					//find relative velocity between object and fluid
-					const velDir = box2d.b2Math.SubtractVV(
-						floatingObject.GetBody().GetLinearVelocityFromWorldPoint(center),
-						fluid.GetBody().GetLinearVelocityFromWorldPoint(center)
-					)
-					const vel = velDir.Normalize()
+		const dragForce = new box2d.b2Vec2(0, 0)
+		dragForce.x = dragMod * dragMag * -velDir.x
+		dragForce.y = dragMod * dragMag * -velDir.y
 
-					const dragMod = fluid.GetUserData().dragConstant
-					const dragMag = fluid.GetDensity() * vel * vel
+		floatingFixture.GetBody().ApplyForce(dragForce, center)
 
-					const dragForce = new box2d.b2Vec2(0, 0)
-					dragForce.x = dragMod * dragMag * -velDir.x
-					dragForce.y = dragMod * dragMag * -velDir.y
+		// Prevent the floating bodies from rotating forever
+		const angularDrag = area * -floatingFixture.GetBody().GetAngularVelocity()
+		floatingFixture.GetBody().ApplyTorque(angularDrag)
+	}
 
-					floatingObject.GetBody().ApplyForce(dragForce, center)
-					const angularDrag = area * -floatingObject.GetBody().GetAngularVelocity()
-					floatingObject.GetBody().ApplyTorque(angularDrag)
-					//-----------------------------------------------------------------------------
-				}
-				else {
-					//-- apply complex drag -------------------------------------------------------
-					const dragMod = fluid.GetUserData().dragConstant
-					const liftMod = fluid.GetUserData().liftConstant
-					const maxDrag = 3000//adjust as desired
-					const maxLift = 1000//adjust as desired
-					for (let j = 0; j < intersectionPoints.length; j++) {
-						const v0 = intersectionPoints[j]
-						const v1 = intersectionPoints[(j + 1) % intersectionPoints.length]
+	function applyComplexDrag(floatingFixture, fluidFixture, intersectionPoints, area) {
+		const fluidDensity = fluidFixture.GetDensity()
+		const dragMod = fluidFixture.GetUserData().dragConstant
+		const liftMod = fluidFixture.GetUserData().liftConstant
+		const maxDrag = 3000
+		const maxLift = 1000
 
-						const vS = box2d.b2Math.AddVV(v0, v1)
-						const midPoint = new box2d.b2Vec2(0, 0)
-						midPoint.x = 0.5 * vS.x
-						midPoint.y = 0.5 * vS.y
+		for (let j = 0; j < intersectionPoints.length; j++) {
+			const v0 = intersectionPoints[j]
+			const v1 = intersectionPoints[(j + 1) % intersectionPoints.length]
 
-						//find relative velocity between object and fluid at edge midpoint
-						const velDir = box2d.b2Math.SubtractVV(
-							floatingObject.GetBody().GetLinearVelocityFromWorldPoint(midPoint),
-							fluid.GetBody().GetLinearVelocityFromWorldPoint(midPoint)
-						)
-						const vel = velDir.Normalize()
+			const vS = box2d.b2Math.AddVV(v0, v1)
+			const midPoint = new box2d.b2Vec2(0, 0)
+			midPoint.x = 0.5 * vS.x
+			midPoint.y = 0.5 * vS.y
 
-						const edge = box2d.b2Math.SubtractVV(v1, v0)
-						const edgeLength = edge.Normalize()
+			// Find relative velocity between floatingFixture and fluidFixture
+			const velDir = box2d.b2Math.SubtractVV(
+				floatingFixture.GetBody().GetLinearVelocityFromWorldPoint(midPoint),
+				fluidFixture.GetBody().GetLinearVelocityFromWorldPoint(midPoint)
+			)
+			const vel = velDir.Normalize()
 
-						const normal = box2d.b2Math.CrossFV(-1, edge)
-						const dragDot = box2d.b2Math.Dot(normal, velDir)
-						if (dragDot < 0) {
-							continue
-						}
+			const edge = box2d.b2Math.SubtractVV(v1, v0)
+			const edgeLength = edge.Normalize()
 
-						let dragMag = dragDot * dragMod * edgeLength * density * vel * vel
-						dragMag = box2d.b2Math.Min(dragMag, maxDrag)
-
-						const dragForce = new box2d.b2Vec2(0, 0)
-						dragForce.x = dragMag * -velDir.x
-						dragForce.y = dragMag * -velDir.y
-
-						floatingObject.GetBody().ApplyForce(dragForce, midPoint)
-
-						const liftDot = box2d.b2Math.Dot(edge, velDir)
-						let liftMag = dragDot * liftDot * liftMod * edgeLength * density * vel * vel
-						liftMag = box2d.b2Math.Min(liftMag, maxLift)
-						const liftDir = box2d.b2Math.CrossFV(1, velDir)
-
-						const liftForce = new box2d.b2Vec2(0, 0)
-						liftForce.x = liftMag * -liftDir.x
-						liftForce.y = liftMag * -liftDir.y
-
-						floatingObject.GetBody().ApplyForce(liftForce, midPoint)
-					}
-					//-----------------------------------------------------------------------------
-				}
+			const normal = box2d.b2Math.CrossFV(-1, edge)
+			const dragDot = box2d.b2Math.Dot(normal, velDir)
+			if (dragDot < 0) {
+				continue
 			}
+
+			let dragMag = dragDot * dragMod * edgeLength * fluidDensity * vel * vel
+			dragMag = box2d.b2Math.Min(dragMag, maxDrag)
+
+			const dragForce = new box2d.b2Vec2(0, 0)
+			dragForce.x = dragMag * -velDir.x
+			dragForce.y = dragMag * -velDir.y
+
+			// Prevent the floating bodies from rotating forever
+			const angularDrag = area * -floatingFixture.GetBody().GetAngularVelocity()
+			floatingFixture.GetBody().ApplyTorque(angularDrag)
+
+			// Applying drag force
+			floatingFixture.GetBody().ApplyForce(dragForce, midPoint)
+
+			const liftDot = box2d.b2Math.Dot(edge, velDir)
+			let liftMag = dragDot * liftDot * liftMod * edgeLength * fluidDensity * vel * vel
+			liftMag = box2d.b2Math.Min(liftMag, maxLift)
+			const liftDir = box2d.b2Math.CrossFV(1, velDir)
+
+			const liftForce = new box2d.b2Vec2(0, 0)
+			liftForce.x = liftMag * -liftDir.x
+			liftForce.y = liftMag * -liftDir.y
+
+			// Applying lift force
+			floatingFixture.GetBody().ApplyForce(liftForce, midPoint)
 		}
 	}
 
-	function findIntersectionOfFixtures(fluid, floatingObject) {
-		const fluidShape = fluid.GetShape()
+	function findIntersectionOfFixtures(floatingFixture, fluidFixture) {
+		const fluidShape = fluidFixture.GetShape()
 		if (fluidShape.GetType() !== Box2D.Collision.Shapes.b2Shape.e_polygonShape) {
 			return false
 		}
 
-		const floatingObjectShape = floatingObject.GetShape()
-		if (floatingObjectShape.GetType() === Box2D.Collision.Shapes.b2Shape.e_circleShape) {
-			handleCircleFloatingObject(floatingObjectShape)
+		const floatingShape = floatingFixture.GetShape()
+		if (floatingShape.GetType() === Box2D.Collision.Shapes.b2Shape.e_circleShape) {
+			handleFloatingCircle(floatingFixture)
 		}
 
 		let outputVertices = []
 		for (let i = 0; i < fluidShape.GetVertexCount(); i++) {
-			outputVertices.push(fluid.GetBody().GetWorldPoint(fluidShape.GetVertices()[i]))
+			outputVertices.push(fluidFixture.GetBody().GetWorldPoint(fluidShape.GetVertices()[i]))
 		}
 
 		const clipPolygon = []
-		if (floatingObjectShape.GetType() === Box2D.Collision.Shapes.b2Shape.e_polygonShape) {
-			for (let i = 0; i < floatingObjectShape.GetVertexCount(); i++) {
-				clipPolygon.push(floatingObject.GetBody().GetWorldPoint(floatingObjectShape.GetVertices()[i]))
-			}
+		if (floatingShape.GetType() === Box2D.Collision.Shapes.b2Shape.e_polygonShape) {
+			floatingShape.GetVertices().forEach(v => clipPolygon.push(floatingFixture.GetBody().GetWorldPoint(v)))
 		}
 		else {
-			for (let i = 0; i < floatingObjectShape.numVertices; i++) {
-				clipPolygon.push(floatingObject.GetBody().GetWorldPoint(floatingObjectShape.vertices[i]))
-			}
+			floatingShape.vertices.forEach(v => clipPolygon.push(floatingFixture.GetBody().GetWorldPoint(v)))
 		}
 
 		// TODO - understand what is going on here
@@ -241,19 +239,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		return outputVertices
 	}
 
-	function handleCircleFloatingObject(floatingObjectShape) {
-		const radius = floatingObjectShape.GetRadius()
+	function handleFloatingCircle(floatingFixture) {
+		const floatingShape = floatingFixture.GetShape()
+		const radius = floatingShape.GetRadius()
 		const vertices = []
 		for (let i = _NUM_VERTICES_INSIDE_CIRCLE; i > 0; i--) {
 			const angle = (i / _NUM_VERTICES_INSIDE_CIRCLE) * 360 * _DEGTORAD
 			vertices.push(new box2d.b2Vec2(Math.sin(angle) * radius, Math.cos(angle) * radius))
 		}
 
-		floatingObjectShape.numVertices = _NUM_VERTICES_INSIDE_CIRCLE
-		floatingObjectShape.vertices = vertices
+		floatingShape.numVertices = _NUM_VERTICES_INSIDE_CIRCLE
+		floatingShape.vertices = vertices
 
 		if (_worldManager.getEnableDebug()) {
-			drawPolygonInsideCircle(floatingObject)
+			drawPolygonInsideCircle(floatingFixture)
 		}
 	}
 
