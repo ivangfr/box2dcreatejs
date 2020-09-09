@@ -8,15 +8,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		initialize(worldManager, details)
 	}
 
-	const _validMultiTouchHandlerDef = ['enableDrag', 'drawPointerLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove', 'enableSlice', 'sliceOpts']
+	const _validMultiTouchHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'drawPointerLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
 
 	let _worldManager
+	let _canvasPosition
+	let _screenButtons
+	let _drawPointerLocation
+	let _selectedBodies, _mousePVec, _halfSquare
+	let _userOnMouseDown, _userOnMouseUp, _userOnMouseMove
 
 	let _enableDrag
 	MultiTouchHandler.prototype.getEnableDrag = function () { return _enableDrag }
 	MultiTouchHandler.prototype.setEnableDrag = function (value) { _enableDrag = value }
 
-	let _enableSlice
+	let _enableSlice, _sliceOpts
 	MultiTouchHandler.prototype.getEnableSlice = function () { return _enableSlice }
 	MultiTouchHandler.prototype.setEnableSlice = function (value) {
 		_enableSlice = value
@@ -25,18 +30,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 
+	let _pointerRadius
+	MultiTouchHandler.prototype.getPointerRadius = function () { return _pointerRadius }
+	MultiTouchHandler.prototype.setPointerRadius = function (value) { _pointerRadius = value }
+
+	let _pointerAccurate
+	MultiTouchHandler.prototype.getPointerAccurate = function () { return _pointerAccurate }
+	MultiTouchHandler.prototype.setPointerAccurate = function (value) { _pointerAccurate = value }
+
 	let _sliceHandler
 	MultiTouchHandler.prototype.getSliceHandler = function () { return _sliceHandler }
 
-	let _mouseEvent, _mouseX, _mouseY, _isMouseDown
-	MultiTouchHandler.prototype.isMouseDown = function () { return _isMouseDown }
+	let _mouse = { down: false }
+	MultiTouchHandler.prototype.isMouseDown = function () { return _mouse.down }
 
-	let _userOnMouseDown, _userOnMouseUp, _userOnMouseMove, _sliceOpts
-	let _canvasPosition
-	let _screenButtons
-	let _pointerRadius, _pointerAccurate, _drawPointerLocation
-	let _selectedBodies, _mousePVec, _halfSquare, _mouseDownOnEntity, _mouseJoint
-	let _touches, _touchesJoint, _touchesDownOnEntity
+	let _touches, _touchJoints, _touchesDownOnEntity, _mouseJoints
 
 	let _touchable = 'createTouch' in document
 	MultiTouchHandler.prototype.isTouchable = function () { return _touchable }
@@ -57,8 +65,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		_enableSlice = (details && details.enableSlice !== undefined) ? details.enableSlice : false
-		if (_enableSlice)
+		if (_enableSlice) {
 			_sliceHandler = new MyGameBuilder.SliceHandler(worldManager, _sliceOpts)
+		}
 
 		_drawPointerLocation = (details && details.drawPointerLocation !== undefined) ? details.drawPointerLocation : false
 
@@ -91,149 +100,122 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			box2dCanvas.addEventListener('mouseup', onMouseUp, true)
 		}
 
-		_mouseDownOnEntity = false
-		_mouseJoint = []
+		_mouse.onEntity = false
+		_mouseJoints = []
+
 		_touches = []
-		_touchesJoint = {}
+		_touchJoints = {}
 		_touchesDownOnEntity = {}
 	}
 
 	MultiTouchHandler.prototype.update = function (countTick) {
 		if (_touchable) {
-			for (let i = 0; i < _touches.length; i++) {
-				const touch = _touches[i]
-
-				if (_drawPointerLocation) {
-					drawTouchLocation(touch)
-				}
-
-				const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
-				if (screenButton !== null) {
-					if (screenButton.touchId === undefined) {
-						screenButton.isButtonDown = true
-						screenButton.touchId = touch.identifier
-						if (screenButton.onMouseDown !== undefined) {
-							screenButton.onMouseDown(touch)
-						}
-					}
-					else if (touch.identifier === screenButton.touchId && screenButton.keepPressed &&
-						screenButton.isButtonDown && screenButton.onMouseDown !== undefined &&
-						countTick % _worldManager.getTickMod() === 0) {
-						screenButton.onMouseDown(touch)
-					}
-				}
-				else if (_enableDrag && _touchesDownOnEntity[touch.identifier]) {
-					const { adjustX, adjustY } = _worldManager.getCameraAdjust()
-
-					if (_touchesJoint[touch.identifier] === undefined) {
-						_touchesJoint[touch.identifier] = []
-
-						// TODO - maybe use lambda with filter here
-						const bodies = getBodyAtMouseTouch(touch.clientX + adjustX, touch.clientY + adjustY)
-						for (let j = 0; j < bodies.length; j++) {
-							const body = bodies[j]
-							if (body.GetUserData().draggable) {
-								_touchesJoint[touch.identifier].push(createMouseJoint(body, touch.clientX + adjustX, touch.clientY + adjustY))
-							}
-						}
-					}
-					if (_touchesJoint[touch.identifier].length > 0) {
-						// TODO - maybe use lambda
-						for (let j = 0; j < _touchesJoint[touch.identifier].length; j++)
-							_touchesJoint[touch.identifier][j].SetTarget(
-								new box2d.b2Vec2(
-									(touch.clientX + adjustX) / _worldManager.getScale(),
-									(touch.clientY + adjustY) / _worldManager.getScale()
-								)
-							)
-					}
-				}
-			}
+			_touches.forEach(touch => handleTouchUpdate(touch, countTick))
 		}
 		else {
-			if (_drawPointerLocation) {
-				drawMouseLocation()
-			}
-
-			if (_isMouseDown) {
-				const screenButton = downOnScreenButton(_mouseX, _mouseY)
-				if (screenButton !== null) {
-					if (!screenButton.isButtonDown) {
-						screenButton.isButtonDown = true
-						if (screenButton.onMouseDown !== undefined) {
-							screenButton.onMouseDown(_mouseEvent)
-						}
-					}
-					else if (screenButton.keepPressed && countTick % _worldManager.getTickMod() === 0) {
-						screenButton.onMouseDown(_mouseEvent)
-					}
-				}
-				else if (_enableDrag && _mouseDownOnEntity) {
-					const { adjustX, adjustY } = _worldManager.getCameraAdjust()
-
-					if (_mouseJoint.length === 0) {
-						const bodies = getBodyAtMouseTouch(_mouseX + adjustX, _mouseY + adjustY)
-
-						// TODO - maybe use lambda with filter here
-						for (let i = 0; i < bodies.length; i++) {
-							const body = bodies[i]
-							if (body.GetUserData().draggable) {
-								_mouseJoint.push(createMouseJoint(body, _mouseX + adjustX, _mouseY + adjustY))
-							}
-						}
-					}
-
-					if (_mouseJoint.length > 0) {
-						// TODO - maybe use lambda here
-						for (let i = 0; i < _mouseJoint.length; i++)
-							_mouseJoint[i].SetTarget(
-								new box2d.b2Vec2(
-									(_mouseX + adjustX) / _worldManager.getScale(),
-									(_mouseY + adjustY) / _worldManager.getScale()
-								)
-							)
-					}
-				}
-			}
+			handleMouseUpdate(countTick)
 		}
 	}
 
 	MultiTouchHandler.prototype.getEntitiesAtMouseTouch = function (e) {
-		let x, y
-		if (_touchable) {
-			x = e.clientX
-			y = e.clientY
-		}
-		else {
-			x = e.x
-			y = e.y
-		}
-
+		const x = _touchable ? e.clientX : e.x
+		const y = _touchable ? e.clientY : e.y
 		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
 
-		const bodies = getBodyAtMouseTouch(x + adjustX, y + adjustY)
 		const entities = []
-		// TODO - maybe use lambda here
-		for (let i = 0; i < bodies.length; i++) {
-			const entity = _worldManager.getEntityByItsBody(bodies[i])
-			entities.push(entity)
-		}
+		getBodyAtMouseTouch(x + adjustX, y + adjustY)
+			.map(body => _worldManager.getEntityByItsBody(body))
+			.forEach(entity => entities.push(entity))
 
 		return entities
+	}
+
+	function handleTouchUpdate(touch, countTick) {
+		if (_drawPointerLocation) {
+			drawTouchLocation(touch)
+		}
+
+		const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
+		if (screenButton !== null) {
+			if (screenButton.touchId === undefined) {
+				screenButton.isButtonDown = true
+				screenButton.touchId = touch.identifier
+				if (screenButton.onMouseDown !== undefined) {
+					screenButton.onMouseDown(touch)
+				}
+			}
+			else if (touch.identifier === screenButton.touchId && screenButton.keepPressed &&
+				screenButton.isButtonDown && screenButton.onMouseDown !== undefined &&
+				countTick % _worldManager.getTickMod() === 0) {
+				screenButton.onMouseDown(touch)
+			}
+		}
+		else if (_enableDrag && _touchesDownOnEntity[touch.identifier]) {
+			const { adjustX, adjustY } = _worldManager.getCameraAdjust()
+
+			if (_touchJoints[touch.identifier] === undefined) {
+				_touchJoints[touch.identifier] = []
+
+				getBodyAtMouseTouch(touch.clientX + adjustX, touch.clientY + adjustY)
+					.filter(body => body.GetUserData().draggable)
+					.forEach(body => _touchJoints[touch.identifier].push(createMouseJoint(body, touch.clientX + adjustX, touch.clientY + adjustY)))
+			}
+
+			_touchJoints[touch.identifier].forEach(touchJoint => touchJoint.SetTarget(
+				new box2d.b2Vec2(
+					(touch.clientX + adjustX) / _worldManager.getScale(),
+					(touch.clientY + adjustY) / _worldManager.getScale()
+				)
+			))
+		}
+	}
+
+	function handleMouseUpdate(countTick) {
+		if (_drawPointerLocation) {
+			drawMouseLocation()
+		}
+
+		if (_mouse.down) {
+			const screenButton = downOnScreenButton(_mouse.x, _mouse.y)
+			if (screenButton !== null) {
+				if (!screenButton.isButtonDown) {
+					screenButton.isButtonDown = true
+					if (screenButton.onMouseDown !== undefined) {
+						screenButton.onMouseDown(_mouse.event)
+					}
+				}
+				else if (screenButton.keepPressed && countTick % _worldManager.getTickMod() === 0) {
+					screenButton.onMouseDown(_mouse.event)
+				}
+			}
+			else if (_enableDrag && _mouse.onEntity) {
+				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
+
+				if (_mouseJoints.length === 0) {
+					getBodyAtMouseTouch(_mouse.x + adjustX, _mouse.y + adjustY)
+						.filter(body => body.GetUserData().draggable)
+						.forEach(body => _mouseJoints.push(createMouseJoint(body, _mouse.x + adjustX, _mouse.y + adjustY)))
+				}
+
+				_mouseJoints.forEach(mouseJoint => mouseJoint.SetTarget(
+					new box2d.b2Vec2(
+						(_mouse.x + adjustX) / _worldManager.getScale(),
+						(_mouse.y + adjustY) / _worldManager.getScale()
+					)
+				))
+			}
+		}
 	}
 
 	function onTouchStart(e) {
 		e.preventDefault()
 		_touches = e.touches
 
-		// TODO - maybe use lambda here
-		for (let i = 0; i < e.changedTouches.length; i++) {
-			const touch = e.changedTouches[i]
+		e.changedTouches.forEach(touch => {
 			const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
 
 			if (screenButton === null) {
 				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
-
 				const bodies = getBodyAtMouseTouch(touch.clientX + adjustX, touch.clientY + adjustY)
 				if (bodies.length > 0) {
 					_touchesDownOnEntity[touch.identifier] = true
@@ -241,106 +223,90 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				else if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchStart(touch)
 				}
-
 				if (_userOnMouseDown !== undefined) {
 					_userOnMouseDown(touch)
 				}
 			}
-		}
+		})
 	}
 
 	function onTouchMove(e) {
 		e.preventDefault()
 		_touches = e.touches
 
-		// TODO - maybe use lambda here
-		for (let i = 0; i < e.changedTouches.length; i++) {
-			const touch = e.changedTouches[i]
+		e.changedTouches.forEach(touch => {
 			const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
 
-			for (let j = 0; j < _screenButtons.length; j++) {
-				const sb = _screenButtons[j]
-				if (sb.isButtonDown && sb !== screenButton) {
+			_screenButtons
+				.filter(sb => sb.isButtonDown && sb !== screenButton)
+				.forEach(sb => {
 					sb.touchId = undefined
 					sb.isButtonDown = false
 					if (sb.onMouseUp !== undefined) {
 						sb.onMouseUp(touch)
 					}
-				}
-			}
+				})
 
 			if (screenButton === null) {
 				if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchMove(touch)
 				}
-
 				if (_userOnMouseMove !== undefined) {
 					_userOnMouseMove(touch)
 				}
 			}
-		}
+		})
 	}
 
 	function onTouchEnd(e) {
 		e.preventDefault()
 		_touches = e.touches
 
-		// TODO - maybe use lambda here
-		for (let i = 0; i < e.changedTouches.length; i++) {
-			const touch = e.changedTouches[i]
+		e.changedTouches.forEach(touch => {
 			_touchesDownOnEntity[touch.identifier] = false
 
 			let touchOnScreenButton = false
-			// TODO - maybe use lambda here
-			for (let j = 0; j < _screenButtons.length; j++) {
-				const screenButton = _screenButtons[j]
-
-				if (screenButton.touchId === touch.identifier) {
+			_screenButtons
+				.filter(sb => sb.touchId === touch.identifier)
+				.forEach(sb => {
 					touchOnScreenButton = true
-
-					screenButton.isButtonDown = false
-					screenButton.touchId = undefined
-					if (screenButton.onMouseUp !== undefined) {
-						screenButton.onMouseUp(touch)
+					sb.isButtonDown = false
+					sb.touchId = undefined
+					if (sb.onMouseUp !== undefined) {
+						sb.onMouseUp(touch)
 					}
-				}
-			}
+				})
 
 			if (!touchOnScreenButton) {
 				if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchEnd(touch)
 				}
-
 				if (_userOnMouseUp !== undefined) {
 					_userOnMouseUp(touch)
 				}
 			}
 
-			for (let p in _touchesJoint) {
+			for (let p in _touchJoints) {
 				if (p === touch.identifier) {
-					// TODO - maybe use lambda  here
-					for (let j = 0; j < _touchesJoint[p].length; j++) {
-						_worldManager.getWorld().DestroyJoint(_touchesJoint[p][j])
-					}
-					delete _touchesJoint[p]
+					_touchJoints[p].forEach(touchJoint => _worldManager.getWorld().DestroyJoint(touchJoint))
+					delete _touchJoints[p]
 				}
 			}
-		}
+		})
 	}
 
 	function onMouseDown(e) {
 		e.preventDefault()
+		_mouse.event = e
+		_mouse.down = true
 
-		_mouseEvent = e
-		_isMouseDown = true
-
-		const screenButton = downOnScreenButton(_mouseX, _mouseY)
+		const screenButton = downOnScreenButton(_mouse.x, _mouse.y)
 		if (screenButton === null) {
 			const { adjustX, adjustY } = _worldManager.getCameraAdjust()
-			
-			const bodies = getBodyAtMouseTouch(_mouseX + adjustX, _mouseY + adjustY)
+
+			const bodies = getBodyAtMouseTouch(_mouse.x + adjustX, _mouse.y + adjustY)
 			if (bodies.length > 0) {
-				_mouseDownOnEntity = true
+				_mouse.onEntity = true
 			}
 			else if (_sliceHandler !== undefined && _enableSlice) {
 				_sliceHandler.onMouseDown(e)
@@ -350,32 +316,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				_userOnMouseDown(e)
 			}
 		}
-
 	}
 
 	function onMouseMove(e) {
 		e.preventDefault()
+		_mouse.x = e.x - _canvasPosition.x
+		_mouse.y = e.y - _canvasPosition.y
 
-		_mouseX = e.x - _canvasPosition.x
-		_mouseY = e.y - _canvasPosition.y
+		const screenButton = downOnScreenButton(_mouse.x, _mouse.y)
 
-		const screenButton = downOnScreenButton(_mouseX, _mouseY)
-
-		for (let i = 0; i < _screenButtons.length; i++) {
-			const sb = _screenButtons[i]
-			if (sb.isButtonDown && sb !== screenButton) {
+		_screenButtons
+			.filter(sb => sb.isButtonDown && sb !== screenButton)
+			.forEach(sb => {
 				sb.isButtonDown = false
 				if (sb.onMouseUp !== undefined) {
 					sb.onMouseUp(e)
 				}
-			}
-		}
+			})
 
 		if (screenButton === null) {
 			if (_sliceHandler !== undefined && _enableSlice) {
 				_sliceHandler.onMouseMove(e)
 			}
-
 			if (_userOnMouseMove !== undefined) {
 				_userOnMouseMove(e)
 			}
@@ -385,41 +347,33 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function onMouseUp(e) {
 		e.preventDefault()
 
-		_mouseEvent = undefined
-		_isMouseDown = false
-		_mouseDownOnEntity = false
+		_mouse.event = undefined
+		_mouse.down = false
+		_mouse.onEntity = false
 
 		let mouseOnScreenButton = false
-		// TODO - maybe use lambda here
-		for (let i = 0; i < _screenButtons.length; i++) {
-			const screenButton = _screenButtons[i]
-
-			if (screenButton.isButtonDown) {
+		_screenButtons
+			.filter(sb => sb.isButtonDown)
+			.forEach(sb => {
 				mouseOnScreenButton = true
-
-				screenButton.isButtonDown = false
-				if (screenButton.onMouseUp !== undefined) {
-					screenButton.onMouseUp(e)
+				sb.isButtonDown = false
+				if (sb.onMouseUp !== undefined) {
+					sb.onMouseUp(e)
 				}
-			}
-		}
+			})
 
 		if (!mouseOnScreenButton) {
 			if (_sliceHandler !== undefined && _enableSlice) {
 				_sliceHandler.onMouseUp(e)
 			}
-
 			if (_userOnMouseUp) {
 				_userOnMouseUp(e)
 			}
 		}
 
-		if (_mouseJoint.length > 0) {
-			// TODO - maybe use lambda here
-			for (let i = 0; i < _mouseJoint.length; i++) {
-				_worldManager.getWorld().DestroyJoint(_mouseJoint[i])
-			}
-			_mouseJoint = []
+		if (_mouseJoints.length > 0) {
+			_mouseJoints.forEach(mouseJoint => _worldManager.getWorld().DestroyJoint(mouseJoint))
+			_mouseJoints = []
 		}
 	}
 
@@ -433,10 +387,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		md.target.Set(x, y)
 		md.collideConnected = true
 		md.maxForce = 300.0 * body.GetMass()
-		const mouseJoint = _worldManager.getWorld().CreateJoint(md)
-		body.SetAwake(true)
 
-		return mouseJoint
+		body.SetAwake(true)
+		return _worldManager.getWorld().CreateJoint(md)
 	}
 
 	function drawTouchLocation(touch) {
@@ -477,8 +430,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function drawMouseLocation() {
-		const x = _mouseX
-		const y = _mouseY
+		const x = _mouse.x
+		const y = _mouse.y
 		const radius = _pointerRadius * _worldManager.getScale()
 		const halfSquare = _halfSquare * _worldManager.getScale()
 
@@ -542,7 +495,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		return _selectedBodies
 	}
 
-	// TODO - improve this method
 	function getBodyCB(fixture) {
 		if (fixture.GetBody().GetType() !== box2d.b2Body.b2_staticBody) {
 			if (_pointerAccurate) {

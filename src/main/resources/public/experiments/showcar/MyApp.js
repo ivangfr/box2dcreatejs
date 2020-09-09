@@ -132,12 +132,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			events: {
 				left: () => {
-					car.frontTire.getB2Body().ApplyForce(new box2d.b2Vec2(-500, 0), { x: 1, y: 1 })
-					// car.frontTire.getB2Body().SetAngularVelocity(-70)
+					car.frontTire.getB2Body().SetAngularVelocity(-70)
 				},
 				right: () => {
-					car.frontTire.getB2Body().ApplyForce(new box2d.b2Vec2(500, 0), { x: 1, y: 1 })
-					// car.frontTire.getB2Body().SetAngularVelocity(70)
+					car.frontTire.getB2Body().SetAngularVelocity(70)
 				}
 			}
 		})

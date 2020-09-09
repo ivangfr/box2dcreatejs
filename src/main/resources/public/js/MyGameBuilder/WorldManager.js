@@ -511,7 +511,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		if (!(body instanceof box2d.b2Body)) {
 			throw new Error(arguments.callee.name + " : invalid value for body!")
 		}
-		return _entities.filter(entity => entity.b2body === body)[0]
+		let entity
+		for (let i = 0; i < _entities.length; i++) {
+			if (_entities[i].b2body == body) {
+				entity = _entities[i]
+				break
+			}
+		}
+		if (!entity) {
+			console.warn("Cannot find an entity with the body informed!", body)
+		}
+		return entity
 	}
 
 	//================================================================================================

@@ -31,6 +31,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					'../../images/leftarrow.png',
 					'../../images/rightarrow.png',
 					'../../images/ball.png',
+					'../../images/box.jpg',
 				],
 				onComplete: testButtonPressed
 			}
@@ -39,7 +40,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	function testButtonPressed() {
 		createWorldLimits()
-		createSmallBalls(250)
+		createBalls(200)
 
 		_worldManager.createScreenButton({
 			x: 810, y: 478,
@@ -73,7 +74,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderRadius: 10
 				}
 			},
-			onmousedown: () => createSoccerBall()
+			onmousedown: () => createBox()
 		})
 
 		_worldManager.createKeyboardHandler({
@@ -88,29 +89,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				keepPressed: true
 			},
 			50: { // 2
-				onkeydown: () => createSoccerBall()
+				onkeydown: () => createBox()
+			},
+			65: { // a
+				onkeydown: () => {
+					const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
+					_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
+				}
 			}
 		})
 
 		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			pointerRadius: 20,
 			pointerAccurate: false,
-			drawPointerLocation: true,
-			onmousedown: function (e) {
-				multiTouchHandler.getEntitiesAtMouseTouch(e)
-					.forEach(entity => _worldManager.deleteEntity(entity))
-			},
-			onmousemove: function (e) {
-				const x = e.x || e.clientX
-				const y = e.y || e.clientY
-				document.getElementById("output").innerHTML = x + ':' + y
-
-				if (!multiTouchHandler.isTouchable() && !multiTouchHandler.isMouseDown()) {
-					return
-				}
-				multiTouchHandler.getEntitiesAtMouseTouch(e)
-					.forEach(entity => _worldManager.deleteEntity(entity))
-			}
+			drawPointerLocation: true
 		})
 	}
 
@@ -156,7 +148,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 	}
 
-	function createSmallBalls(number) {
+	function createBalls(number) {
 		for (let i = 0; i < number; i++) {
 			_worldManager.createEntity({
 				type: 'dynamic',
@@ -181,16 +173,35 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'dynamic',
 			x: 50, y: 100,
 			shape: 'circle',
-			circleOpts: { radius: 25 },
+			circleOpts: { radius: 20 },
 			render: {
 				type: 'image',
 				imageOpts: {
 					image: '../../images/ball.png',
 					adjustImageSize: true
 				}
-			}
+			},
+			bodyDefOpts: { angularVelocity: 150 }
 		})
-		ball.b2body.ApplyImpulse(new box2d.b2Vec2(-300, 0), ball.b2body.GetWorldCenter())
+		ball.b2body.ApplyImpulse(new box2d.b2Vec2(50, 0), ball.b2body.GetWorldCenter())
+	}
+
+	function createBox() {
+		const box = _worldManager.createEntity({
+			type: 'dynamic',
+			x: 50, y: 100, angle: 25,
+			shape: 'box',
+			boxOpts: { width: 40, height: 40 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/box.jpg',
+					adjustImageSize: true
+				}
+			},
+			bodyDefOpts: { angularVelocity: 150 }
+		})
+		box.b2body.ApplyImpulse(new box2d.b2Vec2(50, 0), box.b2body.GetWorldCenter())
 	}
 
 }())

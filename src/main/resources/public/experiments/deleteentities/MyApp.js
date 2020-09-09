@@ -1,7 +1,7 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	
+
 	let _worldManager
 
 	function MyApp() {
@@ -28,58 +28,27 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testDeleteEntities() {
 
 		createWorldLimits()
-
-		createToys(30)
-
-		const square = _worldManager.createEntity({
-			type: 'dynamic',
-			x: 400, y: 250,
-			shape: 'box',
-			boxOpts: { width: 60, height: 60 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' },
-					borderWidth: 2,
-					borderColor: 'black'
-				}
-			},
-			noGravity: true
-		})
-
-		const ball = _worldManager.createEntity({
-			type: 'dynamic',
-			x: Math.random() * 980,
-			y: Math.random() * 500,
-			shape: 'circle',
-			circleOpts: { radius: 30 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' },
-					borderWidth: 2,
-					borderColor: 'black'
-				}
-			},
-			group: 'ball',
-			noGravity: true
-		})
-
-		_worldManager.createLink({
-			entityA: square,
-			entityB: ball,
-			type: 'revolute',
-			localAnchorA: { x: 0, y: 2 }
-		})
+		createBalls(300)
+		createBoxes(150)
 
 		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+			pointerRadius: 20,
+			pointerAccurate: false,
 			drawPointerLocation: true,
-			onmousedown: (e) => {
+			onmousedown: function (e) {
 				multiTouchHandler.getEntitiesAtMouseTouch(e)
 					.filter(entity => entity.getGroup() === 'ball')
 					.forEach(entity => _worldManager.deleteEntity(entity))
+			},
+			onmousemove: function (e) {
+				const x = e.x || e.clientX
+				const y = e.y || e.clientY
+
+				if (multiTouchHandler.isTouchable() || multiTouchHandler.isMouseDown()) {
+					multiTouchHandler.getEntitiesAtMouseTouch(e)
+						.filter(entity => entity.getGroup() === 'ball')
+						.forEach(entity => _worldManager.deleteEntity(entity))
+				}
 			}
 		})
 
@@ -91,7 +60,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
 			},
 			65: { // a
-				onkeydown: () => _worldManager.deleteEntity(square)
+				onkeydown: () => {
+					const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
+					_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
+				}
 			}
 		})
 	}
@@ -138,24 +110,49 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 	}
 
-	function createToys(number) {
+	function createBalls(number) {
 		for (let i = 0; i < number; i++) {
 			_worldManager.createEntity({
 				type: 'dynamic',
 				x: Math.random() * 980,
 				y: Math.random() * 500,
 				shape: 'circle',
-				circleOpts: { radius: 30 },
+				circleOpts: { radius: 10 },
 				render: {
 					type: 'draw',
 					drawOpts: {
 						bgColorStyle: 'solid',
 						bgSolidColorOpts: { color: 'teal' },
 						borderWidth: 2,
-						borderColor: 'black'
+						borderColor: 'black',
+						cache: true
 					}
 				},
 				group: 'ball'
+			})
+		}
+	}
+
+	function createBoxes(number) {
+		for (let i = 0; i < number; i++) {
+			_worldManager.createEntity({
+				type: 'dynamic',
+				x: Math.random() * 980,
+				y: Math.random() * 500,
+				shape: 'box',
+				boxOpts: { width: 20, height: 20 },
+				render: {
+					type: 'draw',
+					drawOpts: {
+						bgColorStyle: 'solid',
+						bgSolidColorOpts: { color: 'white' },
+						borderWidth: 2,
+						borderColor: 'black',
+						cache: true
+					}
+				},
+				draggable: false,
+				group: 'box'
 			})
 		}
 	}

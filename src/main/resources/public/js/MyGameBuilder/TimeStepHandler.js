@@ -53,8 +53,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 			if (timeStepHandler.view) {
 				const { adjustX, adjustY } = _worldManager.getCameraAdjust()
-				timeStepHandler.view.x += adjustX
-				timeStepHandler.view.y += adjustY
+				timeStepHandler.view.x -= adjustX
+				timeStepHandler.view.y -= adjustY
 
 				_easeljsStage.removeChild(timeStepHandler.view)
 			}
