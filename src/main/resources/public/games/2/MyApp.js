@@ -121,8 +121,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createKeyboardHandler({
-			68: { //d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) }
 			}
 		})
 

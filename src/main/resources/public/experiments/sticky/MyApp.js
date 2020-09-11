@@ -62,33 +62,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960)
-			},
-			37: { // left arrow
-				onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(-100, 0), shooter.b2body.GetWorldCenter()),
-				keepPressed: true
-			},
-			38: { // up arrow
-				onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(0, -100), shooter.b2body.GetWorldCenter()),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(100, 0), shooter.b2body.GetWorldCenter()),
-				keepPressed: true
-			},
-			40: { // down arrow
-				onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(0, 100), shooter.b2body.GetWorldCenter()),
-				keepPressed: true
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960) },
+				ArrowLeft: {
+					onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(-100, 0), shooter.b2body.GetWorldCenter()),
+					keepPressed: true
+				},
+				ArrowUp: {
+					onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(0, -100), shooter.b2body.GetWorldCenter()),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(100, 0), shooter.b2body.GetWorldCenter()),
+					keepPressed: true
+				},
+				ArrowDown: {
+					onkeydown: () => shooter.b2body.ApplyForce(new box2d.b2Vec2(0, 100), shooter.b2body.GetWorldCenter()),
+					keepPressed: true
+				}
 			}
 		})
 

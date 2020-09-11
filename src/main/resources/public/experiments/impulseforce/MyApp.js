@@ -54,31 +54,22 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		let direction = 1
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			49: { // 1
-				onkeydown: () => tire.getB2Body().ApplyForce(new box2d.b2Vec2(direction * 5000, 0), tire.b2body.GetWorldCenter()),
-				keepPressed: true
-			},
-			50: { // 2
-				onkeydown: () => tire.getB2Body().ApplyImpulse(new box2d.b2Vec2(direction * 500, 0), tire.b2body.GetWorldCenter())
-			},
-			51: { // 3
-				onkeydown: () => tire.getB2Body().ApplyForce(new box2d.b2Vec2(direction * 500, 0), { x: 1, y: 1 }),
-				keepPressed: true
-			},
-			52: { // 4
-				onkeydown: () => tire.getB2Body().ApplyImpulse(new box2d.b2Vec2(direction * 50, 0), { x: 1, y: 1 })
-			},
-			37: { // left arrow
-				onkeydown: () => direction = -1
-			},
-			39: { // right arrow
-				onkeydown: ()  => direction = 1
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				1: { // 1
+					onkeydown: () => tire.getB2Body().ApplyForce(new box2d.b2Vec2(direction * 5000, 0), tire.b2body.GetWorldCenter()),
+					keepPressed: true
+				},
+				2: { onkeydown: () => tire.getB2Body().ApplyImpulse(new box2d.b2Vec2(direction * 500, 0), tire.b2body.GetWorldCenter()) },
+				3: {
+					onkeydown: () => tire.getB2Body().ApplyForce(new box2d.b2Vec2(direction * 500, 0), { x: 1, y: 1 }),
+					keepPressed: true
+				},
+				4: { onkeydown: () => tire.getB2Body().ApplyImpulse(new box2d.b2Vec2(direction * 50, 0), { x: 1, y: 1 }) },
+				ArrowLeft: { onkeydown: () => direction = -1 },
+				ArrowRight: { onkeydown: () => direction = 1 }
 			}
 		})
 	}

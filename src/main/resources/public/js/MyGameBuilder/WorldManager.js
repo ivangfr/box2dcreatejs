@@ -593,6 +593,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_fpsIndicator.x = -x + 10
 		_fpsIndicator.y = -y + 10
 
+		if (_keyboardHandler) {
+			const keyboardHintText = _keyboardHandler.getKeyboardHintText();
+			if (keyboardHintText) {
+				keyboardHintText.x = -x + keyboardHintText.x0
+				keyboardHintText.y = -y + keyboardHintText.y0
+			}
+		}
+
 		_screenButtons.forEach(screenButton => {
 			if (screenButton.view !== undefined) {
 				screenButton.view.x = -x + screenButton.view.x0
@@ -674,6 +682,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		if (details !== undefined) {
+			// TODO - should validate if details is an object?
 			for (let p in details) {
 				if (_validWorldManagerDef.indexOf(p) < 0) {
 					throw new Error(arguments.callee.name + " : the detail (" + p + ") is not supported! Valid definitions: " + _validWorldManagerDef)

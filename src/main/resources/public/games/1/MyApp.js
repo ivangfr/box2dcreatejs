@@ -185,28 +185,22 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
-			},
-			37: { // left arrow
-				onkeydown: (e) => player.anticlockwise(e)
-			},
-			38: { // up arrow
-				onkeydown: (e) => player.foward(e),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: (e) => player.clockwise(e)
-			},
-			40: { // down arrow
-				onkeydown: (e) => player.backward(e),
-				keepPressed: true
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
+				ArrowLeft: { onkeydown: (e) => player.anticlockwise(e) },
+				ArrowUp: {
+					onkeydown: (e) => player.foward(e),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: (e) => player.clockwise(e)
+				},
+				ArrowDown: {
+					onkeydown: (e) => player.backward(e),
+					keepPressed: true
+				}
 			}
 		})
 

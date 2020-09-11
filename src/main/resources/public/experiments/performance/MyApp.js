@@ -1,7 +1,7 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	
+
 	let _worldManager
 
 	function MyApp() {
@@ -41,29 +41,23 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const balls = createBalls(250)
 
 		_worldManager.createKeyboardHandler({
-			65: { // a
-				onkeydown: () => _worldManager.getZoomHandler().zoomIn()
+			keyboardHint: {
+				enabled: true,
+				color: 'black'
 			},
-			83: { // s
-				onkeydown: () => _worldManager.getZoomHandler().zoomOut()
-			},
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			70: {
-				onkeydown: () => {
-					const screenHandler = _worldManager.getScreenHandler()
-					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
-				}
-			},
-			49: { // 1
-				onkeydown: () => balls.forEach(ball => ball.changeScale(1.1))
-			},
-			50: { // 2
-				onkeydown: () => balls.forEach(ball => ball.changeScale(0.9))
+			keys: {
+				a: { onkeydown: () => _worldManager.getZoomHandler().zoomIn() },
+				s: { onkeydown: () => _worldManager.getZoomHandler().zoomOut() },
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				f: {
+					onkeydown: () => {
+						const screenHandler = _worldManager.getScreenHandler()
+						screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
+					}
+				},
+				1: { onkeydown: () => balls.forEach(ball => ball.changeScale(1.1)) },
+				2: { onkeydown: () => balls.forEach(ball => ball.changeScale(0.9)) }
 			}
 		})
 

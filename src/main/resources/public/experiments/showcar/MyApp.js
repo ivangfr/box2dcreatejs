@@ -45,7 +45,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		createLandscape()
 		createWorldLimits()
-
 		const car = createCar()
 
 		const timeStepHandler = _worldManager.createTimeStepHandler({
@@ -70,56 +69,31 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		const screenHandler = _worldManager.createScreenHandler()
-
 		const zoomHandler = _worldManager.createZoomHandler({ max: 1.1, min: 0.5, step: 0.1 })
 
 		_worldManager.createKeyboardHandler({
-			65: { // a
-				onkeydown: () => zoomHandler.zoomIn()
+			keyboardHint: {
+				enabled: true,
+				color: 'black'
 			},
-			83: { // s
-				onkeydown: () => zoomHandler.zoomOut()
-			},
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
-			},
-			70: { // f
-				onkeydown: () => screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
-			},
-			37: { // left arrow
-				onkeydown: () => _worldManager.getPlayer().left(),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => _worldManager.getPlayer().right(),
-				keepPressed: true
-			},
-			49: { // 1
-				onkeydown: () => {
-					car.chassis.changeScale(1.1)
-					car.backTire.changeScale(1.1)
-					car.frontTire.changeScale(1.1)
-					car.link1.changeScale(1.1)
-					car.link2.changeScale(1.1)
-				}
-			},
-			50: { // 2
-				onkeydown: () => {
-					car.chassis.changeScale(0.9)
-					car.backTire.changeScale(0.9)
-					car.frontTire.changeScale(0.9)
-					car.link1.changeScale(0.9)
-					car.link2.changeScale(0.9)
-				}
+			keys: {
+				a: { onkeydown: () => zoomHandler.zoomIn() },
+				s: { onkeydown: () => zoomHandler.zoomOut() },
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
+				f: { onkeydown: () => screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen() },
+				ArrowLeft: {
+					onkeydown: () => _worldManager.getPlayer().left(),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => _worldManager.getPlayer().right(),
+					keepPressed: true
+				},
+				1: { onkeydown: () => changeCarScale(car, 1.1) },
+				2: { onkeydown: () => changeCarScale(car, 0.9) }
 			}
 		})
 
@@ -345,6 +319,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		return { chassis, backTire, frontTire, link1, link2 }
+	}
+
+	function changeCarScale(car, scale) {
+		car.chassis.changeScale(scale)
+		car.backTire.changeScale(scale)
+		car.frontTire.changeScale(scale)
+		car.link1.changeScale(scale)
+		car.link2.changeScale(scale)
 	}
 
 }())

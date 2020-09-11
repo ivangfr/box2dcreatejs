@@ -78,23 +78,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			49: { // 1
-				onkeydown: () => createSoccerBall(),
-				keepPressed: true
-			},
-			50: { // 2
-				onkeydown: () => createBox()
-			},
-			65: { // a
-				onkeydown: () => {
-					const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
-					_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				1: { // 1
+					onkeydown: () => createSoccerBall(),
+					keepPressed: true
+				},
+				2: { onkeydown: () => createBox() },
+				a: {
+					onkeydown: () => {
+						const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
+						_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
+					}
 				}
 			}
 		})

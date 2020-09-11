@@ -183,24 +183,20 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createKeyboardHandler({
-			68: { //d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			38: { //up arrow
-				onkeydown: () => _player.up(),
-				onkeyup: () => _player.upNormal(),
-				keepPressed: true
-			},
-			40: { //down arrow
-				onkeydown: () => _player.down(),
-				onkeyup: () => _player.downNormal(),
-				keepPressed: true
-			},
-			65: { //a
-				onkeydown: () => _player.fire()
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				ArrowUp: {
+					onkeydown: () => _player.up(),
+					onkeyup: () => _player.upNormal(),
+					keepPressed: true
+				},
+				ArrowDown: {
+					onkeydown: () => _player.down(),
+					onkeyup: () => _player.downNormal(),
+					keepPressed: true
+				},
+				a: { onkeydown: () => _player.fire() }
 			}
 		})
 

@@ -63,62 +63,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const contactHandler = _worldManager.createContactHandler({
 			breakOpts: { numCuts: 2 },
 			beginContact: function (contact) {
-				const bodyA = contact.GetFixtureA().GetBody()
-				const bodyB = contact.GetFixtureB().GetBody()
-				const bodyAUserData = bodyA.GetUserData()
-				const bodyBUserData = bodyB.GetUserData()
-
-				if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'block') ||
-					(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'block')) {
-					let block, projectile
-					if (bodyAUserData.group === 'block') {
-						block = _worldManager.getEntityByItsBody(bodyA)
-						projectile = _worldManager.getEntityByItsBody(bodyB)
-					}
-					else {
-						block = _worldManager.getEntityByItsBody(bodyB)
-						projectile = _worldManager.getEntityByItsBody(bodyA)
-					}
-
-					const worldManifold = new Box2D.Collision.b2WorldManifold()
-					contact.GetWorldManifold(worldManifold)
-
-					const vel1 = projectile.b2body.GetLinearVelocity()
-					const vel2 = block.b2body.GetLinearVelocity()
-					const impactVelocity = box2d.b2Math.SubtractVV(vel1, vel2)
-					const approachVelocity = box2d.b2Math.Dot(worldManifold.m_normal, impactVelocity)
-					const impulse = Math.abs(approachVelocity * projectile.b2body.GetMass())
-
-					if (impulse > 10) {
-						let angle = Math.atan2(vel1.y, vel1.x)
-						angle *= 180 / Math.PI
-
-						const angles = []
-						angles.push(angle)
-						angles.push(angle - 25)
-						angles.push(angle + 25)
-
-						let x = worldManifold.m_points[0].x
-						if (worldManifold.m_points[1].x > 0) {
-							x = (x + worldManifold.m_points[1].x) / 2
-						}
-						x *= _worldManager.getScale()
-
-						let y = worldManifold.m_points[0].y
-						if (worldManifold.m_points[1].y > 0) {
-							y = (y + worldManifold.m_points[1].y) / 2
-						}
-						y *= _worldManager.getScale()
-
-						const numCuts = Math.round(impulse / 20)
-
-						const output = document.getElementById("output")
-						output.innerHTML += ' - numCuts ' + numCuts
-
-						contactHandler.getBreakHandler().setNumCuts(numCuts)
-						contactHandler.addEntityToBeBroken(block, x, y, angles)
-					}
-				}
+				fnBeginContact(contactHandler, contact)
 			},
 			preSolve: function (contact) { },
 			postSolve: function (contact, impulse) { },
@@ -126,33 +71,28 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
-			},
-			37: { // left arrow
-				onkeydown: () => player.left(),
-				keepPressed: true
-			},
-			38: { // up arrow
-				onkeydown: () => player.up(),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => player.right(),
-				keepPressed: true
-			},
-			40: { // down arrow
-				onkeydown: () => player.down(),
-				keepPressed: true
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
+				ArrowLeft: {
+					onkeydown: () => player.left(),
+					keepPressed: true
+				},
+				ArrowUp: {
+					onkeydown: () => player.up(),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => player.right(),
+					keepPressed: true
+				},
+				ArrowDown: {
+					onkeydown: () => player.down(),
+					keepPressed: true
+				}
 			}
 		})
 
@@ -398,6 +338,61 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			draggable: false,
 			noGravity: true
 		})
+	}
+
+	function fnBeginContact(contactHandler, contact) {
+		const bodyA = contact.GetFixtureA().GetBody()
+		const bodyB = contact.GetFixtureB().GetBody()
+		const bodyAUserData = bodyA.GetUserData()
+		const bodyBUserData = bodyB.GetUserData()
+
+		if ((bodyAUserData.name === 'projectile' && bodyBUserData.group === 'block') ||
+			(bodyBUserData.name === 'projectile' && bodyAUserData.group === 'block')) {
+			let block, projectile
+			if (bodyAUserData.group === 'block') {
+				block = _worldManager.getEntityByItsBody(bodyA)
+				projectile = _worldManager.getEntityByItsBody(bodyB)
+			}
+			else {
+				block = _worldManager.getEntityByItsBody(bodyB)
+				projectile = _worldManager.getEntityByItsBody(bodyA)
+			}
+
+			const worldManifold = new Box2D.Collision.b2WorldManifold()
+			contact.GetWorldManifold(worldManifold)
+
+			const vel1 = projectile.b2body.GetLinearVelocity()
+			const vel2 = block.b2body.GetLinearVelocity()
+			const impactVelocity = box2d.b2Math.SubtractVV(vel1, vel2)
+			const approachVelocity = box2d.b2Math.Dot(worldManifold.m_normal, impactVelocity)
+			const impulse = Math.abs(approachVelocity * projectile.b2body.GetMass())
+
+			if (impulse > 10) {
+				let angle = Math.atan2(vel1.y, vel1.x)
+				angle *= 180 / Math.PI
+
+				const angles = []
+				angles.push(angle)
+				angles.push(angle - 250 * Math.random())
+				angles.push(angle + 250 * Math.random())
+
+				let x = worldManifold.m_points[0].x
+				if (worldManifold.m_points[1].x > 0) {
+					x = (x + worldManifold.m_points[1].x) / 2
+				}
+				x *= _worldManager.getScale()
+
+				let y = worldManifold.m_points[0].y
+				if (worldManifold.m_points[1].y > 0) {
+					y = (y + worldManifold.m_points[1].y) / 2
+				}
+				y *= _worldManager.getScale()
+
+				const numCuts = Math.round(impulse / 20)
+				contactHandler.getBreakHandler().setNumCuts(numCuts)
+				contactHandler.addEntityToBeBroken(block, x, y, angles)
+			}
+		}
 	}
 
 }())

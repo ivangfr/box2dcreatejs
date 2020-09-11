@@ -1,7 +1,7 @@
 this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
-	
+
 	let _worldManager
 
 	function MyApp() {
@@ -45,23 +45,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960)
-			},
-			65: { // a
-				onkeydown: () => grenade1.explode()
-			},
-			83: { // s
-				onkeydown: () => grenade2.explode()
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 1960 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(1960) },
+				a: { onkeydown: () => grenade1.explode() },
+				s: { onkeydown: () => grenade2.explode() }
 			}
 		})
 

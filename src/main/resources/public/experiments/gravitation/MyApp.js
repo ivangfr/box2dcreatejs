@@ -43,27 +43,26 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createLandscapeAndWorldLimits()
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			37: { // left arrow
-				onkeydown: () => player.left(),
-				keepPressed: true
-			},
-			38: { // up arrow
-				onkeydown: () => player.up(),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => player.right(),
-				keepPressed: true
-			},
-			40: { // down arrow
-				onkeydown: () => player.down(),
-				keepPressed: true
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				ArrowLeft: {
+					onkeydown: () => player.left(),
+					keepPressed: true
+				},
+				ArrowUp: {
+					onkeydown: () => player.up(),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => player.right(),
+					keepPressed: true
+				},
+				ArrowDown: {
+					onkeydown: () => player.down(),
+					keepPressed: true
+				}
 			}
 		})
 

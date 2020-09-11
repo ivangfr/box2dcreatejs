@@ -53,73 +53,63 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_worldManager.createKeyboardHandler({
-			// -- Screen
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			keyboardHint: {
+				enabled: true,
+				font: 'bold 11px Monaco'
 			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
-			},
-			70: { // f
-				onkeydown: () => {
-					const screenHandler = _worldManager.getScreenHandler()
-					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
-				}
-			},
-
-			// -- Ken
-			37: { // left arrow
-				onkeydown: () => {
-					ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
-					ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(-1500, 0), ken.b2body.GetWorldCenter())
-				},
-				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => {
-					ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
-					ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(1500, 0), ken.b2body.GetWorldCenter())
-				},
-				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
-				keepPressed: true
-			},
-			38: { // up arrow
-				onkeydown: () => {
-					if (ken.b2body.view.currentAnimation === "idle") {
-						ken.b2body.view.gotoAndPlay("jump")
-						ken.b2body.ApplyImpulse(new box2d.b2Vec2(0, -150), ken.b2body.GetWorldCenter())
+			keys: {
+				// -- Screen
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
+				f: {
+					onkeydown: () => {
+						const screenHandler = _worldManager.getScreenHandler()
+						screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
 					}
-				}
-			},
-			40: { // down arrow
-				onkeydown: () => ken.b2body.view.gotoAndPlay("squat"),
-				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
-			},
-			65: { // a
-				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("kick")
-			},
-			83: { // s
-				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("highkick")
-			},
-			90: { // z
-				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("haduken")
-			},
-			88: { // x
-				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("punch")
-			},
+				},
 
-			// -- Grenade
-			67: { // c
-				onkeydown: () => {
-					ball.b2body.view.gotoAndPlay("explode")
-					boy.b2body.view.gotoAndPlay("jump")
+				// -- Ken
+				ArrowLeft: {
+					onkeydown: () => {
+						ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
+						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(-1500, 0), ken.b2body.GetWorldCenter())
+					},
+					onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => {
+						ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
+						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(1500, 0), ken.b2body.GetWorldCenter())
+					},
+					onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
+					keepPressed: true
+				},
+				ArrowUp: {
+					onkeydown: () => {
+						if (ken.b2body.view.currentAnimation === "idle") {
+							ken.b2body.view.gotoAndPlay("jump")
+							ken.b2body.ApplyImpulse(new box2d.b2Vec2(0, -150), ken.b2body.GetWorldCenter())
+						}
+					}
+				},
+				ArrowDown: {
+					onkeydown: () => ken.b2body.view.gotoAndPlay("squat"),
+					onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
+				},
+				a: { onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("kick") },
+				s: { onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("highkick") },
+				z: { onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("haduken") },
+				x: { onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("punch") },
+
+				// -- Grenade
+				c: {
+					onkeydown: () => {
+						ball.b2body.view.gotoAndPlay("explode")
+						boy.b2body.view.gotoAndPlay("jump")
+					}
 				}
 			}
 		})

@@ -31,16 +31,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createPinsAndBlocks()
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			65: { // a
-				onkeydown: () => {
-					const wind = _worldManager.getWind()
-					wind.isOn() ? wind.stop() : wind.start()
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				a: {
+					onkeydown: () => {
+						const wind = _worldManager.getWind()
+						wind.isOn() ? wind.stop() : wind.start()
+					}
 				}
 			}
 		})

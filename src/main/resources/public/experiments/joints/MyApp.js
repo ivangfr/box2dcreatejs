@@ -41,20 +41,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function testJoints() {
+		createWorldLimits()
+		createCar()
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
+			keyboardHint: {
+				enabled: true,
+				x: 440
 			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) }
 			}
 		})
 
 		_worldManager.createMultiTouchHandler()
-
-		createWorldLimits()
-		createCar()
 	}
 
 	function createWorldLimits() {

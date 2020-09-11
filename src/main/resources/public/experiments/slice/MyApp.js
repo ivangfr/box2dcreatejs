@@ -56,30 +56,25 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			80: { // p
-				onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause()
-			},
-			79: { // o
-				onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980)
-			},
-			65: { // a
-				onkeydown: () => {
-					valDrag = !multiTouchHandler.getEnableDrag()
-					multiTouchHandler.setEnableDrag(valDrag)
-					output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
-				}
-			},
-			83: { // s
-				onkeydown: () => {
-					valSlice = !multiTouchHandler.getEnableSlice()
-					multiTouchHandler.setEnableSlice(valSlice)
-					output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				p: { onkeydown: () => timeStepHandler.isPaused() ? timeStepHandler.play() : timeStepHandler.pause() },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
+				a: {
+					onkeydown: () => {
+						valDrag = !multiTouchHandler.getEnableDrag()
+						multiTouchHandler.setEnableDrag(valDrag)
+						output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
+					}
+				},
+				s: {
+					onkeydown: () => {
+						valSlice = !multiTouchHandler.getEnableSlice()
+						multiTouchHandler.setEnableSlice(valSlice)
+						output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
+					}
 				}
 			}
 		})

@@ -48,40 +48,39 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createKeyboardHandler({
-			68: { // d
-				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
-			},
-			82: { // r
-				onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender())
-			},
-			49: { // 1
-				onkeydown: () => {
-					const playerCamera = _playerSelected.getCamera()
-					if (playerCamera.getXAxisOn()) {
-						playerCamera.setXAxisOn(false)
-						playerCamera.setAdjustX(490 - player.getPosition().x)
+			keyboardHint: { enabled: true },
+			keys: {
+				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				1: {
+					onkeydown: () => {
+						const playerCamera = _playerSelected.getCamera()
+						if (playerCamera.getXAxisOn()) {
+							playerCamera.setXAxisOn(false)
+							playerCamera.setAdjustX(490 - player.getPosition().x)
+						}
+						else {
+							playerCamera.setXAxisOn(true)
+							playerCamera.setAdjustX(490)
+						}
 					}
-					else {
-						playerCamera.setXAxisOn(true)
-						playerCamera.setAdjustX(490)
-					}
+				},
+				ArrowLeft: {
+					onkeydown: () => _playerSelected.left(),
+					keepPressed: true
+				},
+				ArrowUp: {
+					onkeydown: () => _playerSelected.up(),
+					keepPressed: true
+				},
+				ArrowRight: {
+					onkeydown: () => _playerSelected.right(),
+					keepPressed: true
+				},
+				ArrowDown: {
+					onkeydown: () => _playerSelected.down(),
+					keepPressed: true
 				}
-			},
-			37: { // left arrow
-				onkeydown: () => _playerSelected.left(),
-				keepPressed: true
-			},
-			38: { // up arrow
-				onkeydown: () => _playerSelected.up(),
-				keepPressed: true
-			},
-			39: { // right arrow
-				onkeydown: () => _playerSelected.right(),
-				keepPressed: true
-			},
-			40: { // down arrow
-				onkeydown: () => _playerSelected.down(),
-				keepPressed: true
 			}
 		})
 
