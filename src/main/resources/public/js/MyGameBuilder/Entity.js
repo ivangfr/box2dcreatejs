@@ -146,8 +146,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			details.angle = 0
 		}
 
-		const b2body = createBox2dBody(details)
-		entity.b2body = b2body
+		entity.b2body = createBox2dBody(details)
 
 		let view = null
 		if (details.render !== undefined) {
@@ -188,77 +187,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createBox2dBody(details) {
-		let shape, radius, width, height, points
-		shape = details.shape
-		if (shape === 'circle') {
-			radius = details.circleOpts.radius
-		}
-		else if (shape === 'box') {
-			width = details.boxOpts.width
-			height = details.boxOpts.height
-		}
-		else if (shape === 'polygon') {
-			points = details.polygonOpts.points
-		}
+		const fixtureDef = createFixtureDef(details)
+		const bodyDef = createBodyDef(details)
 
-		const fixDef = new box2d.b2FixtureDef
+		const body = _worldManager.getWorld().CreateBody(bodyDef)
+		body.CreateFixture(fixtureDef)
+		return body
+	}
 
-		if (shape === 'circle') {
-			fixDef.shape = new box2d.b2CircleShape(radius / _worldManager.getScale())
-		}
-		else if (shape === 'box') {
-			fixDef.shape = new box2d.b2PolygonShape()
-			fixDef.shape.SetAsBox(width / 2 / _worldManager.getScale(), height / 2 / _worldManager.getScale())
-		}
-		else if (shape === 'polygon') {
-			const center = findCentroid(points).center
-			let vertices = []
-			for (let i = 0; i < points.length; i++) {
-				const point = points[i]
-				point.x -= center.x
-				point.y -= center.y
-
-				const vertice = new box2d.b2Vec2()
-				vertice.Set(point.x / _worldManager.getScale(), point.y / _worldManager.getScale())
-				vertices[i] = vertice
-			}
-			vertices = arrangeClockwise(vertices)
-
-			fixDef.shape = new box2d.b2PolygonShape()
-			fixDef.shape.SetAsArray(vertices, vertices.length)
-		}
-
-		if (details.fixtureDefOpts === undefined) {
-			details.fixtureDefOpts = {}
-		}
-
-		fixDef.density = (details.fixtureDefOpts.density !== undefined) ? details.fixtureDefOpts.density : 1.0
-		fixDef.friction = (details.fixtureDefOpts.friction !== undefined) ? details.fixtureDefOpts.friction : 1.0
-		fixDef.restitution = (details.fixtureDefOpts.restitution !== undefined) ? details.fixtureDefOpts.restitution : 0.5
-		fixDef.isSensor = (details.fixtureDefOpts.isSensor !== undefined) ? details.fixtureDefOpts.isSensor : false
-
-		fixDef.userData = {}
-		fixDef.userData.isFluid = false
-		if (details.fixtureDefOpts.isFluid !== undefined) {
-			fixDef.userData.isFluid = details.fixtureDefOpts.isFluid
-			fixDef.isSensor = fixDef.userData.isFluid
-		}
-		fixDef.userData.dragConstant = (details.fixtureDefOpts.dragConstant !== undefined) ? details.fixtureDefOpts.dragConstant : 0.25
-		fixDef.userData.liftConstant = (details.fixtureDefOpts.liftConstant !== undefined) ? details.fixtureDefOpts.liftConstant : 0.25
-		fixDef.userData.isSticky = (details.fixtureDefOpts.isSticky !== undefined) ? details.fixtureDefOpts.isSticky : false
-		fixDef.userData.isTarget = (details.fixtureDefOpts.isTarget !== undefined) ? details.fixtureDefOpts.isTarget : false
-		fixDef.userData.hardness = (details.fixtureDefOpts.hardness !== undefined) ? details.fixtureDefOpts.hardness : 1
-
-		if (details.fixtureDefOpts.filterGroupIndex !== undefined) {
-			fixDef.filter.groupIndex = details.fixtureDefOpts.filterGroupIndex
-		}
-		if (details.fixtureDefOpts.filterCategoryBits !== undefined) {
-			fixDef.filter.categoryBits = details.fixtureDefOpts.filterCategoryBits
-		}
-		if (details.fixtureDefOpts.filterMaskBits !== undefined) {
-			fixDef.filter.maskBits = details.fixtureDefOpts.filterMaskBits
-		}
-
+	function createBodyDef(details) {
 		const bodyDef = new box2d.b2BodyDef()
 
 		bodyDef.type = (details.type === 'static' || details.type === 'dynamic' || details.type === 'kinematic') ?
@@ -313,17 +250,81 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		details.userData.id = id
 		details.userData.name = details.name
 		details.userData.group = details.group
-		details.userData.shape = shape
+		details.userData.shape = details.shape
 		details.userData.render = details.render
 		details.userData.draggable = details.draggable
 		details.userData.sliceable = details.sliceable
 		details.userData.noGravity = details.noGravity
 
 		bodyDef.userData = details.userData
-		const body = _worldManager.getWorld().CreateBody(bodyDef)
-		body.CreateFixture(fixDef)
+		
+		return bodyDef
+	}
 
-		return body
+	function createFixtureDef(details) {
+		const fixDef = new box2d.b2FixtureDef
+
+		if (details.shape === 'circle') {
+			const radius = details.circleOpts.radius
+			fixDef.shape = new box2d.b2CircleShape(radius / _worldManager.getScale())
+		}
+		else if (details.shape === 'box') {
+			const width = details.boxOpts.width
+			const height = details.boxOpts.height
+			fixDef.shape = new box2d.b2PolygonShape()
+			fixDef.shape.SetAsBox(width / 2 / _worldManager.getScale(), height / 2 / _worldManager.getScale())
+		}
+		else if (details.shape === 'polygon') {
+			const points = details.polygonOpts.points
+			const center = findCentroid(points).center
+			let vertices = []
+			for (let i = 0; i < points.length; i++) {
+				const point = points[i]
+				point.x -= center.x
+				point.y -= center.y
+
+				const vertice = new box2d.b2Vec2()
+				vertice.Set(point.x / _worldManager.getScale(), point.y / _worldManager.getScale())
+				vertices[i] = vertice
+			}
+			vertices = arrangeClockwise(vertices)
+
+			fixDef.shape = new box2d.b2PolygonShape()
+			fixDef.shape.SetAsArray(vertices, vertices.length)
+		}
+
+		if (details.fixtureDefOpts === undefined) {
+			details.fixtureDefOpts = {}
+		}
+
+		fixDef.density = (details.fixtureDefOpts.density !== undefined) ? details.fixtureDefOpts.density : 1.0
+		fixDef.friction = (details.fixtureDefOpts.friction !== undefined) ? details.fixtureDefOpts.friction : 1.0
+		fixDef.restitution = (details.fixtureDefOpts.restitution !== undefined) ? details.fixtureDefOpts.restitution : 0.5
+		fixDef.isSensor = (details.fixtureDefOpts.isSensor !== undefined) ? details.fixtureDefOpts.isSensor : false
+
+		fixDef.userData = {}
+		fixDef.userData.isFluid = false
+		if (details.fixtureDefOpts.isFluid !== undefined) {
+			fixDef.userData.isFluid = details.fixtureDefOpts.isFluid
+			fixDef.isSensor = fixDef.userData.isFluid
+		}
+		fixDef.userData.dragConstant = (details.fixtureDefOpts.dragConstant !== undefined) ? details.fixtureDefOpts.dragConstant : 0.25
+		fixDef.userData.liftConstant = (details.fixtureDefOpts.liftConstant !== undefined) ? details.fixtureDefOpts.liftConstant : 0.25
+		fixDef.userData.isSticky = (details.fixtureDefOpts.isSticky !== undefined) ? details.fixtureDefOpts.isSticky : false
+		fixDef.userData.isTarget = (details.fixtureDefOpts.isTarget !== undefined) ? details.fixtureDefOpts.isTarget : false
+		fixDef.userData.hardness = (details.fixtureDefOpts.hardness !== undefined) ? details.fixtureDefOpts.hardness : 1
+
+		if (details.fixtureDefOpts.filterGroupIndex !== undefined) {
+			fixDef.filter.groupIndex = details.fixtureDefOpts.filterGroupIndex
+		}
+		if (details.fixtureDefOpts.filterCategoryBits !== undefined) {
+			fixDef.filter.categoryBits = details.fixtureDefOpts.filterCategoryBits
+		}
+		if (details.fixtureDefOpts.filterMaskBits !== undefined) {
+			fixDef.filter.maskBits = details.fixtureDefOpts.filterMaskBits
+		}
+
+		return fixDef
 	}
 
 	function getBodyDefType(type) {

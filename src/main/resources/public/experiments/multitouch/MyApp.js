@@ -79,8 +79,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				spriteSheetOpts: {
 					spriteData: {
 						images: ['../../images/explosion.png'],
-						animations: { 'normal': [0], 'explode': [1, 47, 'normal'] },
-						frames: { 'height': 256, 'width': 256 }
+						animations: {
+							normal: 0,
+							explode: [1, 47, 'normal']
+						},
+						frames: { width: 256, height: 256 }
 					},
 					startAnimation: 'normal'
 				}
@@ -89,7 +92,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		_worldManager.createMultiTouchHandler({
-			drawPointerLocation: true,
+			debugTouchMouseLocation: true,
 			onmousedown: function () {
 				document.getElementById("output").innerHTML = 'MOUSEDOWN'
 			},

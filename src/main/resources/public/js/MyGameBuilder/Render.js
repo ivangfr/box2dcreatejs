@@ -7,16 +7,25 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function Render() { }
 
 	const _validRenderDef = ['z', 'type', 'opacity', 'action', 'filters', 'drawOpts', 'imageOpts', 'spriteSheetOpts']
+	
 	const _validRenderTypeDef = ['draw', 'image', 'spritesheet']
+	
 	const _validRenderDrawOptsDef = ['borderWidth', 'borderColor', 'borderRadius', 'bgColorStyle', 'bgSolidColorOpts', 'bgLinearGradientOpts', 'bgRadialGradientOpts', 'bgImage', 'repeatBgImage', 'adjustBgImageSize', 'cache', 'textOpts']
+	
 	const _validRenderImageOptsDef = ['image', 'adjustImageSize']
 	const _validRenderRepeatBgImageDef = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y']
+	
 	const _validRenderBgColorStyleDef = ['transparent', 'solid', 'linearGradient', 'radialGradient']
 	const _validRenderBgColorStyleSolidColorOptsDef = ['color']
 	const _validRenderBgColorStyleLinearGradientOptsDef = ['colors', 'ratios', 'x0', 'y0', 'x1', 'y1']
 	const _validRenderBgColorStyleRadialGradientOptsDef = ['colors', 'ratios', 'x0', 'y0', 'r0', 'x1', 'y1', 'r1']
+	
 	const _validRenderSpriteSheetOptsDef = ['startAnimation', 'spriteData', 'adjustImageSize']
 	const _validRenderSpriteSheetDataDef = ['animations', 'frames', 'images']
+	// For more information about attibutes in details.spriteSheetOpts.spriteData.animations,
+	// details.spriteSheetOpts.spriteData.frames or details.spriteSheetOpts.spriteData.images,
+	// see https://www.createjs.com/docs/easeljs/classes/SpriteSheet.html
+	
 	const _validRenderTextOptsDef = ['text', 'font', 'color']
 
 	let _worldManager
@@ -164,7 +173,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		const spriteSheet = new createjs.SpriteSheet(spriteData)
-		spriteSheet.animations.forEach(animation => animation.speed0 = 1)
+		spriteSheet.animations
+			.map(name => spriteSheet.getAnimation(name))
+			.forEach(animation => {
+				animation.speed0 = animation.speed
+			})
 
 		const view = new createjs.Sprite(spriteSheet)
 		view.render0 = details

@@ -28,6 +28,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					color: 'white'
 				},
 				files: [
+					'../../images/ken.png',
 					'../../images/runningGrant.png',
 					'../../images/explosion.png',
 					'../../images/leftarrow.png',
@@ -41,61 +42,18 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testSpriteSheet() {
 		createWorldLimits()
 
-		const boy = _worldManager.createEntity({
-			type: 'dynamic',
-			x: 400, y: 250,
-			shape: 'box',
-			boxOpts: { width: 60, height: 90 },
-			render: {
-				type: 'spritesheet',
-				spriteSheetOpts: {
-					spriteData: {
-						images: ['../../images/runningGrant.png'],
-						animations: { 'run': [0, 25], 'jump': [26, 63, 'run'] },
-						frames: { 'height': 292.5, 'width': 165.75 }
-					},
-					startAnimation: 'run',
-					adjustImageSize: true
-				},
-			},
-			bodyDefOpts: { fixedRotation: true },
-			fixtureDefOpts: { friction: 0.2 }
-		})
-
-		const ball = _worldManager.createEntity({
-			type: 'dynamic',
-			x: 300, y: 250,
-			shape: 'circle',
-			circleOpts: { radius: 20 },
-			render: {
-				type: 'spritesheet',
-				spriteSheetOpts: {
-					spriteData: {
-						images: ['../../images/explosion.png'],
-						animations: { 'normal': [0], 'explode': [1, 47, 'normal'] },
-						frames: { 'height': 256, 'width': 256 }
-					},
-					startAnimation: 'normal'
-				}
-			},
-			bodyDefOpts: { fixedRotation: true }
-		})
+		const ken = createKen()
+		const ball = createBall()
+		const boy = createBoy()
 
 		_worldManager.createMultiTouchHandler()
 
 		_worldManager.createScreenHandler()
 
-		const timeStepHandler = _worldManager.createTimeStepHandler({
-			layer: {
-				render: {
-					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.3
-				}
-			}
-		})
+		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_worldManager.createKeyboardHandler({
+			// -- Screen
 			68: { // d
 				onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug())
 			},
@@ -114,19 +72,55 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					screenHandler.isFullScreen() ? screenHandler.showNormalCanvasSize() : screenHandler.showFullScreen()
 				}
 			},
-			65: { // a
-				onkeydown: () => ball.b2body.view.gotoAndPlay("explode")
-			},
+
+			// -- Ken
 			37: { // left arrow
-				onkeydown: () => boy.b2body.ApplyForce(new box2d.b2Vec2(-500, 0), boy.b2body.GetWorldCenter()),
+				onkeydown: () => {
+					ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
+					ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(-1500, 0), ken.b2body.GetWorldCenter())
+				},
+				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
+				keepPressed: true
+			},
+			39: { // right arrow
+				onkeydown: () => {
+					ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
+					ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(1500, 0), ken.b2body.GetWorldCenter())
+				},
+				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
 				keepPressed: true
 			},
 			38: { // up arrow
-				onkeydown: () => boy.b2body.view.gotoAndPlay("jump")
+				onkeydown: () => {
+					if (ken.b2body.view.currentAnimation === "idle") {
+						ken.b2body.view.gotoAndPlay("jump")
+						ken.b2body.ApplyImpulse(new box2d.b2Vec2(0, -150), ken.b2body.GetWorldCenter())
+					}
+				}
 			},
-			39: { // right arrow
-				onkeydown: () => boy.b2body.ApplyForce(new box2d.b2Vec2(500, 0), boy.b2body.GetWorldCenter()),
-				keepPressed: true
+			40: { // down arrow
+				onkeydown: () => ken.b2body.view.gotoAndPlay("squat"),
+				onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
+			},
+			65: { // a
+				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("kick")
+			},
+			83: { // s
+				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("highkick")
+			},
+			90: { // z
+				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("haduken")
+			},
+			88: { // x
+				onkeydown: () => ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("punch")
+			},
+
+			// -- Grenade
+			67: { // c
+				onkeydown: () => {
+					ball.b2body.view.gotoAndPlay("explode")
+					boy.b2body.view.gotoAndPlay("jump")
+				}
 			}
 		})
 
@@ -227,6 +221,91 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
 			render: staticRender
+		})
+	}
+
+	function createKen() {
+		return _worldManager.createEntity({
+			type: 'dynamic',
+			x: 200, y: 350,
+			shape: 'box',
+			boxOpts: { width: 144, height: 152 },
+			render: {
+				type: 'spritesheet',
+				spriteSheetOpts: {
+					spriteData: {
+						images: ['../../images/ken.png'],
+						animations: {
+							idle: [6, 9, 'idle', 0.1],
+							walk: [18, 22, 'walk', 0.1],
+							haduken: [0, 3, 'idle', 0.2],
+							punch: [12, 14, 'idle', 0.25],
+							kick: [37, 40, 'idle', 0.25],
+							highkick: [42, 46, 'idle', 0.25],
+							jump: [48, 53, 'idle', 0.1],
+							squat: 54
+						},
+						frames: { width: 71, height: 80 }
+					},
+					startAnimation: 'idle',
+					adjustImageSize: true
+				},
+			},
+			bodyDefOpts: { fixedRotation: true },
+			fixtureDefOpts: {
+				friction: 0.1,
+				restitution: 0.01
+			}
+		})
+	}
+
+	function createBall() {
+		return _worldManager.createEntity({
+			type: 'dynamic',
+			x: 500, y: 250,
+			shape: 'circle',
+			circleOpts: { radius: 20 },
+			render: {
+				type: 'spritesheet',
+				spriteSheetOpts: {
+					spriteData: {
+						images: ['../../images/explosion.png'],
+						animations: {
+							normal: 0,
+							explode: [1, 47, 'normal']
+						},
+						frames: { width: 256, height: 256 }
+					},
+					startAnimation: 'normal'
+				}
+			},
+			bodyDefOpts: { fixedRotation: true }
+		})
+	}
+
+	function createBoy() {
+		return _worldManager.createEntity({
+			type: 'dynamic',
+			x: 700, y: 250,
+			shape: 'box',
+			boxOpts: { width: 60, height: 90 },
+			render: {
+				type: 'spritesheet',
+				spriteSheetOpts: {
+					spriteData: {
+						images: ['../../images/runningGrant.png'],
+						animations: {
+							run: [0, 25],
+							jump: [26, 63, 'run']
+						},
+						frames: { width: 165.75, height: 292.5 }
+					},
+					startAnimation: 'run',
+					adjustImageSize: true
+				},
+			},
+			bodyDefOpts: { fixedRotation: true },
+			fixtureDefOpts: { friction: 0.1 }
 		})
 	}
 

@@ -59,15 +59,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			noGravity: true
 		})
 
-		const timeStepHandler = _worldManager.createTimeStepHandler({
-			layer: {
-				render: {
-					type: 'draw',
-					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.3
-				}
-			}
-		})
+		const timeStepHandler = _worldManager.createTimeStepHandler()
 
 		_worldManager.createKeyboardHandler({
 			68: { // d
@@ -102,7 +94,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		let mouseX, mouseY
 		_worldManager.createMultiTouchHandler({
-			drawPointerLocation: true,
+			debugTouchMouseLocation: true,
 			onmousedown: function () {
 				const shooterX = shooter.getPosition().x
 				const shooterY = shooter.getPosition().y
@@ -136,8 +128,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 							bgSolidColorOpts: { color: 'black' }
 						}
 					},
-					bodyDefOpts: { bullet: false },
-					fixtureDefOpts: { density: 15, restitution: 0.1, isSticky: true, filterGroupIndex: -1 }
+					bodyDefOpts: { bullet: true },
+					fixtureDefOpts: {
+						density: 15,
+						restitution: 0.1,
+						isSticky: true,
+						filterGroupIndex: -1
+					}
 				})
 
 				bullet.b2body.ApplyImpulse(new box2d.b2Vec2(dirX, dirY), bullet.b2body.GetWorldCenter())

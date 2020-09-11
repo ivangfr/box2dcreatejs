@@ -150,7 +150,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				spriteSheet.animations
 					.map(name => spriteSheet.getAnimation(name))
 					.forEach(animation => {
-						animation.speed = (fps === _normalFPS) ? animation.speed0 : _normalFPS / fps
+						animation.speed = (fps === _normalFPS) ? animation.speed0 : animation.speed0 * _normalFPS / fps
 					})
 			})
 	}

@@ -102,7 +102,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const multiTouchHandler = _worldManager.createMultiTouchHandler({
 			pointerRadius: 20,
 			pointerAccurate: false,
-			drawPointerLocation: true
+			debugTouchMouseLocation: true
 		})
 	}
 

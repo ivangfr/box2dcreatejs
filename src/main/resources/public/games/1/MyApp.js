@@ -108,7 +108,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			createButtonsForMobile(player)
 		}
 
-		const timeStepHandler = _worldManager.createTimeStepHandler()
+		const timeStepHandler = _worldManager.createTimeStepHandler({
+			layer: {
+				render: {
+					type: 'draw',
+					drawOpts: { bgColorStyle: 'solid' },
+					opacity: 0.2
+				}
+			}
+		})
 
 		_soundHandler = _worldManager.createSoundHandler()
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 0.3 })

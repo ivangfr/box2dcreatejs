@@ -8,12 +8,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		initialize(worldManager, details)
 	}
 
-	const _validMultiTouchHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'drawPointerLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
+	const _validMultiTouchHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'debugTouchMouseLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
 
 	let _worldManager
 	let _canvasPosition
 	let _screenButtons
-	let _drawPointerLocation
+	let _debugTouchMouseLocation
 	let _selectedBodies, _mousePVec, _halfSquare
 	let _userOnMouseDown, _userOnMouseUp, _userOnMouseMove
 
@@ -69,7 +69,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			_sliceHandler = new MyGameBuilder.SliceHandler(worldManager, _sliceOpts)
 		}
 
-		_drawPointerLocation = (details && details.drawPointerLocation !== undefined) ? details.drawPointerLocation : false
+		_debugTouchMouseLocation = (details && details.debugTouchMouseLocation !== undefined) ? details.debugTouchMouseLocation : false
 
 		_pointerRadius = _halfSquare = 1.0 / worldManager.getScale()
 		if (details && details.pointerRadius !== undefined) {
@@ -131,7 +131,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function handleTouchUpdate(touch, countTick) {
-		if (_drawPointerLocation) {
+		if (_worldManager.getEnableDebug() && _worldManager.getTimeStep() !== 0 && _debugTouchMouseLocation) {
 			drawTouchLocation(touch)
 		}
 
@@ -171,7 +171,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function handleMouseUpdate(countTick) {
-		if (_drawPointerLocation) {
+		if (_worldManager.getEnableDebug() && _worldManager.getTimeStep() !== 0 && _debugTouchMouseLocation) {
 			drawMouseLocation()
 		}
 
@@ -530,8 +530,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.enableSlice !== undefined && typeof details.enableSlice !== 'boolean') {
 				throw new Error(arguments.callee.name + " : enableSlice must be a true/false!")
 			}
-			if (details.drawPointerLocation !== undefined && typeof details.drawPointerLocation !== 'boolean') {
-				throw new Error(arguments.callee.name + " : drawPointerLocation must be a true/false!")
+			if (details.debugTouchMouseLocation !== undefined && typeof details.debugTouchMouseLocation !== 'boolean') {
+				throw new Error(arguments.callee.name + " : debugTouchMouseLocation must be a true/false!")
 			}
 			if (details.pointerRadius !== undefined && (typeof details.pointerRadius !== 'number' || details.pointerRadius <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid value for pointerRadius!")

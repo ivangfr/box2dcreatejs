@@ -177,7 +177,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				render: {
 					type: 'draw',
 					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.1
+					opacity: 0.2
 				}
 			}
 		})
@@ -379,8 +379,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				spriteSheetOpts: {
 					spriteData: {
 						images: ['../../images/explosion_small.png'],
-						animations: { 'normal': [47], 'explode': [1, 47, 'normal'] },
-						frames: { 'height': 64, 'width': 64 },
+						animations: {
+							normal: 47,
+							explode: [1, 47, 'normal']
+						},
+						frames: { width: 64, height: 64 },
 					},
 					startAnimation: 'explode'
 				}
@@ -515,29 +518,29 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					spriteData: {
 						images: ['../../images/aircraft.png'],
 						animations: {
-							'normal': [12],
-							'goUp': {
+							normal: 12,
+							goUp: {
 								frames: [12, 7, 2],
 								next: false,
 								speed: 0.25
 							},
-							'upNormal': {
+							upNormal: {
 								frames: [2, 7, 12],
 								next: false,
 								speed: 0.25
 							},
-							'goDown': {
+							goDown: {
 								frames: [12, 17, 22],
 								next: false,
 								speed: 0.25
 							},
-							'downNormal': {
+							downNormal: {
 								frames: [22, 17, 12],
 								next: false,
 								speed: 0.25
 							}
 						},
-						frames: { 'height': 100, 'width': 100 }
+						frames: { width: 100, height: 100 }
 					},
 					startAnimation: 'normal'
 				}
@@ -657,9 +660,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					spriteData: {
 						images: ['../../images/ufo.png'],
 						animations: {
-							'normal': [0, 5, 'normal', 0.25]
+							normal: [0, 5, 'normal', 0.25]
 						},
-						frames: { 'height': 84, 'width': 84 }
+						frames: { width: 84, height: 84 }
 					},
 					startAnimation: 'normal'
 				}

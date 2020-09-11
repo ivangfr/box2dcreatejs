@@ -131,7 +131,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				render: {
 					type: 'draw',
 					drawOpts: { bgColorStyle: 'solid' },
-					opacity: 0.1
+					opacity: 0.2
 				}
 			}
 		})
@@ -256,21 +256,21 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					spriteData: {
 						images: ['../../images/fish.png'],
 						animations: {
-							'normalLeft': [0, 9, 'normalLeft', 0.25],
-							'normalRight': [19],
-							'turnRight': [10, 19, 'normalRight', 0.25],
-							'turnLeft': {
+							normalLeft: [0, 9, 'normalLeft', 0.25],
+							normalRight: [19],
+							turnRight: [10, 19, 'normalRight', 0.25],
+							turnLeft: {
 								frames: [19, 18, 17, 16, 15, 14, 13, 12, 11, 10],
-								next: "normalLeft",
+								next: 'normalLeft',
 								speed: 0.25
 							},
-							'turnLeftDie': {
+							turnLeftDie: {
 								frames: [19, 18, 17, 16, 15, 14, 13, 12, 11, 10],
 								next: "die",
 								speed: 0.25
 							},
-							'die': [20, 39, 'dead', 0.25],
-							'dead': [39]
+							die: [20, 39, 'dead', 0.25],
+							dead: [39]
 						},
 						frames: { 'height': 85, 'width': 80 }
 					},

@@ -3,7 +3,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 (function () {
 
 	let _worldManager
-	let _mouseX, _mouseY
 
 	function MyApp() {
 		this.initialize()
@@ -29,6 +28,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testWind() {
 		createWorldLimits()
 		createToys()
+		createPinsAndBlocks()
 
 		_worldManager.createKeyboardHandler({
 			68: { // d
@@ -42,24 +42,16 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					const wind = _worldManager.getWind()
 					wind.isOn() ? wind.stop() : wind.start()
 				}
-			},
-			83: { // s
-				onkeydown: () => createNewToy()
 			}
 		})
 
-		_worldManager.createMultiTouchHandler({
-			onmousemove: (e) => {
-				_mouseX = e.x
-				_mouseY = e.y
-			}
-		})
+		_worldManager.createMultiTouchHandler()
 
 		// Wind
 		_worldManager.createWind({
 			numRays: 50,
 			power: 2000,
-			on: true,
+			on: false,
 			directionTo: 'right',
 			adjustY: 100,
 			height: 500
@@ -189,22 +181,133 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 	}
 
-	function createNewToy(e) {
-		_worldManager.createEntity({
-			type: 'dynamic',
-			x: _mouseX,
-			y: _mouseY,
-			shape: 'circle',
-			circleOpts: { radius: 20 },
-			render: {
-				type: 'draw',
-				drawOpts: {
-					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'orange' },
-					borderWidth: 1,
-					borderColor: 'black'
-				}
+	function createPinsAndBlocks() {
+		const blockRender = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'orange' },
+				borderWidth: 1,
+				borderColor: 'black'
 			}
+		}
+
+		const pinRender = {
+			type: 'draw',
+			drawOpts: {
+				bgColorStyle: 'solid',
+				bgSolidColorOpts: { color: 'black' }
+			}
+		}
+
+		// This function will make the blocks to stop rotating
+		function simulateAirResistence() {
+			const area = getArea(this.b2body.m_fixtureList.m_shape.m_vertices)
+			this.b2body.ApplyTorque(area * -this.b2body.GetAngularVelocity())
+		}
+
+		const block1 = _worldManager.createEntity({
+			type: 'dynamic',
+			x: 200, y: 150,
+			shape: 'box',
+			boxOpts: { width: 20, height: 100 },
+			render: blockRender,
+			events: {
+				ontick: simulateAirResistence
+			}
+		})
+
+		const pin1 = _worldManager.createEntity({
+			type: 'static',
+			x: 200, y: 150,
+			shape: 'circle',
+			circleOpts: { radius: 5 },
+			render: pinRender
+		})
+
+		_worldManager.createLink({
+			entityA: block1,
+			entityB: pin1,
+			type: 'revolute',
+			localAnchorA: { x: 0, y: -1.4 }
+		})
+
+		const block2 = _worldManager.createEntity({
+			type: 'dynamic',
+			x: 400, y: 200,
+			shape: 'box',
+			boxOpts: { width: 10, height: 100 },
+			render: blockRender,
+			events: {
+				ontick: simulateAirResistence
+			}
+		})
+
+		const pin2 = _worldManager.createEntity({
+			type: 'static',
+			x: 400, y: 200,
+			shape: 'circle',
+			circleOpts: { radius: 2.5 },
+			render: pinRender
+		})
+
+		_worldManager.createLink({
+			entityA: block2,
+			entityB: pin2,
+			type: 'revolute',
+			localAnchorA: { x: 0, y: -1.4 }
+		})
+
+		const block3 = _worldManager.createEntity({
+			type: 'dynamic',
+			x: 600, y: 100,
+			shape: 'box',
+			boxOpts: { width: 10, height: 100 },
+			render: blockRender,
+			events: {
+				ontick: simulateAirResistence
+			}
+		})
+
+		const pin3 = _worldManager.createEntity({
+			type: 'static',
+			x: 600, y: 100,
+			shape: 'circle',
+			circleOpts: { radius: 2.5 },
+			render: pinRender
+		})
+
+		_worldManager.createLink({
+			entityA: block3,
+			entityB: pin3,
+			type: 'revolute',
+			localAnchorA: { x: 0, y: 0 }
+		})
+
+		const block4 = _worldManager.createEntity({
+			type: 'dynamic',
+			x: 800, y: 200,
+			shape: 'box',
+			boxOpts: { width: 20, height: 200 },
+			render: blockRender,
+			events: {
+				ontick: simulateAirResistence
+			}
+		})
+
+		const pin4 = _worldManager.createEntity({
+			type: 'static',
+			x: 800, y: 200,
+			shape: 'circle',
+			circleOpts: { radius: 5 },
+			render: pinRender
+		})
+
+		_worldManager.createLink({
+			entityA: block4,
+			entityB: pin4,
+			type: 'revolute',
+			localAnchorA: { x: 0, y: 0 }
 		})
 	}
 

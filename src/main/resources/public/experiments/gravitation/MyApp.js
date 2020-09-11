@@ -151,8 +151,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 							spriteSheetOpts: {
 								spriteData: {
 									images: ['../../images/explosion.png'],
-									animations: { 'normal': [48], 'explode': [0, 48, 'normal'] },
-									frames: { 'height': 256, 'width': 256 },
+									animations: {
+										normal: 48,
+										explode: [0, 48, 'normal']
+									},
+									frames: { width: 256, height: 256 },
 								},
 								startAnimation: 'explode',
 								adjustImageSize: true
