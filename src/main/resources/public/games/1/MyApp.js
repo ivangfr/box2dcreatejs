@@ -35,15 +35,16 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
-			fpsIndicator: { enabled: true },
+			fpsIndicator: {
+				enabled: true,
+				color: 'black'
+			},
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
-				showLoadingIndicator: true,
 				loadingIndicatorOpts: {
-					x: 420,
-					y: 210,
-					font: 'bold italic 30px Verdana',
-					color: 'white'
+					x: 450,
+					y: 220,
+					color: 'black'
 				},
 				files: [
 					{ src: '../../sounds/blink-182_dammit.mp3', id: 'music' },

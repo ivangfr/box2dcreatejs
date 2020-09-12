@@ -13,19 +13,19 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function initialize(loading, worldManager, details) {
 		validate(worldManager, details)
 
-		const x = (details && details.x !== undefined) ? details.x : 10
-		const y = (details && details.y !== undefined) ? details.y : 30
-		const font = (details && details.font !== undefined) ? details.font : 'bold 18px Arial'
+		const x = (details && details.x !== undefined) ? details.x : worldManager.getEaseljsCanvas().width / 2
+		const y = (details && details.y !== undefined) ? details.y : worldManager.getEaseljsCanvas().height / 2
+		const font = (details && details.font !== undefined) ? details.font : 'bold 30px Monaco'
 		const color = (details && details.color !== undefined) ? details.color : 'white'
 
-		loading.view = new createjs.Text("-- %", font, color)
+		loading.view = new createjs.Text("--%", font, color)
 		loading.view.x = x
 		loading.view.y = y
 		worldManager.getEaseljsStage().addChild(loading.view)
 	}
 
 	LoadingIndicator.prototype.update = function (progress) {
-		this.view.text = progress + " %"
+		this.view.text = progress + "%"
 	}
 
 	function validate(worldManager, details) {

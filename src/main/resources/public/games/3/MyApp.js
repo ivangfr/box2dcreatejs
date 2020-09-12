@@ -38,12 +38,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fpsIndicator: { enabled: true },
 			world: new box2d.b2World(new box2d.b2Vec2(0, 0), true),
 			preLoad: {
-				showLoadingIndicator: true,
 				loadingIndicatorOpts: {
-					x: 420,
-					y: 210,
-					font: 'bold italic 30px Verdana',
-					color: 'white'
+					x: 450,
+					y: 220,
+					color: 'black'
 				},
 				files: [
 					'../../images/ufo.png',

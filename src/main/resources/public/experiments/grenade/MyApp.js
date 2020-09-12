@@ -20,13 +20,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fpsIndicator: { enabled: true },
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
-				showLoadingIndicator: true,
-				loadingIndicatorOpts: {
-					x: 420,
-					y: 210,
-					font: 'bold italic 30px Verdana',
-					color: 'white'
-				},
 				files: [
 					{ src: '../../sounds/explosion.mp3', id: 'explosion' },
 					{ src: '../../sounds/Thunder1.mp3', id: 'explosion2' },

@@ -23,12 +23,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
-				showLoadingIndicator: false,
 				loadingIndicatorOpts: {
 					x: 420,
 					y: 210,
 					font: 'bold italic 30px Verdana',
-					color: 'white'
+					color: 'black'
 				},
 				files: [
 					'../../images/tire.png',

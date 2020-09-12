@@ -206,13 +206,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.preLoad.onComplete !== undefined) {
 				_onPreLoadComplete = details.preLoad.onComplete
 			}
-			if (details.preLoad.showLoadingIndicator !== undefined) {
-				_showLoadingIndicator = details.preLoad.showLoadingIndicator
-			}
+
+			_showLoadingIndicator = (details.preLoad.showLoadingIndicator !== undefined) ? details.preLoad.showLoadingIndicator : true
 			if (_showLoadingIndicator) {
 				const loadingIndicatorOpts = (details.preLoad.loadingIndicatorOpts !== undefined) ? details.preLoad.loadingIndicatorOpts : {}
 				_loadingIndicator = new MyGameBuilder.LoadingIndicator(worldManager, loadingIndicatorOpts)
 			}
+
 			if (details.preLoad.files !== undefined) {
 				_preload = new createjs.LoadQueue(true)
 				_preload.installPlugin(createjs.Sound)
@@ -614,7 +614,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		if (_keyboardHandler) {
 			const keyboardHintText = _keyboardHandler.getKeyboardHintText();
 			if (keyboardHintText) {
-				keyboardHintText.x = keyboardHintText.x0 - x 
+				keyboardHintText.x = keyboardHintText.x0 - x
 				keyboardHintText.y = keyboardHintText.y0 - y
 			}
 		}

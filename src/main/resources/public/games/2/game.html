@@ -74,6 +74,15 @@
 			left: 350px;
 			display: none;
 		}
+
+		#keytable {
+			position: absolute;
+			top: 520px;
+			left: 10px;
+			display: none;
+			border: 1px solid #000;
+			padding: 5px;
+		}
 	</style>
 
 	<script src="../../js/Box2dWeb/Box2dWeb-2.1.a.3.js"></script>
@@ -122,6 +131,7 @@
 				}
 			}
 			else {
+				document.getElementById("keytable").style.display = 'block'
 				thisApp = new MyGameBuilder.MyApp()
 			}
 		}
@@ -138,6 +148,10 @@
 	<div id='help'></div>
 	<p id="hint"></p>
 	<p id="score"></p>
+	<div id="keytable">
+		<p><i>Keys:</i></p>
+		<p><b>d</b> : debug</p>
+	</div>
 </body>
 
 </html>
