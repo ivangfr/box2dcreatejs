@@ -32,9 +32,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		initialize(this, easeljsCanvas, box2dCanvas, details)
 	}
 
-	const _validWorldManagerDef = ['scale', 'world', 'stepOpts', 'enableRender', 'enableDebug', 'showFPSIndicator', 'tickMod', 'userOnTick', 'preLoad']
+	const _validWorldManagerDef = ['scale', 'world', 'stepOpts', 'enableRender', 'enableDebug', 'fpsIndicator', 'tickMod', 'userOnTick', 'preLoad']
 	const _validWorldManagerStepOptsDef = ['FPS', 'velocityIterations', 'positionIterations',]
 	const _validWorldManagerPreLoadDef = ['showLoadingIndicator', 'files', 'onComplete', 'loadingIndicatorOpts']
+	const _validWorldManagerFpsIndicatorDef = ['enabled', 'x', 'y', 'font', 'color']
 
 	let _scale
 	WorldManager.prototype.getScale = function () { return _scale }
@@ -127,7 +128,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	let _preload
 	WorldManager.prototype.getPreLoad = function (id, rawResult) { return _preload }
 
-	let _showFPSIndicator, _fpsIndicator
+	let _fpsIndicator, _fpsIndicatorText
 	let _loadingIndicator, _showLoadingIndicator, _loadingPercent, _onPreLoadComplete
 
 	let _FPS
@@ -165,44 +166,61 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_FPS = (details && details.stepOpts !== undefined && details.stepOpts.FPS !== undefined) ? details.stepOpts.FPS : 60
 		_timeStep = 1 / _FPS
 
+		_scale = (details && details.scale !== undefined) ? details.scale : 30
+		_world = (details && details.world !== undefined) ? details.world : new box2d.b2World(new box2d.b2Vec2(0, 9.8), true)
+		_enableRender = (details && details.enableRender !== undefined) ? details.enableRender : true
+		_enableDebug = (details && details.enableDebug !== undefined) ? details.enableDebug : false
+		_tickMod = (details && details.tickMod !== undefined) ? details.tickMod : 12
+
 		_velocityIterations = (details && details.stepOpts !== undefined && details.stepOpts.velocityIterations !== undefined) ?
 			details.stepOpts.velocityIterations : 10
 
 		_positionIterations = (details && details.stepOpts !== undefined && details.stepOpts.positionIterations !== undefined) ?
 			details.stepOpts.positionIterations : 10
 
-		_scale = (details && details.scale !== undefined) ? details.scale : 30
-		_world = (details && details.world !== undefined) ? details.world : new box2d.b2World(new box2d.b2Vec2(0, 9.8), true)
-		_enableRender = (details && details.enableRender !== undefined) ? details.enableRender : true
-		_enableDebug = (details && details.enableDebug !== undefined) ? details.enableDebug : false
-		_showFPSIndicator = (details && details.showFPSIndicator !== undefined) ? details.showFPSIndicator : false
-		_tickMod = (details && details.tickMod !== undefined) ? details.tickMod : 12
+		_fpsIndicator = {
+			enabled: false,
+			x: 10, y: 10,
+			color: 'white',
+			font: 'bold 18px Monaco'
+		}
+		if (details && details.fpsIndicator !== undefined) {
+			if (details.fpsIndicator.enabled !== undefined) {
+				_fpsIndicator.enabled = details.fpsIndicator.enabled
+			}
+			if (details.fpsIndicator.x !== undefined) {
+				_fpsIndicator.x = details.fpsIndicator.x
+			}
+			if (details.fpsIndicator.y !== undefined) {
+				_fpsIndicator.y = details.fpsIndicator.y
+			}
+			if (details.fpsIndicator.color !== undefined) {
+				_fpsIndicator.color = details.fpsIndicator.color
+			}
+			if (details.fpsIndicator.font !== undefined) {
+				_fpsIndicator.font = details.fpsIndicator.font
+			}
+		}
 
-		if (details && details.preLoad) {
+		if (details && details.preLoad !== undefined) {
 			if (details.preLoad.onComplete !== undefined) {
 				_onPreLoadComplete = details.preLoad.onComplete
 			}
-
 			if (details.preLoad.showLoadingIndicator !== undefined) {
 				_showLoadingIndicator = details.preLoad.showLoadingIndicator
 			}
-
 			if (_showLoadingIndicator) {
 				const loadingIndicatorOpts = (details.preLoad.loadingIndicatorOpts !== undefined) ? details.preLoad.loadingIndicatorOpts : {}
 				_loadingIndicator = new MyGameBuilder.LoadingIndicator(worldManager, loadingIndicatorOpts)
 			}
-
 			if (details.preLoad.files !== undefined) {
 				_preload = new createjs.LoadQueue(true)
 				_preload.installPlugin(createjs.Sound)
-
 				_preload.addEventListener("fileload", handleFileLoad)
 				_preload.addEventListener("complete", handleComplete)
 				_preload.addEventListener("error", handleError)
 				_preload.addEventListener("progress", handleProgress)
-
 				_preload.loadManifest(details.preLoad.files)
-
 				fnStart()
 			}
 		}
@@ -230,7 +248,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_onPreLoadComplete()
 
-		if (_showFPSIndicator) {
+		if (_fpsIndicator.enabled) {
 			createFPSIndicator()
 		}
 	}
@@ -254,7 +272,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	WorldManager.prototype.start = function () {
 		fnStart()
-		if (_showFPSIndicator) {
+		if (_fpsIndicator.enabled) {
 			createFPSIndicator()
 		}
 	}
@@ -269,10 +287,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createFPSIndicator() {
-		_fpsIndicator = new createjs.Text("-- fps", "bold 18px Arial", "white")
-		_fpsIndicator.x = 10
-		_fpsIndicator.y = 10
-		_easeljsStage.addChild(_fpsIndicator)
+		_fpsIndicatorText = new createjs.Text("-- fps", _fpsIndicator.font, _fpsIndicator.color)
+		_fpsIndicatorText.x = _fpsIndicatorText.x0 = _fpsIndicator.x
+		_fpsIndicatorText.y = _fpsIndicatorText.y0 = _fpsIndicator.y
+		_easeljsStage.addChild(_fpsIndicatorText)
 	}
 
 	function tick(event) {
@@ -343,8 +361,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 
 		//-- FPS Label ----------------------------------------------------------------
-		if (_fpsIndicator) {
-			_fpsIndicator.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps"
+		if (_fpsIndicatorText) {
+			_fpsIndicatorText.text = Math.round(createjs.Ticker.getMeasuredFPS()) + "fps"
 		}
 		//-----------------------------------------------------------------------------
 
@@ -590,14 +608,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_easeljsStage.setTransform(x * _canvasCtxScale, y * _canvasCtxScale, _canvasCtxScale, _canvasCtxScale)
 
-		_fpsIndicator.x = -x + 10
-		_fpsIndicator.y = -y + 10
+		_fpsIndicatorText.x = _fpsIndicatorText.x0 - x
+		_fpsIndicatorText.y = _fpsIndicatorText.y0 - y
 
 		if (_keyboardHandler) {
 			const keyboardHintText = _keyboardHandler.getKeyboardHintText();
 			if (keyboardHintText) {
-				keyboardHintText.x = -x + keyboardHintText.x0
-				keyboardHintText.y = -y + keyboardHintText.y0
+				keyboardHintText.x = keyboardHintText.x0 - x 
+				keyboardHintText.y = keyboardHintText.y0 - y
 			}
 		}
 
@@ -682,7 +700,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 
 		if (details !== undefined) {
-			// TODO - should validate if details is an object?
+			if (typeof details !== 'object') {
+				throw new Error(arguments.callee.name + " : The WorldManager details must be an object!")
+			}
 			for (let p in details) {
 				if (_validWorldManagerDef.indexOf(p) < 0) {
 					throw new Error(arguments.callee.name + " : the detail (" + p + ") is not supported! Valid definitions: " + _validWorldManagerDef)
@@ -721,14 +741,37 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.activeDebug !== undefined && typeof details.activeDebug !== 'boolean') {
 				throw new Error(arguments.callee.name + " : activeDebug must be a true/false!")
 			}
-			if (details.showFPSIndicator !== undefined && typeof details.showFPSIndicator !== 'boolean') {
-				throw new Error(arguments.callee.name + " : showFPSIndicator must be a true/false!")
-			}
 			if (details.tickMod !== undefined && (typeof details.tickMod !== 'number' || details.tickMod <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid number for tickMod!")
 			}
 			if (details.userOnTick !== undefined && typeof details.userOnTick !== 'function') {
 				throw new Error(arguments.callee.name + " : userOnTick must be a function!")
+			}
+
+			if (details.fpsIndicator !== undefined) {
+				if (typeof details.fpsIndicator !== 'object') {
+					throw new Error(arguments.callee.name + " : fpsIndicator must be an object!")
+				}
+				for (let def in details.fpsIndicator) {
+					if (_validWorldManagerFpsIndicatorDef.indexOf(def) < 0) {
+						throw new Error(arguments.callee.name + " : the detail (" + def + ") is not supported! Valid definitions: " + _validWorldManagerFpsIndicatorDef)
+					}
+				}
+				if (details.fpsIndicator.enabled !== undefined && typeof details.fpsIndicator.enabled !== 'boolean') {
+					throw new Error(arguments.callee.name + " : fpsIndicator.enabled must be true/false!")
+				}
+				if (details.fpsIndicator.x !== undefined && typeof details.fpsIndicator.x !== 'number') {
+					throw new Error(arguments.callee.name + " : fpsIndicator.x must be a number!")
+				}
+				if (details.fpsIndicator.y !== undefined && typeof details.fpsIndicator.y !== 'number') {
+					throw new Error(arguments.callee.name + " : fpsIndicator.y must be a number!")
+				}
+				if (details.fpsIndicator.font !== undefined && typeof details.fpsIndicator.font !== 'string') {
+					throw new Error(arguments.callee.name + " : fpsIndicator.font must be a string! See EaselJS documentation: https://www.createjs.com/docs/easeljs/classes/Text.html")
+				}
+				if (details.fpsIndicator.color !== undefined && typeof details.fpsIndicator.color !== 'string') {
+					throw new Error(arguments.callee.name + " : fpsIndicator.color must be a string! See EaselJS documentation: https://www.createjs.com/docs/easeljs/classes/Text.html")
+				}
 			}
 
 			if (details.preLoad !== undefined) {

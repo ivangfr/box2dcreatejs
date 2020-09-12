@@ -17,7 +17,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
-			showFPSIndicator: true,
+			fpsIndicator: { enabled: true },
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
 				showLoadingIndicator: true,
