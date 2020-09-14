@@ -87,12 +87,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			events: {
 				backward: () => {
-					car.frontTire.getB2Body().SetAngularVelocity(-70)
-					_tireClockwise = 1
+					car.frontTire.getB2Body().SetAngularVelocity(-90)
+					_tireClockwise = -1
 				},
 				foward: () => {
-					car.frontTire.getB2Body().SetAngularVelocity(70)
-					_tireClockwise = -1
+					car.frontTire.getB2Body().SetAngularVelocity(90)
+					_tireClockwise = 1
 				},
 				anticlockwise: () => car.chassis.getB2Body().SetAngularVelocity(-1),
 				clockwise: () => car.chassis.getB2Body().SetAngularVelocity(1)
@@ -130,7 +130,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			aContactTireConcrete.forEach(contact => {
 				const worldManifold = new Box2D.Collision.b2WorldManifold()
 				const intensity = contactIntensity(contact, worldManifold)
-				if (intensity > 100 && intensity < 800) {
+				if (intensity > 50) {
 					createParticles(TIRE_VS_CONCRETE, worldManifold)
 				}
 			})
@@ -361,6 +361,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: renderTire,
 			fixtureDefOpts: {
 				density: 5.0,
+				restitution: 1,
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
@@ -377,7 +378,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			render: renderTire,
 			fixtureDefOpts: {
 				density: 5.0,
-				friction: 3.0,
+				restitution: 1,
 				filterCategoryBits: CATEGORY_CAR,
 				filterMaskBits: CATEGORY_SCENERY
 			},
@@ -620,18 +621,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		aPoints.push({ x: 0, y: 10 })
 
-		aPoints.push({ x: 600, y: 10 })
-		aPoints.push({ x: 610, y: 13 })
-		aPoints.push({ x: 620, y: 10 })
-
-		aPoints.push({ x: 700, y: 10 })
-		aPoints.push({ x: 710, y: 13 })
-		aPoints.push({ x: 720, y: 10 })
-
-		aPoints.push({ x: 800, y: 10 })
-		aPoints.push({ x: 810, y: 13 })
-		aPoints.push({ x: 820, y: 10 })
-
 		aPoints.push({ x: 1200, y: 10 })
 		aPoints.push({ x: 1500, y: 120 })
 		aPoints.push({ x: 2100, y: 120 })
@@ -795,8 +784,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				}
 			}
 
-			const power = randomIntFromInterval(2, 15)
-			const angle = randomIntFromInterval(30, 90) * _tireClockwise
+			const power = randomIntFromInterval(1, 5)
+			const angle = randomIntFromInterval(210, 270) * _tireClockwise
 			const angleDir = new box2d.b2Vec2(Math.sin(angle * Math.PI / 180), Math.cos(angle * Math.PI / 180))
 			const timeDisappear = randomIntFromInterval(1, 2) * 1000
 
@@ -808,7 +797,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				noGravity: true,
 				bodyDefOpts: {
 					fixedRotation: false,
-					linearDamping: 5,
+					linearDamping: 1,
 					linearVelocity: {
 						x: angleDir.x * power,
 						y: angleDir.y * power

@@ -60,7 +60,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: {
 				isFluid: true,
 				dragConstant: 0.25,
-				liftConstant: 0.25
+				liftConstant: 0.25,
 			}
 		})
 
@@ -167,9 +167,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 120, y: 100, angle: 15,
+			x: 110, y: 100, angle: 15,
 			shape: 'box',
-			boxOpts: { width: 10, height: 90 },
+			boxOpts: { width: 10, height: 80 },
 			render: {
 				type: 'draw',
 				drawOpts: {
@@ -184,32 +184,32 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 300, y: 100, angle: 90,
+			x: 300, y: 100, angle: 80,
 			shape: 'box',
 			boxOpts: { width: 20, height: 120 },
 			render: {
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'purple' },
+					bgSolidColorOpts: { color: 'white' },
 					borderWidth: 2
 				},
 			},
-			fixtureDefOpts: { density: 0.8 },
+			fixtureDefOpts: { density: 0.1 },
 			name: 'rect',
 			sliceable: true
 		})
 
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 440, y: 250, angle: 15,
+			x: 440, y: 250, angle: 20,
 			shape: 'box',
 			boxOpts: { width: 60, height: 60 },
 			render: {
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'solid',
-					bgSolidColorOpts: { color: 'white' },
+					bgSolidColorOpts: { color: 'purple' },
 					borderWidth: 2
 				},
 			},
@@ -230,7 +230,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 2
 				}
 			},
-			fixtureDefOpts: { density: 0.7 }
+			fixtureDefOpts: { density: 0.4 }
 		})
 
 		_worldManager.createEntity({
@@ -246,7 +246,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 2
 				},
 			},
-			fixtureDefOpts: { density: 0.8 },
+			fixtureDefOpts: {
+				density: 0.8,
+				restitution: 0.2
+			},
 			sliceable: true,
 			events: {
 				onslice: function () {

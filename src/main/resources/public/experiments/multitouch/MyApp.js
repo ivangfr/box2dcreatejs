@@ -45,7 +45,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					bgColorStyle: 'solid',
 					bgSolidColorOpts: { color: 'white' }
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.3 }
 		})
 
 		_worldManager.createEntity({
@@ -59,7 +60,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					bgColorStyle: 'solid',
 					bgSolidColorOpts: { color: 'white' }
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.3 }
 		})
 
 		const explosive = _worldManager.createEntity({
@@ -81,7 +83,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					startAnimation: 'normal'
 				}
 			},
-			bodyDefOpts: { fixedRotation: true }
+			bodyDefOpts: { fixedRotation: true },
+			fixtureDefOpts: { restitution: 0.3 }
 		})
 
 		_worldManager.createMultiTouchHandler({

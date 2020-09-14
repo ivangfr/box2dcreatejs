@@ -40,7 +40,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					image: '../../images/tire.png',
 					adjustImageSize: true
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.5 }
 		})
 
 		_worldManager.createMultiTouchHandler()

@@ -260,7 +260,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createCar() {
-		const CAR_X = 360, CAR_Y = 350
+		const CAR_X = 360, CAR_Y = 250
 
 		const colorFilter = new createjs.ColorFilter(0.65, 0.84, 0.52, 1) // red, green, blue, alpha
 
@@ -293,7 +293,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			x: CAR_X - 30, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: tireRender
+			render: tireRender,
+			fixtureDefOpts: { restitution: 0.2 }
 		})
 
 		const frontTire = _worldManager.createEntity({
@@ -301,7 +302,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			x: CAR_X + 60, y: CAR_Y + 50,
 			shape: 'circle',
 			circleOpts: { radius: 20 },
-			render: tireRender
+			render: tireRender,
+			fixtureDefOpts: { restitution: 0.2 }
 		})
 
 		const link1 = _worldManager.createLink({

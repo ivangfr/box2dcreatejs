@@ -37,14 +37,17 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createWorldLimits()
 		createCar()
 
+		const timeStepHandler = _worldManager.createTimeStepHandler()
+
 		_worldManager.createKeyboardHandler({
 			keyboardHint: {
 				enabled: true,
-				x: 440
+				x: 400
 			},
 			keys: {
 				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
-				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) }
+				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
+				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
 			}
 		})
 

@@ -210,9 +210,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'teal' },
-				borderWidth: 2,
-				borderColor: 'white'
+				bgSolidColorOpts: { color: 'teal' }
 			}
 		}
 

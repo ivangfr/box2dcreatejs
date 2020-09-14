@@ -286,6 +286,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					cache: true
 				}
 			},
+			fixtureDefOpts: { restitution: 0.5 },
 			group: 'breakable',
 			draggable: false
 		})

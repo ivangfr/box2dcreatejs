@@ -153,7 +153,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						bgSolidColorOpts: { color: 'white' },
 						borderWidth: 2
 					}
-				}
+				},
+				fixtureDefOpts: { restitution: 0.5 },
 			})
 		}
 	}

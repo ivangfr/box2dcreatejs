@@ -299,7 +299,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		fixDef.density = (details.fixtureDefOpts.density !== undefined) ? details.fixtureDefOpts.density : 1.0
 		fixDef.friction = (details.fixtureDefOpts.friction !== undefined) ? details.fixtureDefOpts.friction : 1.0
-		fixDef.restitution = (details.fixtureDefOpts.restitution !== undefined) ? details.fixtureDefOpts.restitution : 0.5
+		fixDef.restitution = (details.fixtureDefOpts.restitution !== undefined) ? details.fixtureDefOpts.restitution : 0
 		fixDef.isSensor = (details.fixtureDefOpts.isSensor !== undefined) ? details.fixtureDefOpts.isSensor : false
 
 		fixDef.userData = {}

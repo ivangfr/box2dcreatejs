@@ -113,7 +113,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 1,
 					borderColor: 'black'
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.2 }
 		})
 
 		_worldManager.createEntity({
@@ -146,7 +147,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 1,
 					borderColor: 'black'
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.5 }
 		})
 
 		_worldManager.createEntity({
@@ -162,7 +164,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 1,
 					borderColor: 'black'
 				}
-			}
+			},
+			fixtureDefOpts: { restitution: 0.5 }
 		})
 
 		_worldManager.createEntity({
@@ -199,20 +202,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		}
 
-		// This function will make the blocks to stop rotating
-		function simulateAirResistence() {
-			const area = getArea(this.b2body.m_fixtureList.m_shape.m_vertices)
-			this.b2body.ApplyTorque(area * -this.b2body.GetAngularVelocity())
-		}
-
 		const block1 = _worldManager.createEntity({
 			type: 'dynamic',
 			x: 200, y: 150,
 			shape: 'box',
 			boxOpts: { width: 20, height: 100 },
 			render: blockRender,
-			events: {
-				ontick: simulateAirResistence
+			bodyDefOpts: {
+				angularDamping: 0.1,
+				linearDamping: 0.1
 			}
 		})
 
@@ -237,8 +235,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'box',
 			boxOpts: { width: 10, height: 100 },
 			render: blockRender,
-			events: {
-				ontick: simulateAirResistence
+			bodyDefOpts: {
+				angularDamping: 0.1,
+				linearDamping: 0.1
 			}
 		})
 
@@ -263,8 +262,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'box',
 			boxOpts: { width: 10, height: 100 },
 			render: blockRender,
-			events: {
-				ontick: simulateAirResistence
+			bodyDefOpts: {
+				angularDamping: 0.1,
+				linearDamping: 0.1
 			}
 		})
 
@@ -289,8 +289,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'box',
 			boxOpts: { width: 20, height: 200 },
 			render: blockRender,
-			events: {
-				ontick: simulateAirResistence
+			bodyDefOpts: {
+				angularDamping: 0.1,
+				linearDamping: 0.1
 			}
 		})
 

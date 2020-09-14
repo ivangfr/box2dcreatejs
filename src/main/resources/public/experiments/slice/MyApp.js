@@ -132,6 +132,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderWidth: 2, borderColor: 'black'
 				}
 			},
+			fixtureDefOpts: { restitution: 0.5 },
 			sliceable: true,
 			noGravity: true,
 			events: {
@@ -234,6 +235,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					borderColor: 'black'
 				}
 			},
+			fixtureDefOpts: { restitution: 0.3 },
 			sliceable: true
 		})
 

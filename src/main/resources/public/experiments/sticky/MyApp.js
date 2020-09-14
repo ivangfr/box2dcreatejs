@@ -180,7 +180,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function createTargets() {
-		const staticRender = {
+		const targetRender = {
 			type: 'draw',
 			drawOpts: {
 				bgColorStyle: 'solid',
@@ -190,10 +190,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createEntity({
 			type: 'dynamic',
-			x: 400, y: 250,
+			x: 400, y: 300,
 			shape: 'box',
 			boxOpts: { width: 50, height: 300 },
-			render: staticRender,
+			render: targetRender,
 			fixtureDefOpts: {
 				density: 10,
 				restitution: 0,
@@ -207,7 +207,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			x: 900, y: 250,
 			shape: 'box',
 			boxOpts: { width: 10, height: 500 },
-			render: staticRender,
+			render: targetRender,
 			fixtureDefOpts: {
 				restitution: 0.1,
 				isTarget: true

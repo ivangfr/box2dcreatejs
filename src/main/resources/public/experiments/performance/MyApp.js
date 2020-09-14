@@ -155,7 +155,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 						borderWidth: 2,
 						cache: true,
 					},
-				}
+				},
+				fixtureDefOpts: { restitution: 0.5 }
 			})
 			balls.push(ball)
 		}

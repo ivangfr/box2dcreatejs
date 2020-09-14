@@ -67,7 +67,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				ArrowLeft: {
 					onkeydown: () => {
 						ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
-						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(-1500, 0), ken.b2body.GetWorldCenter())
+						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(-3000, 0), ken.b2body.GetWorldCenter())
 					},
 					onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
 					keepPressed: true
@@ -75,7 +75,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				ArrowRight: {
 					onkeydown: () => {
 						ken.b2body.view.currentAnimation === "idle" && ken.b2body.view.gotoAndPlay("walk")
-						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(1500, 0), ken.b2body.GetWorldCenter())
+						ken.b2body.view.currentAnimation === "walk" && ken.b2body.ApplyForce(new box2d.b2Vec2(3000, 0), ken.b2body.GetWorldCenter())
 					},
 					onkeyup: () => ken.b2body.view.gotoAndPlay("idle"),
 					keepPressed: true
@@ -236,8 +236,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			bodyDefOpts: { fixedRotation: true },
 			fixtureDefOpts: {
-				friction: 0.1,
-				restitution: 0.01
+				friction: 0.7,
+				restitution: 0
 			}
 		})
 	}
@@ -262,7 +262,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 					startAnimation: 'normal'
 				}
 			},
-			bodyDefOpts: { fixedRotation: true }
+			bodyDefOpts: { fixedRotation: true },
+			fixtureDefOpts: { restitution: 0.5 }
 		})
 	}
 
