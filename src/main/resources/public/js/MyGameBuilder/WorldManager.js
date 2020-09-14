@@ -119,8 +119,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	let _soundHandler
 	WorldManager.prototype.getSoundHandler = function () { return _soundHandler }
 
-	let _browserOSHandler
-	WorldManager.prototype.getBrowserOSHandler = function () { return _browserOSHandler }
+	let _mobileTabletDetector
+	WorldManager.prototype.getMobileTabletDetector = function () { return _mobileTabletDetector }
 
 	let _wind
 	WorldManager.prototype.getWind = function () { return _wind }
@@ -673,12 +673,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	//================================================================================================
-	//---------------------------------- BrowserOsHandler --------------------------------------------
+	//---------------------------------- MobileTabletDetector ----------------------------------------
 	//================================================================================================
 
-	WorldManager.prototype.createBrowserOSHandler = function () {
-		_browserOSHandler = new MyGameBuilder.BrowserOSHandler()
-		return _browserOSHandler
+	WorldManager.prototype.createMobileTabletDetector = function () {
+		_mobileTabletDetector = new MyGameBuilder.MobileTabletDetector()
+		return _mobileTabletDetector
 	}
 
 	//================================================================================================

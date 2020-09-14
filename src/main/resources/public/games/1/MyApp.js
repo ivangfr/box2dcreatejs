@@ -11,7 +11,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	let _worldManager
 
-	let _os
+	let _isMobileTablet
 	let _hintElem, _timeElem
 	let _soundHandler
 	let _tireClockwise
@@ -65,7 +65,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_os = _worldManager.createBrowserOSHandler().getOS()
+		_isMobileTablet = _worldManager.createMobileTabletDetector().isMobileTablet()
 	}
 
 	function startWorld() {
@@ -105,7 +105,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		_worldManager.createMultiTouchHandler({ enableDrag: false })
 
-		if (_os === "iOS" || _os === "Android") {
+		if (_isMobileTablet) {
 			createButtonsForMobile(player)
 		}
 
@@ -123,7 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 0.3 })
 
 		_worldManager.setUserOnTick(function () {
-			if (_os !== "iOS" && _os !== "Android") {
+			if (_isMobileTablet) {
 				car.chassis.getPosition().y < 100 ? zoomHandler.zoomOut() : zoomHandler.zoomIn()
 			}
 
@@ -169,7 +169,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		if (_os !== "iOS" && _os !== "Android") {
+		if (_isMobileTablet) {
 			_worldManager.createLandscape({
 				x: 10000, y: 115,
 				shape: 'box',

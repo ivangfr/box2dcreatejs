@@ -4,58 +4,222 @@
 <head>
 	<meta charset="UTF-8">
 	<title>MyGameBuilder</title>
-	<link rel='stylesheet' href='css/cssreset-min.css' type='text/css' />
-	<link rel='stylesheet' href='css/style.css' type='text/css' />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
 </head>
 
 <body>
-	<div id="wrapper">
-		<header>
-			<h1 id="title">MyGameBuilder</h1>
-			<h2 class="subtitle">The easiest way to build your own HTML & Javascript games</h2>
-		</header>
-		<div class='game-container'>
-			<h3>Game - Car</h3>
-			<a href="games/1/game.html"><img src='images/screenshot/car-game.jpg' /></a>
+	<header>
+		<div class="ui inverted vertical footer blue segment">
+			<div class="ui container">
+				<h1 class="ui center aligned inverted header" style="font-size: 5em;">MyGameBuilder</h1>
+			</div>
 		</div>
-		<div class='game-container'>
-			<h3>Game - Break & Slice</h3>
-			<a href="games/2/game.html"><img src='images/screenshot/breakslice-game.jpg' /></a>
+	</header>
+
+	<main>
+		<div class="ui container">
+
+			<div class="ui center aligned basic segment">
+				<a class="ui large black label" href="https://github.com/ivangfr/mygamebuilder">
+					<i class="github icon"></i>
+					ivangfr/mygamebuilder
+				</a>
+				<a class="ui large blue label" href="https://www.linkedin.com/in/ivanfranchin/">
+					<i class="linkedin icon"></i>
+					Ivan Franchin
+				</a>
+			</div>
+
+			<div class="ui divider" style="padding-bottom: 3em;"></div>
+
+			<img class="ui huge centered image" src='images/homepage/box2d-createjs.png' />
+
+			<div class="ui divider" style="padding-bottom: 3em;"></div>
+
+			<div class="ui center aligned basic segment">
+				<p style="font-size: 1.5em;"><b>MyGameBuilder</b> is a Javascript library that joins <a
+						href="https://box2d.org">Box2D</a> 2D Physics Engine and <a href="https://createjs.com">CreateJS</a> suite
+					of libraries and tools (like EaselJS, SoundJS, etc) in order to create the easiest Javascript Library
+					to build your own HTML & Javascript games</p>
+			</div>
+
+			<div class="ui horizontal divider" style="padding: 3em;">
+				<h3>Games</h3>
+			</div>
+
+			<div class="ui stackable grid">
+				<div class="eight wide column">
+					<div class="ui raised segment">
+						<h3>Car</h3>
+						<a href="games/1/game.html" class="ui image"><img src='images/homepage/car-game.jpg' /></a>
+					</div>
+				</div>
+				<div class="eight wide column">
+					<div class="ui raised segment">
+						<h3>Break & Slice</h3>
+						<a href="games/2/game.html" class="ui image"><img src='images/homepage/breakslice-game.jpg' /></a>
+					</div>
+				</div>
+				<div class="eight wide column">
+					<div class="ui raised segment">
+						<h3>Space</h3>
+						<a href="games/3/game.html" class="ui image"><img src='images/homepage/space-game.jpg' /></a>
+					</div>
+				</div>
+				<div class="eight wide column">
+					<h3>More games soon!</h3>
+				</div>
+			</div>
+
+			<div class="ui horizontal divider" style="padding: 3em;">
+				<h3>Experiments</h3>
+			</div>
+
+			<div class="ui three column center aligned grid">
+				<div class="column">
+					<a class="ui large grey label" href="experiments/showcar/experiment.html">
+						<i class="road icon"></i>
+						ShowCar
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/performance/experiment.html">
+						<i class="chart bar icon"></i>
+						Performance
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/joints/experiment.html">
+						<i class="linkify icon"></i>
+						Joints
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/break/experiment.html">
+						<i class="glass martini icon"></i>
+						Break
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/slice/experiment.html">
+						<i class="cut icon"></i>
+						Slice
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/buoyancy/experiment.html">
+						<i class="life ring outline icon"></i>
+						Buoyancy
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/buttonpressed/experiment.html">
+						<i class="futbol icon"></i>
+						ButtonPressed
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/deleteentities/experiment.html">
+						<i class="minus circle icon"></i>
+						DeleteEntities
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/changeplayer/experiment.html">
+						<i class="users icon"></i>
+						ChangePlayer
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/grenade/experiment.html">
+						<i class="bomb icon"></i>
+						Grenade
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/sticky/experiment.html">
+						<i class="thumbtack icon"></i>
+						Sticky
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/gravitation/experiment.html">
+						<i class="space shuttle icon"></i>
+						Gravitation
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/wind/experiment.html">
+						<i class="paper plane icon"></i>
+						Wind
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/multitouch/experiment.html">
+						<i class="hand peace outline icon"></i>
+						MultiTouch
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/spritesheet/experiment.html">
+						<i class="film icon"></i>
+						SpriteSheet
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/landscape/experiment.html">
+						<i class="image icon"></i>
+						Landscape
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/sound/experiment.html">
+						<i class="music icon"></i>
+						Sound
+					</a>
+				</div>
+				<div class="column">
+					<a class="ui large grey label" href="experiments/impulseforce/experiment.html">
+						<i class="hand paper outline icon"></i>
+						ImpulseForce
+					</a>
+				</div>
+			</div>
+
+			<div class="ui horizontal divider" style="padding: 3em;">
+				<h3>Downloads</h3>
+			</div>
+
+			<div class="ui selection list">
+				<div class="item">
+					<i class="large download middle aligned icon"></i>
+					<div class="content">
+						<a class="header">mygamebuilder-1.0.0.zip</a>
+						<div class="description">Box2dWeb-2.1.a.3.min.js; createjs-1.0.0.min.js</div>
+					</div>
+				</div>
+				<div class="item">
+					<i class="large download middle aligned icon"></i>
+					<div class="content">
+						<a class="header">mygamebuilder-1.0.0.min.zip</a>
+						<div class="description">Box2dWeb-2.1.a.3.min.js; createjs-1.0.0.min.js</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class='game-container'>
-			<h3>Game - Space</h3>
-			<a href="games/3/game.html"><img src='images/screenshot/space-game.jpg' /></a>
+	</main>
+
+	<footer style="padding-top: 5em;">
+		<div class="ui inverted vertical footer white segment">
+			<div class="ui container">
+				<h4 class="ui center aligned inverted header">MyGameBuilder&nbsp;&copy; 2020</h4>
+			</div>
 		</div>
+	</footer>
 
-		<h2 class="subtitle">More games soon!</h2>
-
-		<h3>Experiments</h3>
-
-		<ul>
-			<li><a href="experiments/showcar/experiment.html">ShowCar</a></li>
-			<li><a href="experiments/performance/experiment.html">Performance</a></li>
-			<li><a href="experiments/joints/experiment.html">Joints</a></li>
-			<li><a href="experiments/break/experiment.html">Break</a></li>
-			<li><a href="experiments/slice/experiment.html">Slice</a></li>
-			<li><a href="experiments/buoyancy/experiment.html">Buoyancy</a></li>
-			<li><a href="experiments/buttonpressed/experiment.html">ButtonPressed</a></li>
-			<li><a href="experiments/deleteentities/experiment.html">DeleteEntities</a></li>
-			<li><a href="experiments/changeplayer/experiment.html">ChangePlayer</a></li>
-			<li><a href="experiments/grenade/experiment.html">Grenade</a></li>
-			<li><a href="experiments/sticky/experiment.html">Sticky</a></li>
-			<li><a href="experiments/gravitation/experiment.html">Gravitation</a></li>
-			<li><a href="experiments/wind/experiment.html">Wind</a></li>
-			<li><a href="experiments/multitouch/experiment.html">MultiTouch</a></li>
-			<li><a href="experiments/spritesheet/experiment.html">SpriteSheet</a></li>
-			<li><a href="experiments/landscape/experiment.html">Landscape</a></li>
-			<li><a href="experiments/sound/experiment.html">Sound</a></li>
-			<li><a href="experiments/impulseforce/experiment.html">ImpulseForce</a></li>
-		</ul>
-
-		<footer>
-			<p>MyGameBuilder&nbsp;&copy; 2020</p>
-		</footer>
-	</div>
+	<!--JavaScript at end of body for optimized loading-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </body>
 
 </html>

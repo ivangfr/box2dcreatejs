@@ -159,10 +159,6 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			},
 			keepPressed: true
 		})
-
-		const bo = _worldManager.createBrowserOSHandler()
-		const text = bo.getBrowserName() + ' ' + bo.getBrowserVersion() + ', ' + bo.getOS()
-		document.getElementById("browser_os").innerHTML = text
 	}
 
 	function createWorldLimits() {

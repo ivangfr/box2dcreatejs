@@ -106,22 +106,21 @@
 	<script src="../../js/MyGameBuilder/Landscape.js"></script>
 	<script src="../../js/MyGameBuilder/TimeStepHandler.js"></script>
 	<script src="../../js/MyGameBuilder/BreakHandler.js"></script>
-	<script src="../../js/MyGameBuilder/BrowserOSHandler.js"></script>
 	<script src="../../js/MyGameBuilder/MultiTouchHandler.js"></script>
 	<script src="../../js/MyGameBuilder/WorldManager.js"></script>
 	<script src="../../js/MyGameBuilder/SoundHandler.js"></script>
+	<script src="../../js/MyGameBuilder/MobileTabletDetector.js"></script>
 	<script src="../../js/MyGameBuilder/Utils.js"></script>
 
 	<script src="MyApp.js"></script>
 
 	<script>
 		function init() {
-			const browserOSHandler = new MyGameBuilder.BrowserOSHandler()
-			const os = browserOSHandler.getOS()
+			const isMobileTablet = new MyGameBuilder.MobileTabletDetector().isMobileTablet()
 
 			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
-			if (os === "iOS" || os === "Android") {
+			if (isMobileTablet) {
 				document.getElementById("message").style.display = 'block'
 				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false)
 				function handleTouch(event) {

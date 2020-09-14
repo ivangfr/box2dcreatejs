@@ -16,12 +16,6 @@
 			background-color: #8DB8E3;
 		}
 
-		#browser_os {
-			position: absolute;
-			top: 500px;
-			left: 20px;
-		}
-
 		#output {
 			position: absolute;
 			top: 510px;
@@ -57,20 +51,19 @@
 	<script src="../../js/MyGameBuilder/TimeStepHandler.js"></script>
 	<script src="../../js/MyGameBuilder/BreakHandler.js"></script>
 	<script src="../../js/MyGameBuilder/Wind.js"></script>
-	<script src="../../js/MyGameBuilder/BrowserOSHandler.js"></script>
 	<script src="../../js/MyGameBuilder/WorldManager.js"></script>
+	<script src="../../js/MyGameBuilder/MobileTabletDetector.js"></script>
 	<script src="../../js/MyGameBuilder/Utils.js"></script>
 
 	<script src="MyApp.js"></script>
 
 	<script>
 		function init() {
-			const browserOSHandler = new MyGameBuilder.BrowserOSHandler()
-			const os = browserOSHandler.getOS()
+			const isMobileTablet = new MyGameBuilder.MobileTabletDetector().isMobileTablet()
 
 			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
-			if (os === "iOS" || os === "Android") {
+			if (isMobileTablet) {
 				document.getElementById("output").innerHTML = 'Touch the canvas to start!'
 				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false)
 				function handleTouch(event) {
@@ -91,7 +84,6 @@
 
 <body>
 
-	<p id="browser_os"></p>
 	<p id="output"></p>
 	<canvas id="easeljsCanvas" width="980" height="500"></canvas>
 	<canvas id="box2dCanvas" width="980" height="500"></canvas>
