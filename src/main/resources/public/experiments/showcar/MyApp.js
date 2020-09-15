@@ -294,6 +294,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'circle',
 			circleOpts: { radius: 20 },
 			render: tireRender,
+			bodyDefOpts: { angularVelocity: 70 },
 			fixtureDefOpts: { restitution: 0.2 }
 		})
 
@@ -303,6 +304,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			shape: 'circle',
 			circleOpts: { radius: 20 },
 			render: tireRender,
+			bodyDefOpts: { angularVelocity: 70 },
 			fixtureDefOpts: { restitution: 0.2 }
 		})
 

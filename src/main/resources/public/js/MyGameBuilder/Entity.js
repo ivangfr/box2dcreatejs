@@ -21,7 +21,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	const _validEntityDefType = ['static', 'dynamic', 'kinematic', 0, 1, 2]
 
 	const _validEntityBodyDefOpts = ['fixedRotation', 'bullet', 'linearDamping', 'linearVelocity',
-		'angularDamping', 'angularVelocity']
+		'angularDamping', 'angularVelocity', 'active', 'allowSleep', 'awake']
 
 	const _validEntityFixtureDefOpts = ['density', 'friction', 'restitution', 'isSensor',
 		'filterGroupIndex', 'filterCategoryBits', 'filterMaskBits',
@@ -511,6 +511,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 			if (details.bodyDefOpts.angularVelocity !== undefined && typeof details.bodyDefOpts.angularVelocity !== 'number') {
 				throw new Error(arguments.callee.name + " : bodyDefOpts.angularVelocity must be a number!")
+			}
+			if (details.bodyDefOpts.active !== undefined && typeof details.bodyDefOpts.active !== 'boolean') {
+				throw new Error(arguments.callee.name + " : bodyDefOpts.active must be true/false!")
+			}
+			if (details.bodyDefOpts.allowSleep !== undefined && typeof details.bodyDefOpts.allowSleep !== 'boolean') {
+				throw new Error(arguments.callee.name + " : bodyDefOpts.allowSleep must be true/false!")
+			}
+			if (details.bodyDefOpts.awake !== undefined && typeof details.bodyDefOpts.awake !== 'boolean') {
+				throw new Error(arguments.callee.name + " : bodyDefOpts.awake must be true/false!")
 			}
 		}
 
