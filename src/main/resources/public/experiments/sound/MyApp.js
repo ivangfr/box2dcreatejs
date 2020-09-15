@@ -43,7 +43,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		// Note: shotgun is not created yet, just preload
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createTouchMouseHandler()
 
 		_worldManager.createScreenButton({
 			x: 100, y: 100,

@@ -32,9 +32,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testBreak() {
 		createWorldLimits()
 
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			onmousedown: function (e) {
-				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
+				const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
 				if (entities.length > 0) {
 					const breakHandler = new MyGameBuilder.BreakHandler(_worldManager, {
 						numCuts: 2,

@@ -58,7 +58,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createTouchMouseHandler()
 		_worldManager.createZoomHandler()
 		_worldManager.createScreenHandler()
 	}

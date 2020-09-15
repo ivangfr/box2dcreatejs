@@ -88,7 +88,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_worldManager.createMultiTouchHandler({
+		_worldManager.createTouchMouseHandler({
 			enableSlice: true,
 			sliceOpts: { lineWidth: 3 }
 		})

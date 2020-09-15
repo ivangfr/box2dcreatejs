@@ -44,7 +44,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { restitution: 0.5 }
 		})
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createTouchMouseHandler()
 
 		let direction = 1
 		_worldManager.createKeyboardHandler({

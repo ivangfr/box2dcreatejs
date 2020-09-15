@@ -192,9 +192,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		let mainEarthRender = true
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			onmousedown: function (e) {
-				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
+				const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
 				entities.forEach(entity => {
 					if (entity.b2body.GetUserData().name === 'earth') {
 						mainEarthRender = !mainEarthRender

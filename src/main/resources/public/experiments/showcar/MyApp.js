@@ -99,7 +99,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_worldManager.createMultiTouchHandler({ debugTouchMouseLocation: false })
+		_worldManager.createTouchMouseHandler({ debugTouchMouseLocation: false })
 
 		const player = _worldManager.createPlayer(car.chassis, {
 			camera: {

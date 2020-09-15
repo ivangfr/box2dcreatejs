@@ -30,9 +30,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createLandscapeAndWorldLimits()
 		createBalls(10)
 
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			onmousedown: function (e) {
-				multiTouchHandler.getEntitiesAtMouseTouch(e)
+				touchMouseHandler.getEntitiesAtMouseTouch(e)
 					.filter(entity => entity.getGroup() === 'square')
 					.map(entity => _worldManager.getPlayerByItsEntity(entity))
 					.filter(player => player !== _playerSelected)

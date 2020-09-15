@@ -39,7 +39,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		const ball = createBall()
 		const boy = createBoy()
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createTouchMouseHandler()
 
 		_worldManager.createScreenHandler()
 

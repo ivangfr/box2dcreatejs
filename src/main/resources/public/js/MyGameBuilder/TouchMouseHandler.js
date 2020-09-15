@@ -2,13 +2,13 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 (function () {
 
-	MyGameBuilder.MultiTouchHandler = MultiTouchHandler
+	MyGameBuilder.TouchMouseHandler = TouchMouseHandler
 
-	function MultiTouchHandler(worldManager, details) {
+	function TouchMouseHandler(worldManager, details) {
 		initialize(worldManager, details)
 	}
 
-	const _validMultiTouchHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'debugTouchMouseLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
+	const _validTouchMouseHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'debugTouchMouseLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
 
 	let _worldManager
 	let _canvasPosition
@@ -18,12 +18,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	let _userOnMouseDown, _userOnMouseUp, _userOnMouseMove
 
 	let _enableDrag
-	MultiTouchHandler.prototype.getEnableDrag = function () { return _enableDrag }
-	MultiTouchHandler.prototype.setEnableDrag = function (value) { _enableDrag = value }
+	TouchMouseHandler.prototype.getEnableDrag = function () { return _enableDrag }
+	TouchMouseHandler.prototype.setEnableDrag = function (value) { _enableDrag = value }
 
 	let _enableSlice, _sliceOpts
-	MultiTouchHandler.prototype.getEnableSlice = function () { return _enableSlice }
-	MultiTouchHandler.prototype.setEnableSlice = function (value) {
+	TouchMouseHandler.prototype.getEnableSlice = function () { return _enableSlice }
+	TouchMouseHandler.prototype.setEnableSlice = function (value) {
 		_enableSlice = value
 		if (_sliceHandler === undefined) {
 			_sliceHandler = new MyGameBuilder.SliceHandler(_worldManager, _sliceOpts)
@@ -31,23 +31,23 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	let _pointerRadius
-	MultiTouchHandler.prototype.getPointerRadius = function () { return _pointerRadius }
-	MultiTouchHandler.prototype.setPointerRadius = function (value) { _pointerRadius = value }
+	TouchMouseHandler.prototype.getPointerRadius = function () { return _pointerRadius }
+	TouchMouseHandler.prototype.setPointerRadius = function (value) { _pointerRadius = value }
 
 	let _pointerAccurate
-	MultiTouchHandler.prototype.getPointerAccurate = function () { return _pointerAccurate }
-	MultiTouchHandler.prototype.setPointerAccurate = function (value) { _pointerAccurate = value }
+	TouchMouseHandler.prototype.getPointerAccurate = function () { return _pointerAccurate }
+	TouchMouseHandler.prototype.setPointerAccurate = function (value) { _pointerAccurate = value }
 
 	let _sliceHandler
-	MultiTouchHandler.prototype.getSliceHandler = function () { return _sliceHandler }
+	TouchMouseHandler.prototype.getSliceHandler = function () { return _sliceHandler }
 
 	let _mouse = { down: false }
-	MultiTouchHandler.prototype.isMouseDown = function () { return _mouse.down }
+	TouchMouseHandler.prototype.isMouseDown = function () { return _mouse.down }
 
 	let _touches, _touchJoints, _touchesDownOnEntity, _mouseJoints
 
 	let _touchable = 'createTouch' in document
-	MultiTouchHandler.prototype.isTouchable = function () { return _touchable }
+	TouchMouseHandler.prototype.isTouchable = function () { return _touchable }
 
 	function initialize(worldManager, details) {
 		validate(worldManager, details)
@@ -108,7 +108,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_touchesDownOnEntity = {}
 	}
 
-	MultiTouchHandler.prototype.update = function (countTick) {
+	TouchMouseHandler.prototype.update = function (countTick) {
 		if (_touchable) {
 			_touches.forEach(touch => handleTouchUpdate(touch, countTick))
 		}
@@ -117,7 +117,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		}
 	}
 
-	MultiTouchHandler.prototype.getEntitiesAtMouseTouch = function (e) {
+	TouchMouseHandler.prototype.getEntitiesAtMouseTouch = function (e) {
 		const x = _touchable ? e.clientX : e.x
 		const y = _touchable ? e.clientY : e.y
 		const { adjustX, adjustY } = _worldManager.getCameraAdjust()
@@ -516,11 +516,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		if (details !== undefined) {
 			if (typeof details !== 'object') {
-				throw new Error(arguments.callee.name + " : The MultiTouchHandler details must be an object!")
+				throw new Error(arguments.callee.name + " : The TouchMouseHandler details must be an object!")
 			}
 			for (let def in details) {
-				if (_validMultiTouchHandlerDef.indexOf(def) < 0) {
-					throw new Error(arguments.callee.name + " : the detail (" + def + ") is not supported! Valid definitions: " + _validMultiTouchHandlerDef)
+				if (_validTouchMouseHandlerDef.indexOf(def) < 0) {
+					throw new Error(arguments.callee.name + " : the detail (" + def + ") is not supported! Valid definitions: " + _validTouchMouseHandlerDef)
 				}
 			}
 

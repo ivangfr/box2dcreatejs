@@ -103,7 +103,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		const zoomHandler = _worldManager.createZoomHandler({ max: 1, min: 0.8, step: 0.008 })
 
-		_worldManager.createMultiTouchHandler({ enableDrag: false })
+		_worldManager.createTouchMouseHandler({ enableDrag: false })
 
 		if (_isMobileTablet) {
 			createButtonsForMobile(player)
@@ -123,7 +123,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler.createSoundInstance({ id: 'music' }).myPlay({ loop: -1, volume: 0.3 })
 
 		_worldManager.setUserOnTick(function () {
-			if (_isMobileTablet) {
+			if (!_isMobileTablet) {
 				car.chassis.getPosition().y < 100 ? zoomHandler.zoomOut() : zoomHandler.zoomIn()
 			}
 
@@ -169,7 +169,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		if (_isMobileTablet) {
+		if (!_isMobileTablet) {
 			_worldManager.createLandscape({
 				x: 10000, y: 115,
 				shape: 'box',

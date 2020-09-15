@@ -44,7 +44,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			}
 		})
 
-		_worldManager.createMultiTouchHandler()
+		_worldManager.createTouchMouseHandler()
 
 		// Wind
 		_worldManager.createWind({

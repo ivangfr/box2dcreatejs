@@ -87,7 +87,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			fixtureDefOpts: { restitution: 0.3 }
 		})
 
-		_worldManager.createMultiTouchHandler({
+		_worldManager.createTouchMouseHandler({
 			debugTouchMouseLocation: true,
 			onmousedown: function () {
 				document.getElementById("output").innerHTML = 'MOUSEDOWN'

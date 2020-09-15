@@ -88,7 +88,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		})
 
 		let mouseX, mouseY
-		_worldManager.createMultiTouchHandler({
+		_worldManager.createTouchMouseHandler({
 			debugTouchMouseLocation: true,
 			onmousedown: function () {
 				const shooterX = shooter.getPosition().x

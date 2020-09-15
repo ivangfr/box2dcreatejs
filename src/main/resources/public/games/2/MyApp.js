@@ -85,7 +85,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_soundHandler.createSoundInstance({ id: 'stream' }).myPlay({ loop: -1, volume: 0.3 })
 		_soundHandler.createSoundInstance({ id: 'birds' }).myPlay({ loop: -1, volume: 0.1 })
 
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			enableDrag: false,
 			enableSlice: true,
 			sliceOpts: {
@@ -95,9 +95,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: function (e) {
 				const x = e.x || e.clientX
 				const y = e.y || e.clientY
-				const entities = multiTouchHandler.getEntitiesAtMouseTouch(e)
+				const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
 
-				multiTouchHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
+				touchMouseHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
 					const entityUserData = entity.b2body.GetUserData()
 					if (entityUserData.group === 'breakable') {
 						const breakHandler = new MyGameBuilder.BreakHandler(_worldManager, {

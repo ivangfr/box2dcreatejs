@@ -32,7 +32,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	function testSlice() {
 		createWorldLimits()
 
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			enableSlice: true,
 			sliceOpts: {
 				lineColor: 'yellow',
@@ -42,8 +42,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 		const timeStepHandler = _worldManager.createTimeStepHandler()
 
-		let valDrag = multiTouchHandler.getEnableDrag()
-		let valSlice = multiTouchHandler.getEnableSlice()
+		let valDrag = touchMouseHandler.getEnableDrag()
+		let valSlice = touchMouseHandler.getEnableSlice()
 
 		const output = document.getElementById("output")
 		output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
@@ -57,15 +57,15 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
 				a: {
 					onkeydown: () => {
-						valDrag = !multiTouchHandler.getEnableDrag()
-						multiTouchHandler.setEnableDrag(valDrag)
+						valDrag = !touchMouseHandler.getEnableDrag()
+						touchMouseHandler.setEnableDrag(valDrag)
 						output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
 					}
 				},
 				s: {
 					onkeydown: () => {
-						valSlice = !multiTouchHandler.getEnableSlice()
-						multiTouchHandler.setEnableSlice(valSlice)
+						valSlice = !touchMouseHandler.getEnableSlice()
+						touchMouseHandler.setEnableSlice(valSlice)
 						output.innerHTML = 'DRAG:' + valDrag + ' - SLICE:' + valSlice
 					}
 				}

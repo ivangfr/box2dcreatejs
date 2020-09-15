@@ -110,8 +110,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 	let _keyboardHandler
 
-	let _multiTouchHandler
-	WorldManager.prototype.getMultiTouchHandler = function () { return _multiTouchHandler }
+	let _touchMouseHandler
+	WorldManager.prototype.getTouchMouseHandler = function () { return _touchMouseHandler }
 
 	let _contactHandler
 	WorldManager.prototype.getContactHandler = function () { return _contactHandler }
@@ -342,11 +342,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 
 
 		//-- MultiTouch -----------------------
-		if (_multiTouchHandler && _multiTouchHandler.update) {
-			_multiTouchHandler.update(_countTick)
+		if (_touchMouseHandler && _touchMouseHandler.update) {
+			_touchMouseHandler.update(_countTick)
 
-			if (_multiTouchHandler.getEnableSlice()) {
-				const sliceHandler = _multiTouchHandler.getSliceHandler()
+			if (_touchMouseHandler.getEnableSlice()) {
+				const sliceHandler = _touchMouseHandler.getSliceHandler()
 				if (sliceHandler) {
 					sliceHandler.update()
 				}
@@ -560,12 +560,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	//================================================================================================
-	//--------------------------------- MultiTouchHandler --------------------------------------------
+	//--------------------------------- TouchMouseHandler --------------------------------------------
 	//================================================================================================	
 
-	WorldManager.prototype.createMultiTouchHandler = function (details) {
-		_multiTouchHandler = new MyGameBuilder.MultiTouchHandler(this, details)
-		return _multiTouchHandler
+	WorldManager.prototype.createTouchMouseHandler = function (details) {
+		_touchMouseHandler = new MyGameBuilder.TouchMouseHandler(this, details)
+		return _touchMouseHandler
 	}
 
 	//================================================================================================

@@ -70,6 +70,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			onmousedown: () => createBox()
 		})
 
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
+			pointerRadius: 20,
+			pointerAccurate: false,
+			debugTouchMouseLocation: true
+		})
+
 		_worldManager.createKeyboardHandler({
 			keyboardHint: { enabled: true },
 			keys: {
@@ -81,18 +87,9 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				},
 				2: { onkeydown: () => createBox() },
 				a: {
-					onkeydown: () => {
-						const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
-						_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
-					}
+					onkeydown: () => touchMouseHandler.setPointerAccurate(!touchMouseHandler.getPointerAccurate())
 				}
 			}
-		})
-
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
-			pointerRadius: 20,
-			pointerAccurate: false,
-			debugTouchMouseLocation: true
 		})
 	}
 

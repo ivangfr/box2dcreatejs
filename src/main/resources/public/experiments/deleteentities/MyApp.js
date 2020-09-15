@@ -31,12 +31,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		createBalls(300)
 		createBoxes(150)
 
-		const multiTouchHandler = _worldManager.createMultiTouchHandler({
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			pointerRadius: 20,
 			pointerAccurate: false,
 			debugTouchMouseLocation: true,
 			onmousedown: function (e) {
-				multiTouchHandler.getEntitiesAtMouseTouch(e)
+				touchMouseHandler.getEntitiesAtMouseTouch(e)
 					.filter(entity => entity.getGroup() === 'ball')
 					.forEach(entity => _worldManager.deleteEntity(entity))
 			},
@@ -44,8 +44,8 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				const x = e.x || e.clientX
 				const y = e.y || e.clientY
 
-				if (multiTouchHandler.isTouchable() || multiTouchHandler.isMouseDown()) {
-					multiTouchHandler.getEntitiesAtMouseTouch(e)
+				if (touchMouseHandler.isTouchable() || touchMouseHandler.isMouseDown()) {
+					touchMouseHandler.getEntitiesAtMouseTouch(e)
 						.filter(entity => entity.getGroup() === 'ball')
 						.forEach(entity => _worldManager.deleteEntity(entity))
 				}
@@ -58,10 +58,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 				d: { onkeydown: () => _worldManager.setEnableDebug(!_worldManager.getEnableDebug()) },
 				r: { onkeydown: () => _worldManager.setEnableRender(!_worldManager.getEnableRender()) },
 				a: {
-					onkeydown: () => {
-						const pointerAccurate = _worldManager.getMultiTouchHandler().getPointerAccurate()
-						_worldManager.getMultiTouchHandler().setPointerAccurate(!pointerAccurate)
-					}
+					onkeydown: () => touchMouseHandler.setPointerAccurate(!touchMouseHandler.getPointerAccurate())
 				}
 			}
 		})
