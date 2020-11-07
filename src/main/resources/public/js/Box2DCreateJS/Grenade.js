@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.Grenade = Grenade
+	Box2DCreateJS.Grenade = Grenade
 
 	const _DEGTORAD = 0.0174532925199432957
 
@@ -149,10 +149,10 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, entity, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
-		if (!(entity instanceof MyGameBuilder.Entity)) {
+		if (!(entity instanceof Box2DCreateJS.Entity)) {
 			throw new Error(arguments.callee.name + " : entity must be an instance of Entity!")
 		}
 

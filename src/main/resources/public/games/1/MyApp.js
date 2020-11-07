@@ -1,4 +1,4 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
@@ -23,7 +23,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		this.initialize()
 	}
 
-	MyGameBuilder.MyApp = MyApp
+	Box2DCreateJS.MyApp = MyApp
 
 	MyApp.prototype.initialize = function () {
 		const easeljsCanvas = document.getElementById("easeljsCanvas")
@@ -32,7 +32,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		_hintElem = document.getElementById("hint")
 		_timeElem = document.getElementById("time")
 
-		_worldManager = new MyGameBuilder.WorldManager(easeljsCanvas, box2dCanvas, {
+		_worldManager = new Box2DCreateJS.WorldManager(easeljsCanvas, box2dCanvas, {
 			enableRender: true,
 			enableDebug: false,
 			fpsIndicator: {

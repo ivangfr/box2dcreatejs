@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.TimeStepHandler = TimeStepHandler
+	Box2DCreateJS.TimeStepHandler = TimeStepHandler
 
 	function TimeStepHandler(worldManager, details) {
 		initialize(this, worldManager, details)
@@ -139,7 +139,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		positionShape.boxOpts = timeStepHandlerDetails.layer.boxOpts
 		positionShape.polygonOpts = timeStepHandlerDetails.layer.polygonOpts
 
-		return MyGameBuilder.Render.createView(_worldManager, positionShape, timeStepHandlerDetails.layer.render)
+		return Box2DCreateJS.Render.createView(_worldManager, positionShape, timeStepHandlerDetails.layer.render)
 	}
 
 	function setSpriteSheetFrequency(fps) {
@@ -156,7 +156,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {		
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 

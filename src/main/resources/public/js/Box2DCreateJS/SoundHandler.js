@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.SoundHandler = SoundHandler
+	Box2DCreateJS.SoundHandler = SoundHandler
 
 	function SoundHandler(details) {
 		initialize(this, details)

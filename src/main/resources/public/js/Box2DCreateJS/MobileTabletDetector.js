@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.MobileTabletDetector = MobileTabletDetector
+	Box2DCreateJS.MobileTabletDetector = MobileTabletDetector
 
 	function MobileTabletDetector() {
 		initialize(this)

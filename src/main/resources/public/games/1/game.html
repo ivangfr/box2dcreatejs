@@ -79,30 +79,30 @@
 	<script src="../../js/CreateJS/soundjs-1.0.0.min.js"></script>
 	<script src="../../js/CreateJS/preloadjs-1.0.0.min.js"></script>
 
-	<script src="../../js/MyGameBuilder/ContactHandler.js"></script>
-	<script src="../../js/MyGameBuilder/KeyboardHandler.js"></script>
-	<script src="../../js/MyGameBuilder/ZoomHandler.js"></script>
-	<script src="../../js/MyGameBuilder/Render.js"></script>
-	<script src="../../js/MyGameBuilder/ScreenButton.js"></script>
-	<script src="../../js/MyGameBuilder/LoadingIndicator.js"></script>
-	<script src="../../js/MyGameBuilder/Entity.js"></script>
-	<script src="../../js/MyGameBuilder/Link.js"></script>
-	<script src="../../js/MyGameBuilder/Camera.js"></script>
-	<script src="../../js/MyGameBuilder/Player.js"></script>
-	<script src="../../js/MyGameBuilder/Landscape.js"></script>
-	<script src="../../js/MyGameBuilder/TimeStepHandler.js"></script>
-	<script src="../../js/MyGameBuilder/BreakHandler.js"></script>
-	<script src="../../js/MyGameBuilder/TouchMouseHandler.js"></script>
-	<script src="../../js/MyGameBuilder/WorldManager.js"></script>
-	<script src="../../js/MyGameBuilder/SoundHandler.js"></script>
-	<script src="../../js/MyGameBuilder/MobileTabletDetector.js"></script>
-	<script src="../../js/MyGameBuilder/Utils.js"></script>
+	<script src="../../js/Box2DCreateJS/ContactHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/KeyboardHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/ZoomHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/Render.js"></script>
+	<script src="../../js/Box2DCreateJS/ScreenButton.js"></script>
+	<script src="../../js/Box2DCreateJS/LoadingIndicator.js"></script>
+	<script src="../../js/Box2DCreateJS/Entity.js"></script>
+	<script src="../../js/Box2DCreateJS/Link.js"></script>
+	<script src="../../js/Box2DCreateJS/Camera.js"></script>
+	<script src="../../js/Box2DCreateJS/Player.js"></script>
+	<script src="../../js/Box2DCreateJS/Landscape.js"></script>
+	<script src="../../js/Box2DCreateJS/TimeStepHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/BreakHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/TouchMouseHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/WorldManager.js"></script>
+	<script src="../../js/Box2DCreateJS/SoundHandler.js"></script>
+	<script src="../../js/Box2DCreateJS/MobileTabletDetector.js"></script>
+	<script src="../../js/Box2DCreateJS/Utils.js"></script>
 
 	<script src="MyApp.js"></script>
 
 	<script>
 		function init() {
-			const isMobileTablet = new MyGameBuilder.MobileTabletDetector().isMobileTablet()
+			const isMobileTablet = new Box2DCreateJS.MobileTabletDetector().isMobileTablet()
 
 			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
@@ -112,12 +112,12 @@
 				function handleTouch(event) {
 					document.getElementById("message").style.display = 'none'
 					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false)
-					thisApp = new MyGameBuilder.MyApp()
+					thisApp = new Box2DCreateJS.MyApp()
 				}
 			}
 			else {
 				document.getElementById("keytable").style.display = 'block'
-				thisApp = new MyGameBuilder.MyApp()
+				thisApp = new Box2DCreateJS.MyApp()
 			}
 		}
 

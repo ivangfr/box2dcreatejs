@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.BreakHandler = BreakHandler
+	Box2DCreateJS.BreakHandler = BreakHandler
 
 	const _MIN_PIECE_AREA = 0.1
 
@@ -43,7 +43,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validateBreakEntity(entity, x, y, angles) {
-		if (!(entity instanceof MyGameBuilder.Entity)) {
+		if (!(entity instanceof Box2DCreateJS.Entity)) {
 			throw new Error(arguments.callee.name + " : entity must be an instance of Entity!")
 		}
 
@@ -202,7 +202,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 

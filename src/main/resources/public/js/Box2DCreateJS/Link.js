@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.Link = Link
+	Box2DCreateJS.Link = Link
 
 	function Link(worldManager, details) {
 		initialize(this, worldManager, details)
@@ -218,7 +218,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 
@@ -235,14 +235,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			if (details.entityA === undefined) {
 				throw new Error(arguments.callee.name + " : entityA must be informed!")
 			}
-			if (!(details.entityA instanceof MyGameBuilder.Entity)) {
+			if (!(details.entityA instanceof Box2DCreateJS.Entity)) {
 				throw new Error(arguments.callee.name + " : entityA must be an instance of Entity!")
 			}
 
 			if (details.entityB === undefined) {
 				throw new Error(arguments.callee.name + " : entityB must be informed!")
 			}
-			if (!(details.entityB instanceof MyGameBuilder.Entity)) {
+			if (!(details.entityB instanceof Box2DCreateJS.Entity)) {
 				throw new Error(arguments.callee.name + " : entityB must be an instance of Entity!")
 			}
 

@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.Gravitation = Gravitation
+	Box2DCreateJS.Gravitation = Gravitation
 
 	function Gravitation(worldManager, entity, details) {
 		initialize(this, worldManager, entity, details)
@@ -38,7 +38,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			positionShape.shape = 'circle'
 			positionShape.circleOpts = { radius: gravityRadius * _worldManager.getScale() }
 
-			gravitation.view = MyGameBuilder.Render.createView(worldManager, positionShape, details.render)
+			gravitation.view = Box2DCreateJS.Render.createView(worldManager, positionShape, details.render)
 			gravitation.view.addEventListener('tick', function () {
 				gravitation.view.x = entityPosition.x * _worldManager.getScale()
 				gravitation.view.y = entityPosition.y * _worldManager.getScale()
@@ -139,11 +139,11 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, entity, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 
-		if (!(entity instanceof MyGameBuilder.Entity)) {
+		if (!(entity instanceof Box2DCreateJS.Entity)) {
 			throw new Error(arguments.callee.name + " : entity must be an instance of Entity!")
 		}
 

@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.WorldManager = WorldManager
+	Box2DCreateJS.WorldManager = WorldManager
 
 	//================================================================================================
 	//---------------------------------------- Box2d -------------------------------------------------
@@ -210,7 +210,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			_showLoadingIndicator = (details.preLoad.showLoadingIndicator !== undefined) ? details.preLoad.showLoadingIndicator : true
 			if (_showLoadingIndicator) {
 				const loadingIndicatorOpts = (details.preLoad.loadingIndicatorOpts !== undefined) ? details.preLoad.loadingIndicatorOpts : {}
-				_loadingIndicator = new MyGameBuilder.LoadingIndicator(worldManager, loadingIndicatorOpts)
+				_loadingIndicator = new Box2DCreateJS.LoadingIndicator(worldManager, loadingIndicatorOpts)
 			}
 
 			if (details.preLoad.files !== undefined) {
@@ -456,7 +456,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//---------------------------------- ScreenButton ------------------------------------------------
 	//================================================================================================
 	WorldManager.prototype.createScreenButton = function (details) {
-		const screenButton = new MyGameBuilder.ScreenButton(this, details)
+		const screenButton = new Box2DCreateJS.ScreenButton(this, details)
 		_screenButtons.push(screenButton)
 		return screenButton
 	}
@@ -466,7 +466,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createTimeStepHandler = function (details) {
-		_timeStepHandler = new MyGameBuilder.TimeStepHandler(this, details)
+		_timeStepHandler = new Box2DCreateJS.TimeStepHandler(this, details)
 		return _timeStepHandler
 	}
 
@@ -475,7 +475,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createZoomHandler = function (details) {
-		_zoomHandler = new MyGameBuilder.ZoomHandler(this, details)
+		_zoomHandler = new Box2DCreateJS.ZoomHandler(this, details)
 		return _zoomHandler
 	}
 
@@ -484,7 +484,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createScreenHandler = function (details) {
-		_screenHandler = new MyGameBuilder.ScreenHandler(this, details)
+		_screenHandler = new Box2DCreateJS.ScreenHandler(this, details)
 		return _screenHandler
 	}
 
@@ -493,7 +493,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createLandscape = function (details) {
-		const landscape = new MyGameBuilder.Landscape(this, details)
+		const landscape = new Box2DCreateJS.Landscape(this, details)
 		_landscapes.push(landscape)
 		return landscape
 	}
@@ -503,14 +503,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================	
 
 	WorldManager.prototype.createEntity = function (details) {
-		const entity = new MyGameBuilder.Entity(this, details)
+		const entity = new Box2DCreateJS.Entity(this, details)
 		_entities.push(entity)
 		_entityIdSeq++
 		return entity
 	}
 
 	WorldManager.prototype.deleteEntity = function (entity) {
-		if (!(entity instanceof MyGameBuilder.Entity)) {
+		if (!(entity instanceof Box2DCreateJS.Entity)) {
 			throw new Error(arguments.callee.name + " : invalid value for entity!")
 		}
 		let found = false
@@ -547,7 +547,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createLink = function (details) {
-		return new MyGameBuilder.Link(this, details)
+		return new Box2DCreateJS.Link(this, details)
 	}
 
 	//================================================================================================
@@ -555,7 +555,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createKeyboardHandler = function (details) {
-		_keyboardHandler = new MyGameBuilder.KeyboardHandler(this, details)
+		_keyboardHandler = new Box2DCreateJS.KeyboardHandler(this, details)
 		return _keyboardHandler
 	}
 
@@ -564,7 +564,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================	
 
 	WorldManager.prototype.createTouchMouseHandler = function (details) {
-		_touchMouseHandler = new MyGameBuilder.TouchMouseHandler(this, details)
+		_touchMouseHandler = new Box2DCreateJS.TouchMouseHandler(this, details)
 		return _touchMouseHandler
 	}
 
@@ -573,14 +573,14 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createPlayer = function (entity, details) {
-		const player = new MyGameBuilder.Player(this, entity, details)
+		const player = new Box2DCreateJS.Player(this, entity, details)
 		_players.push(player)
 		_player = player
 		return player
 	}
 
 	WorldManager.prototype.getPlayerByItsEntity = function (entity) {
-		if (!(entity instanceof MyGameBuilder.Entity)) {
+		if (!(entity instanceof Box2DCreateJS.Entity)) {
 			throw new Error(arguments.callee.name + " : invalid value for entity!")
 		}
 		return _players.filter(player => player.getEntity() === entity)[0]
@@ -632,7 +632,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createGrenade = function (entity, details) {
-		return new MyGameBuilder.Grenade(this, entity, details)
+		return new Box2DCreateJS.Grenade(this, entity, details)
 	}
 
 	//================================================================================================
@@ -640,7 +640,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createGravitation = function (entity, details) {
-		const gravitation = new MyGameBuilder.Gravitation(this, entity, details)
+		const gravitation = new Box2DCreateJS.Gravitation(this, entity, details)
 		_gravitations.push(gravitation)
 		return gravitation
 	}
@@ -650,7 +650,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createWind = function (details) {
-		_wind = new MyGameBuilder.Wind(this, details)
+		_wind = new Box2DCreateJS.Wind(this, details)
 		return _wind
 	}
 
@@ -659,7 +659,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createContactHandler = function (details) {
-		_contactHandler = new MyGameBuilder.ContactHandler(this, details)
+		_contactHandler = new Box2DCreateJS.ContactHandler(this, details)
 		return _contactHandler
 	}
 
@@ -668,7 +668,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createSoundHandler = function (details) {
-		_soundHandler = new MyGameBuilder.SoundHandler(details)
+		_soundHandler = new Box2DCreateJS.SoundHandler(details)
 		return _soundHandler
 	}
 
@@ -677,7 +677,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	//================================================================================================
 
 	WorldManager.prototype.createMobileTabletDetector = function () {
-		_mobileTabletDetector = new MyGameBuilder.MobileTabletDetector()
+		_mobileTabletDetector = new Box2DCreateJS.MobileTabletDetector()
 		return _mobileTabletDetector
 	}
 

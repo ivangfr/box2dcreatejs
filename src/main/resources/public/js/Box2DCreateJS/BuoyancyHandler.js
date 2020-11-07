@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.BuoyancyHandler = BuoyancyHandler
+	Box2DCreateJS.BuoyancyHandler = BuoyancyHandler
 
 	const _DEGTORAD = 0.0174532925199432957
 	const _NUM_VERTICES_INSIDE_CIRCLE = 8
@@ -288,7 +288,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 

@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>com.mycompany</groupId>
-    <artifactId>mygamebuilder</artifactId>
+    <artifactId>box2dcreatejs</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>mygamebuilder</name>
+    <name>box2dcreatejs</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

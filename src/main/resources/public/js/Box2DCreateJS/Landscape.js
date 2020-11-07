@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.Landscape = Landscape
+	Box2DCreateJS.Landscape = Landscape
 
 	function Landscape(worldManager, details) {
 		initialize(this, worldManager, details)
@@ -47,7 +47,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			details.render.z = worldManager.getLandscapes().length
 		}
 
-		landscape.view = MyGameBuilder.Render.createView(worldManager, positionShape, details.render)
+		landscape.view = Box2DCreateJS.Render.createView(worldManager, positionShape, details.render)
 		_easeljsStage.addChildAt(landscape.view, details.render.z)
 	}
 
@@ -63,12 +63,12 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		positionShape.boxOpts = this.view.boxOpts
 		positionShape.polygonOpts = this.view.polygonOpts
 
-		this.view = MyGameBuilder.Render.createView(_worldManager, positionShape, render)
+		this.view = Box2DCreateJS.Render.createView(_worldManager, positionShape, render)
 		_easeljsStage.addChildAt(this.view, this.view.z)
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 

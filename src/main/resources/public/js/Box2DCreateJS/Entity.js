@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.Entity = Entity
+	Box2DCreateJS.Entity = Entity
 
 	function Entity(worldManager, details) {
 		initialize(this, worldManager, details)
@@ -87,7 +87,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		positionShape.boxOpts = this.b2body.view.boxOpts
 		positionShape.polygonOpts = this.b2body.view.polygonOpts
 
-		this.b2body.view = MyGameBuilder.Render.createView(_worldManager, positionShape, render)
+		this.b2body.view = Box2DCreateJS.Render.createView(_worldManager, positionShape, render)
 
 		const entity = this
 		this.b2body.view.addEventListener('tick', function () {
@@ -158,7 +158,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 			positionShape.circleOpts = details.circleOpts
 			positionShape.boxOpts = details.boxOpts
 			positionShape.polygonOpts = details.polygonOpts
-			view = MyGameBuilder.Render.createView(worldManager, positionShape, details.render)
+			view = Box2DCreateJS.Render.createView(worldManager, positionShape, details.render)
 		}
 
 		if (view !== null) {
@@ -341,7 +341,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 		if (typeof details !== 'object') {

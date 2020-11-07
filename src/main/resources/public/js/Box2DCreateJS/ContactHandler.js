@@ -1,8 +1,8 @@
-this.MyGameBuilder = this.MyGameBuilder || {};
+this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	MyGameBuilder.ContactHandler = ContactHandler
+	Box2DCreateJS.ContactHandler = ContactHandler
 
 	function ContactHandler(worldManager, details) {
 		initialize(this, worldManager, details)
@@ -47,7 +47,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		let buoyancyHandler
 		if (enabledBuoyancy) {
 			const buoyancyOpts = (details !== undefined && details.buoyancyOpts !== undefined) ? details.buoyancyOpts : {}
-			buoyancyHandler = new MyGameBuilder.BuoyancyHandler(worldManager, buoyancyOpts)
+			buoyancyHandler = new Box2DCreateJS.BuoyancyHandler(worldManager, buoyancyOpts)
 		}
 		contactHandler.getBuoyancyHandler = function () { return buoyancyHandler }
 
@@ -57,7 +57,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		let stickyTargetHandler
 		if (enabledStickyTarget) {
 			const stickyTargetOpts = (details !== undefined && details.stickyTargetOpts !== undefined) ? details.stickyTargetOpts : {}
-			stickyTargetHandler = new MyGameBuilder.StickyTargetHandler(worldManager, stickyTargetOpts)
+			stickyTargetHandler = new Box2DCreateJS.StickyTargetHandler(worldManager, stickyTargetOpts)
 		}
 		contactHandler.getStickyTargetHandler = function () { return stickyTargetHandler }
 
@@ -67,7 +67,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 		let breakHandler
 		if (enabledBreak) {
 			const breakOpts = (details !== undefined && details.breakOpts !== undefined) ? details.breakOpts : {}
-			breakHandler = new MyGameBuilder.BreakHandler(worldManager, breakOpts)
+			breakHandler = new Box2DCreateJS.BreakHandler(worldManager, breakOpts)
 		}
 		contactHandler.getBreakHandler = function () { return breakHandler }
 
@@ -173,7 +173,7 @@ this.MyGameBuilder = this.MyGameBuilder || {};
 	}
 
 	function validate(worldManager, details) {
-		if (!(worldManager instanceof MyGameBuilder.WorldManager)) {
+		if (!(worldManager instanceof Box2DCreateJS.WorldManager)) {
 			throw new Error(arguments.callee.name + " : worldManager must be an instance of WorldManager!")
 		}
 
