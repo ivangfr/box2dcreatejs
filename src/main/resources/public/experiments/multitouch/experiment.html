@@ -80,14 +80,20 @@
 		window.addEventListener("load", init)
 	</script>
 
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DK8MRGZ7JF"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-DK8MRGZ7JF');
+	</script>
 </head>
 
 <body>
-
 	<p id="output"></p>
 	<canvas id="easeljsCanvas" width="980" height="500"></canvas>
 	<canvas id="box2dCanvas" width="980" height="500"></canvas>
-
 </body>
 
 </html>
