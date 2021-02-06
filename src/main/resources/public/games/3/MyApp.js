@@ -3,6 +3,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 (function () {
 
 	let _worldManager
+
+	let _isMobileTablet
 	let _countTick = 0, _score
 	let _hintElem
 	let _soundHandler
@@ -50,6 +52,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					'../../images/moon.png',
 					'../../images/atomic_explosion.png',
 					'../../images/explosion_small.png',
+					'../../images/arrow_up.png',
+					'../../images/arrow_down.png',
+					'../../images/missile.png',
 					{ src: '../../sounds/lifes_a_breeze.mp3', id: 'music' },
 					{ src: '../../sounds/explosion-01.mp3', id: 'explosion' },
 					{ src: '../../sounds/laser.mp3', id: 'laser' },
@@ -66,6 +71,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				}
 			}
 		})
+
+		_isMobileTablet = _worldManager.createMobileTabletDetector().isMobileTablet()
 	}
 
 	function startCountingDown() {
@@ -307,6 +314,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			}
 		})
 
+		_worldManager.createTouchMouseHandler({ enableDrag: false })
+
 		createLimits()
 		createEarth()
 		createMoon()
@@ -318,6 +327,10 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		createLasers(100)
 		createUfo()
 		loadUfo()
+
+		if (_isMobileTablet) {
+			createButtonsForMobile()
+		}
 	}
 
 	function createMoonExplosion(projectileEntity, moonEntity) {
@@ -783,6 +796,57 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			_soundHandler.createSoundInstance({ id: 'laser' }).myPlay({ volume: 0.2 })
 			loadUfo()
 		}
+	}
+
+	function createButtonsForMobile() {
+		// go up button
+		_worldManager.createScreenButton({
+			x: 225, y: 460,
+			shape: 'box',
+			boxOpts: { width: 80, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_up.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _player.up(),
+			onmouseup: () => _player.upNormal(),
+			keepPressed: true
+		})
+
+		// go down button
+		_worldManager.createScreenButton({
+			x: 305, y: 460,
+			shape: 'box',
+			boxOpts: { width: 80, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_down.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _player.down(),
+			onmouseup: () => _player.downNormal(),
+			keepPressed: true
+		})
+
+		// fire button
+		_worldManager.createScreenButton({
+			x: 735, y: 460,
+			shape: 'box',
+			boxOpts: { width: 80, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/missile.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: function (e) { _player.fire() }
+		})
 	}
 
 	function drawMissilePrev(x, y, color) {

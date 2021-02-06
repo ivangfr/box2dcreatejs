@@ -21,8 +21,6 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			world: new box2d.b2World(new box2d.b2Vec2(0, 10), true),
 			preLoad: {
 				files: [
-					'../../images/leftarrow.png',
-					'../../images/rightarrow.png',
 					'../../images/ball.png',
 					'../../images/box.jpg',
 				],

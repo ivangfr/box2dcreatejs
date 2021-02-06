@@ -24,8 +24,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					'../../images/ken.png',
 					'../../images/runningGrant.png',
 					'../../images/explosion.png',
-					'../../images/leftarrow.png',
-					'../../images/rightarrow.png'
+					'../../images/arrow_left.png',
+					'../../images/arrow_right.png'
 				],
 				onComplete: testSpriteSheet
 			}
@@ -133,7 +133,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			render: {
 				type: 'image',
 				imageOpts: {
-					image: '../../images/leftarrow.png',
+					image: '../../images/arrow_left.png',
 					adjustImageSize: true
 				}
 			},

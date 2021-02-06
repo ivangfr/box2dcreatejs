@@ -33,8 +33,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					'../../images/tire.png',
 					'../../images/tire2.png',
 					'../../images/hummer.png',
-					'../../images/leftarrow.png',
-					'../../images/rightarrow.png',
+					'../../images/arrow_left.png',
+					'../../images/arrow_right.png',
 					'../../images/background.jpg',
 					'../../images/earth.png',
 				],
@@ -119,7 +119,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		const leftBtnRender1 = {
 			type: 'image',
 			imageOpts: {
-				image: '../../images/leftarrow.png',
+				image: '../../images/arrow_left.png',
 				adjustImageSize: true
 			}
 		}
@@ -130,7 +130,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				bgColorStyle: 'solid',
 				bgSolidColorOpts: { color: 'white' },
 				borderWidth: 2,
-				bgImage: '../../images/leftarrow.png',
+				bgImage: '../../images/arrow_left.png',
 				adjustBgImageSize: true
 			}
 		}
@@ -153,7 +153,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		const rightBtnRender1 = {
 			type: 'image',
 			imageOpts: {
-				image: '../../images/rightarrow.png',
+				image: '../../images/arrow_right.png',
 				adjustImageSize: true
 			}
 		}
@@ -164,7 +164,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				bgColorStyle: 'solid',
 				bgSolidColorOpts: { color: 'white' },
 				borderWidth: 2,
-				bgImage: '../../images/rightarrow.png',
+				bgImage: '../../images/arrow_right.png',
 				adjustBgImageSize: true
 			}
 		}

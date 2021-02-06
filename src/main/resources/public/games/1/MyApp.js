@@ -51,10 +51,10 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					{ src: '../../sounds/crowd_applause.mp3', id: 'applause' },
 					'../../images/tire.png',
 					'../../images/hummer.png',
-					'../../images/leftarrow.png',
-					'../../images/rightarrow.png',
-					'../../images/uparrow.png',
-					'../../images/downarrow.png',
+					'../../images/arrow_up.png',
+					'../../images/arrow_down.png',
+					'../../images/arrow_left.png',
+					'../../images/arrow_right.png',
 					'../../images/background2.jpg',
 					'../../images/finishFlag.jpg'
 				],
@@ -80,7 +80,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 		const player = _worldManager.createPlayer(car.chassis, {
 			camera: {
-				adjustX: 300,
+				adjustX: 350,
 				adjustY: 90,
 				xAxisOn: true,
 				yAxisOn: false
@@ -454,139 +454,64 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	}
 
 	function createButtonsForMobile(player) {
-		const leftBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/leftarrow.png',
-				adjustImageSize: true
-			}
-		}
-
-		const leftBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/leftarrow.png',
-				adjustBgImageSize: true
-			}
-		}
-
-		const leftBtn = _worldManager.createScreenButton({
-			x: 830, y: 480,
+		
+		_worldManager.createScreenButton({
+			x: 50, y: 450,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: leftBtnRender1,
-			onmousedown: function (e) {
-				player.anticlockwise(e)
-				leftBtn.changeRender(leftBtnRender2)
+			boxOpts: { width: 100, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_up.png',
+					adjustImageSize: true
+				}
 			},
-			onmouseup: function (e) {
-				leftBtn.changeRender(leftBtnRender1)
-			},
+			onmousedown: function (e) { player.anticlockwise(e) },
 			keepPressed: false
 		})
 
-		const rightBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/rightarrow.png',
-				adjustImageSize: true
-			}
-		}
-
-		const rightBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/rightarrow.png',
-				adjustBgImageSize: true
-			}
-		}
-
-		const rightBtn = _worldManager.createScreenButton({
-			x: 930, y: 480,
+		_worldManager.createScreenButton({
+			x: 150, y: 450,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: rightBtnRender1,
-			onmousedown: function (e) {
-				player.clockwise(e)
-				rightBtn.changeRender(rightBtnRender2)
+			boxOpts: { width: 100, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_down.png',
+					adjustImageSize: true
+				}
 			},
-			onmouseup: function (e) {
-				rightBtn.changeRender(rightBtnRender1)
-			},
+			onmousedown: function (e) { player.clockwise(e) },
 			keepPressed: false
 		})
 
-		const upBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/uparrow.png',
-				adjustImageSize: true
-			}
-		}
-
-		const upBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/uparrow.png',
-				adjustBgImageSize: true
-			}
-		}
-
-		const upBtn = _worldManager.createScreenButton({
-			x: 50, y: 440,
+		_worldManager.createScreenButton({
+			x: 830, y: 450,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: upBtnRender1,
-			onmousedown: function (e) {
-				player.foward(e)
-				upBtn.changeRender(upBtnRender2)
+			boxOpts: { width: 100, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_left.png',
+					adjustImageSize: true
+				}
 			},
-			onmouseup: function (e) {
-				upBtn.changeRender(upBtnRender1)
-			},
+			onmousedown: function (e) { player.backward(e) },
 			keepPressed: true
 		})
 
-		const downBtnRender1 = {
-			type: 'image',
-			imageOpts: {
-				image: '../../images/downarrow.png',
-				adjustImageSize: true
-			}
-		}
-
-		const downBtnRender2 = {
-			type: 'draw',
-			drawOpts: {
-				bgColorStyle: 'solid',
-				bgSolidColorOpts: { color: 'white' },
-				borderWidth: 2,
-				bgImage: '../../images/downarrow.png',
-				adjustBgImageSize: true
-			}
-		}
-
-		const downBtn = _worldManager.createScreenButton({
-			x: 50, y: 480,
+		_worldManager.createScreenButton({
+			x: 930, y: 450,
 			shape: 'box',
-			boxOpts: { width: 100, height: 40 },
-			render: downBtnRender1,
-			onmousedown: function (e) {
-				player.backward(e)
-				downBtn.changeRender(downBtnRender2)
+			boxOpts: { width: 100, height: 80 },
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_right.png',
+					adjustImageSize: true
+				}
 			},
-			onmouseup: function (e) {
-				downBtn.changeRender(downBtnRender1)
-			},
+			onmousedown: function (e) { player.foward(e) },
 			keepPressed: true
 		})
 	}

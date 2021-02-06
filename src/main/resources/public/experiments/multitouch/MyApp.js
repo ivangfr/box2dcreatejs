@@ -22,8 +22,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			preLoad: {
 				files: [
 					'../../images/explosion.png',
-					'../../images/leftarrow.png',
-					'../../images/rightarrow.png'
+					'../../images/arrow_left.png',
+					'../../images/arrow_right.png'
 				],
 				onComplete: testMultiTouch
 			}
@@ -151,7 +151,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			render: {
 				type: 'image',
 				imageOpts: {
-					image: '../../images/leftarrow.png',
+					image: '../../images/arrow_left.png',
 					adjustImageSize: true
 				}
 			},
@@ -168,7 +168,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			render: {
 				type: 'image',
 				imageOpts: {
-					image: '../../images/rightarrow.png',
+					image: '../../images/arrow_right.png',
 					adjustImageSize: true
 				}
 			},
