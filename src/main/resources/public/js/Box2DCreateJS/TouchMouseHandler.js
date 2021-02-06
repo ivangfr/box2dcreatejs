@@ -110,7 +110,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 	TouchMouseHandler.prototype.update = function (countTick) {
 		if (_touchable) {
-			_touches.forEach(touch => handleTouchUpdate(touch, countTick))
+			for (let i = 0; i < _touches.length; i++) {
+				handleTouchUpdate(_touches.item(i), countTick)
+			}
 		}
 		else {
 			handleMouseUpdate(countTick)
@@ -211,7 +213,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		e.preventDefault()
 		_touches = e.touches
 
-		e.changedTouches.forEach(touch => {
+		for (let i = 0; i < e.changedTouches.length; i++) {
+			const touch = e.changedTouches.item(i)
 			const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
 
 			if (screenButton === null) {
@@ -227,14 +230,15 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					_userOnMouseDown(touch)
 				}
 			}
-		})
+		}
 	}
 
 	function onTouchMove(e) {
 		e.preventDefault()
 		_touches = e.touches
 
-		e.changedTouches.forEach(touch => {
+		for (let i = 0; i < e.changedTouches.length; i++) {
+			const touch = e.changedTouches.item(i)
 			const screenButton = downOnScreenButton(touch.clientX, touch.clientY)
 
 			_screenButtons
@@ -255,14 +259,15 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					_userOnMouseMove(touch)
 				}
 			}
-		})
+		}
 	}
 
 	function onTouchEnd(e) {
 		e.preventDefault()
 		_touches = e.touches
 
-		e.changedTouches.forEach(touch => {
+		for (let i = 0; i < e.changedTouches.length; i++) {
+			const touch = e.changedTouches.item(i)
 			_touchesDownOnEntity[touch.identifier] = false
 
 			let touchOnScreenButton = false
@@ -292,7 +297,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					delete _touchJoints[p]
 				}
 			}
-		})
+		}
 	}
 
 	function onMouseDown(e) {
