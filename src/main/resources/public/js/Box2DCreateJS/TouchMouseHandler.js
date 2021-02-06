@@ -291,11 +291,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				}
 			}
 
-			for (let p in _touchJoints) {
-				if (p === touch.identifier) {
-					_touchJoints[p].forEach(touchJoint => _worldManager.getWorld().DestroyJoint(touchJoint))
-					delete _touchJoints[p]
-				}
+			if (_touchJoints[touch.identifier]) {
+				_touchJoints[touch.identifier].forEach(touchJoint => _worldManager.getWorld().DestroyJoint(touchJoint))
+				delete _touchJoints[touch.identifier]
 			}
 		}
 	}
