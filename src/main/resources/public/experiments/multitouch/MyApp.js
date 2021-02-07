@@ -89,12 +89,10 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 		_worldManager.createTouchMouseHandler({
 			debugTouchMouseLocation: true,
-			onmousedown: function () {
-				document.getElementById("output").innerHTML = 'MOUSEDOWN'
-			},
-			onmouseup: function () {
-				document.getElementById("output").innerHTML = 'MOUSEUP'
-			}
+			onmousedown: () => document.getElementById("output").innerHTML = 'MOUSEDOWN',
+			onmouseup: () => document.getElementById("output").innerHTML = 'MOUSEUP',
+			ontouchstart: () => document.getElementById("output").innerHTML = 'TOUCHSTART',
+			ontouchend: () => document.getElementById("output").innerHTML = 'TOUCHEND',
 		})
 
 		_worldManager.createKeyboardHandler({

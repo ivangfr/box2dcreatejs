@@ -8,7 +8,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		initialize(worldManager, details)
 	}
 
-	const _validTouchMouseHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'debugTouchMouseLocation', 'pointerRadius', 'pointerAccurate', 'onmousedown', 'onmouseup', 'onmousemove']
+	const _validTouchMouseHandlerDef = ['enableDrag', 'enableSlice', 'sliceOpts', 'debugTouchMouseLocation', 'pointerRadius', 'pointerAccurate',
+	  'onmousedown', 'onmouseup', 'onmousemove', 'ontouchstart', 'ontouchmove', 'ontouchend']
 
 	let _worldManager
 	let _canvasPosition
@@ -16,6 +17,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	let _debugTouchMouseLocation
 	let _selectedBodies, _mousePVec, _halfSquare
 	let _userOnMouseDown, _userOnMouseUp, _userOnMouseMove
+	let _userOnTouchStart, _userOnTouchMove, _userOnTouchEnd
 
 	let _enableDrag
 	TouchMouseHandler.prototype.getEnableDrag = function () { return _enableDrag }
@@ -87,6 +89,16 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		}
 		if (details && details.onmousemove !== undefined) {
 			_userOnMouseMove = details.onmousemove
+		}
+
+		if (details && details.ontouchstart !== undefined) {
+			_userOnTouchStart = details.ontouchstart
+		}
+		if (details && details.ontouchmove !== undefined) {
+			_userOnTouchMove = details.ontouchmove
+		}
+		if (details && details.ontouchend !== undefined) {
+			_userOnTouchEnd = details.ontouchend
 		}
 
 		if (_touchable) {
@@ -226,8 +238,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				else if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchStart(touch)
 				}
-				if (_userOnMouseDown !== undefined) {
-					_userOnMouseDown(touch)
+				if (_userOnTouchStart !== undefined) {
+					_userOnTouchStart(touch)
 				}
 			}
 		}
@@ -255,8 +267,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchMove(touch)
 				}
-				if (_userOnMouseMove !== undefined) {
-					_userOnMouseMove(touch)
+				if (_userOnTouchMove !== undefined) {
+					_userOnTouchMove(touch)
 				}
 			}
 		}
@@ -286,8 +298,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				if (_sliceHandler !== undefined && _enableSlice) {
 					_sliceHandler.onTouchEnd(touch)
 				}
-				if (_userOnMouseUp !== undefined) {
-					_userOnMouseUp(touch)
+				if (_userOnTouchEnd !== undefined) {
+					_userOnTouchEnd(touch)
 				}
 			}
 
@@ -542,6 +554,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			if (details.pointerAccurate !== undefined && typeof details.pointerAccurate !== 'boolean') {
 				throw new Error(arguments.callee.name + " : pointerAccurate must be a true/false!")
 			}
+			
 			if (details.onmousedown !== undefined && typeof details.onmousedown !== 'function') {
 				throw new Error(arguments.callee.name + " : onmousedown must be a function!")
 			}
@@ -550,6 +563,16 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			}
 			if (details.onmousemove !== undefined && typeof details.onmousemove !== 'function') {
 				throw new Error(arguments.callee.name + " : onmousemove must be a function!")
+			}
+
+			if (details.ontouchstart !== undefined && typeof details.ontouchstart !== 'function') {
+				throw new Error(arguments.callee.name + " : ontouchstart must be a function!")
+			}
+			if (details.ontouchmove !== undefined && typeof details.ontouchmove !== 'function') {
+				throw new Error(arguments.callee.name + " : ontouchmove must be a function!")
+			}
+			if (details.ontouchend !== undefined && typeof details.ontouchend !== 'function') {
+				throw new Error(arguments.callee.name + " : ontouchend must be a function!")
 			}
 		}
 	}

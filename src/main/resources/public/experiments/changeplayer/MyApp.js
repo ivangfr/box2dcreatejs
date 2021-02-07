@@ -2,7 +2,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 (function () {
 
-	let _worldManager, _playerSelected, _prevPlayerSelected
+	let _worldManager, _playerSelected, _prevPlayerSelected, _isMobileTablet
 
 	function MyApp() {
 		this.initialize()
@@ -18,11 +18,26 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			enableRender: true,
 			enableDebug: false,
 			fpsIndicator: { enabled: true },
-			world: new box2d.b2World(new box2d.b2Vec2(0, 0), true)
+			world: new box2d.b2World(new box2d.b2Vec2(0, 0), true),
+			preLoad: {
+				loadingIndicatorOpts: {
+					x: 450,
+					y: 220,
+					color: 'black'
+				},
+				files: [
+					'../../images/arrow_up.png',
+					'../../images/arrow_down.png',
+					'../../images/arrow_left.png',
+					'../../images/arrow_right.png'
+				],
+				onComplete: function () {
+					testChangePlayer()
+				}
+			}
 		})
 
-		testChangePlayer()
-		_worldManager.start()
+		_isMobileTablet = _worldManager.createMobileTabletDetector().isMobileTablet()
 	}
 
 	function testChangePlayer() {
@@ -30,21 +45,24 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		createLandscapeAndWorldLimits()
 		createBalls(10)
 
-		const touchMouseHandler = _worldManager.createTouchMouseHandler({
-			onmousedown: function (e) {
-				touchMouseHandler.getEntitiesAtMouseTouch(e)
-					.filter(entity => entity.getGroup() === 'square')
-					.map(entity => _worldManager.getPlayerByItsEntity(entity))
-					.filter(player => player !== _playerSelected)
-					.forEach(player => {
-						_prevPlayerSelected = _playerSelected
-						_playerSelected = player
-						_worldManager.setPlayer(_playerSelected)
+		function handleSelectPlayer(e, touchMouseHandler) {
+			touchMouseHandler.getEntitiesAtMouseTouch(e)
+			.filter(entity => entity.getGroup() === 'square')
+			.map(entity => _worldManager.getPlayerByItsEntity(entity))
+			.filter(player => player !== _playerSelected)
+			.forEach(player => {
+				_prevPlayerSelected = _playerSelected
+				_playerSelected = player
+				_worldManager.setPlayer(_playerSelected)
 
-						_playerSelected.getEntity().changeRender(getPlayerSelectedRender())
-						_prevPlayerSelected.getEntity().changeRender(getPlayerUnselectedRender())
-					})
-			}
+				_playerSelected.getEntity().changeRender(getPlayerSelectedRender())
+				_prevPlayerSelected.getEntity().changeRender(getPlayerUnselectedRender())
+			})
+		}
+
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
+			onmousedown: (e) => handleSelectPlayer(e, touchMouseHandler),
+			ontouchstart: (e) => handleSelectPlayer(e, touchMouseHandler)
 		})
 
 		_worldManager.createKeyboardHandler({
@@ -85,6 +103,10 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		})
 
 		createPlayers()
+
+		if (_isMobileTablet) {
+			createButtonsForMobile()
+		}
 	}
 
 	function getPlayerSelectedRender() {
@@ -116,6 +138,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			x: 100, y: 150,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
+			bodyDefOpts: { fixedRotation: true },
 			type: 'dynamic',
 			render: getPlayerSelectedRender(),
 			group: 'square'
@@ -129,16 +152,16 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			},
 			events: {
 				up: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -500), this.getB2Body().GetWorldCenter())
 				},
 				down: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 500), this.getB2Body().GetWorldCenter())
 				},
 				left: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(-500, 0), this.getB2Body().GetWorldCenter())
 				},
 				right: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(500, 0), this.getB2Body().GetWorldCenter())
 				}
 			}
 		})
@@ -148,6 +171,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			x: 100, y: 300,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
+			bodyDefOpts: { fixedRotation: true },
 			render: getPlayerUnselectedRender(),
 			group: 'square'
 		})
@@ -160,16 +184,16 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			},
 			events: {
 				up: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -500), this.getB2Body().GetWorldCenter())
 				},
 				down: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 500), this.getB2Body().GetWorldCenter())
 				},
 				left: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(-500, 0), this.getB2Body().GetWorldCenter())
 				},
 				right: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(500, 0), this.getB2Body().GetWorldCenter())
 				}
 			}
 		})
@@ -179,6 +203,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			x: 100, y: 450,
 			shape: 'box',
 			boxOpts: { width: 50, height: 50 },
+			bodyDefOpts: { fixedRotation: true },
 			render: getPlayerUnselectedRender(),
 			group: 'square'
 		})
@@ -191,16 +216,16 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			},
 			events: {
 				up: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, -500), this.getB2Body().GetWorldCenter())
 				},
 				down: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 100), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(0, 500), this.getB2Body().GetWorldCenter())
 				},
 				left: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(-100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(-500, 0), this.getB2Body().GetWorldCenter())
 				},
 				right: function () {
-					this.getB2Body().ApplyForce(new box2d.b2Vec2(100, 0), this.getB2Body().GetWorldCenter())
+					this.getB2Body().ApplyForce(new box2d.b2Vec2(500, 0), this.getB2Body().GetWorldCenter())
 				}
 			}
 		})
@@ -285,6 +310,70 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				}
 			})
 		}
+	}
+
+	function createButtonsForMobile() {
+		const staticBoxOpts = { width: 80, height: 80 }
+
+		_worldManager.createScreenButton({
+			x: 40, y: 410,
+			shape: 'box',
+			boxOpts: staticBoxOpts,
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_left.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _playerSelected.left(),
+			keepPressed: true
+		})
+
+		_worldManager.createScreenButton({
+			x: 100, y: 360,
+			shape: 'box',
+			boxOpts: staticBoxOpts,
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_up.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _playerSelected.up(),
+			keepPressed: true
+		})
+
+		_worldManager.createScreenButton({
+			x: 160, y: 410,
+			shape: 'box',
+			boxOpts: staticBoxOpts,
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_right.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _playerSelected.right(),
+			keepPressed: true
+		})
+
+		_worldManager.createScreenButton({
+			x: 100, y: 460,
+			shape: 'box',
+			boxOpts: staticBoxOpts,
+			render: {
+				type: 'image',
+				imageOpts: {
+					image: '../../images/arrow_down.png',
+					adjustImageSize: true
+				}
+			},
+			onmousedown: () => _playerSelected.down(),
+			keepPressed: true
+		})
 	}
 
 }())
