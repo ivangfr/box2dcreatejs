@@ -7,6 +7,10 @@
 
 	<link rel='stylesheet' href='../../css/cssreset-min.css' type='text/css' media='all' />
 	<style type="text/css">
+	  body {
+			font-family: Verdana;
+		}
+
 		#easeljsCanvas,
 		#box2dCanvas {
 			position: absolute;
@@ -20,6 +24,15 @@
 			position: absolute;
 			top: 510px;
 			left: 20px;
+		}
+
+		#message {
+			font-weight: bold;
+			position: absolute;
+			top: 235px;
+			left: 300px;
+			font-size: 25px;
+			display: none;
 		}
 	</style>
 
@@ -64,10 +77,10 @@
 			let thisApp
 			//It's necessary to play correctly sounds on mobile devices. They must be played inside the click event!
 			if (isMobileTablet) {
-				document.getElementById("output").innerHTML = 'Touch the canvas to start!'
+				document.getElementById("message").style.display = 'block'
 				document.getElementById("box2dCanvas").addEventListener("click", handleTouch, false)
 				function handleTouch(event) {
-					document.getElementById("output").innerHTML = ''
+					document.getElementById("message").style.display = 'none'
 					document.getElementById("box2dCanvas").removeEventListener("click", handleTouch, false)
 					thisApp = new Box2DCreateJS.MyApp()
 				}
@@ -91,9 +104,10 @@
 </head>
 
 <body>
-	<p id="output"></p>
 	<canvas id="easeljsCanvas" width="980" height="500"></canvas>
 	<canvas id="box2dCanvas" width="980" height="500"></canvas>
+	<p id="message">Touch the canvas to start!</p>
+	<p id="output"></p>
 </body>
 
 </html>

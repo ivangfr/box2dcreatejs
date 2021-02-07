@@ -150,7 +150,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			render: {
 				type: 'image',
 				imageOpts: {
-					image: '../../images/rightarrow.png',
+					image: '../../images/arrow_right.png',
 					adjustImageSize: true
 				}
 			},
