@@ -31,25 +31,31 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		createBalls(300)
 		createBoxes(150)
 
+		function handleMouseDownOrTouchStart(e, touchMouseHandler) {
+			touchMouseHandler.getEntitiesAtMouseTouch(e)
+				.filter(entity => entity.getGroup() === 'ball')
+				.forEach(entity => _worldManager.deleteEntity(entity))
+		}
+
+		function handleMouseMoveOrTouchMove(e, touchMouseHandler) {
+			const x = e.x || e.clientX
+			const y = e.y || e.clientY
+
+			if (touchMouseHandler.isTouchable() || touchMouseHandler.isMouseDown()) {
+				touchMouseHandler.getEntitiesAtMouseTouch(e)
+					.filter(entity => entity.getGroup() === 'ball')
+					.forEach(entity => _worldManager.deleteEntity(entity))
+			}
+		}
+
 		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			pointerRadius: 20,
 			pointerAccurate: false,
 			debugTouchMouseLocation: true,
-			onmousedown: function (e) {
-				touchMouseHandler.getEntitiesAtMouseTouch(e)
-					.filter(entity => entity.getGroup() === 'ball')
-					.forEach(entity => _worldManager.deleteEntity(entity))
-			},
-			onmousemove: function (e) {
-				const x = e.x || e.clientX
-				const y = e.y || e.clientY
-
-				if (touchMouseHandler.isTouchable() || touchMouseHandler.isMouseDown()) {
-					touchMouseHandler.getEntitiesAtMouseTouch(e)
-						.filter(entity => entity.getGroup() === 'ball')
-						.forEach(entity => _worldManager.deleteEntity(entity))
-				}
-			}
+			onmousedown: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler),
+			ontouchstart: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler),
+			onmousemove: (e) => handleMouseMoveOrTouchMove(e, touchMouseHandler),
+			ontouchmove: (e) => handleMouseMoveOrTouchMove(e, touchMouseHandler)
 		})
 
 		_worldManager.createKeyboardHandler({

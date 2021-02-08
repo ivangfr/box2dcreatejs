@@ -169,21 +169,19 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			}
 		})
 
-		if (!_isMobileTablet) {
-			_worldManager.createLandscape({
-				x: 10000, y: 115,
-				shape: 'box',
-				boxOpts: { width: 20000, height: 575 },
-				render: {
-					type: 'draw',
-					drawOpts: {
-						bgColorStyle: 'transparent',
-						bgImage: '../../images/background2.jpg',
-						repeatBgImage: 'repeat-x'
-					}
+		_worldManager.createLandscape({
+			x: 10000, y: 115,
+			shape: 'box',
+			boxOpts: { width: 20000, height: 575 },
+			render: {
+				type: 'draw',
+				drawOpts: {
+					bgColorStyle: 'transparent',
+					bgImage: '../../images/background2.jpg',
+					repeatBgImage: 'repeat-x'
 				}
-			})
-		}
+			}
+		})
 
 		_worldManager.createKeyboardHandler({
 			keys: {

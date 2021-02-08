@@ -85,6 +85,30 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		_soundHandler.createSoundInstance({ id: 'stream' }).myPlay({ loop: -1, volume: 0.3 })
 		_soundHandler.createSoundInstance({ id: 'birds' }).myPlay({ loop: -1, volume: 0.1 })
 
+		function handleMouseDownOrTouchStart(e, touchMouseHandler) {
+			const x = e.x || e.clientX
+			const y = e.y || e.clientY
+
+			touchMouseHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
+				const entityUserData = entity.b2body.GetUserData()
+				if (entityUserData.group === 'breakable') {
+					const breakHandler = new Box2DCreateJS.BreakHandler(_worldManager, {
+						numCuts: 2,
+						explosion: true
+					})
+					breakHandler.breakEntity(entity, x, y)
+					createExplosion(x, y)
+				}
+				else if (entityUserData.name === 'fish' && _fishDir !== 0) {
+					const fishView = _fish.b2body.view
+					_fishDir === 1 ? fishView.gotoAndPlay("turnLeftDie") : fishView.gotoAndPlay("die")
+					_fishDir = 0
+					_fish.b2body.GetFixtureList().SetDensity(0.8)
+					createExplosion(x, y)
+				}
+			})
+		}
+
 		const touchMouseHandler = _worldManager.createTouchMouseHandler({
 			enableDrag: false,
 			enableSlice: true,
@@ -92,30 +116,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				lineWidth: 10,
 				lineColor: 'yellow'
 			},
-			onmousedown: function (e) {
-				const x = e.x || e.clientX
-				const y = e.y || e.clientY
-				const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
-
-				touchMouseHandler.getEntitiesAtMouseTouch(e).forEach(entity => {
-					const entityUserData = entity.b2body.GetUserData()
-					if (entityUserData.group === 'breakable') {
-						const breakHandler = new Box2DCreateJS.BreakHandler(_worldManager, {
-							numCuts: 2,
-							explosion: true
-						})
-						breakHandler.breakEntity(entity, x, y)
-						createExplosion(x, y)
-					}
-					else if (entityUserData.name === 'fish' && _fishDir !== 0) {
-						const fishView = _fish.b2body.view
-						_fishDir === 1 ? fishView.gotoAndPlay("turnLeftDie") : fishView.gotoAndPlay("die")
-						_fishDir = 0
-						_fish.b2body.GetFixtureList().SetDensity(0.8)
-						createExplosion(x, y)
-					}
-				})
-			}
+			onmousedown: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler),
+			ontouchstart: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler)
 		})
 
 		_worldManager.createKeyboardHandler({
@@ -363,7 +365,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			const randomInt = randomIntFromInterval(0, 1)
 			const x = randomInt === 0 ? 980 + BLOCK_SIZE / 2 : 0 - BLOCK_SIZE / 2
 			const dir = randomInt === 0 ? -1 : 1
-			const angVel = randomIntFromInterval(0, 2) * 5
+			const angVel = randomIntFromInterval(1, 2) * 5
 
 			block.entity = _worldManager.createEntity({
 				type: 'dynamic',

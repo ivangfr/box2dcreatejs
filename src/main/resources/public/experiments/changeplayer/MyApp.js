@@ -45,7 +45,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		createLandscapeAndWorldLimits()
 		createBalls(10)
 
-		function handleSelectPlayer(e, touchMouseHandler) {
+		function handleMouseDownOrTouchStart(e, touchMouseHandler) {
 			touchMouseHandler.getEntitiesAtMouseTouch(e)
 			.filter(entity => entity.getGroup() === 'square')
 			.map(entity => _worldManager.getPlayerByItsEntity(entity))
@@ -61,8 +61,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		}
 
 		const touchMouseHandler = _worldManager.createTouchMouseHandler({
-			onmousedown: (e) => handleSelectPlayer(e, touchMouseHandler),
-			ontouchstart: (e) => handleSelectPlayer(e, touchMouseHandler)
+			onmousedown: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler),
+			ontouchstart: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler)
 		})
 
 		_worldManager.createKeyboardHandler({

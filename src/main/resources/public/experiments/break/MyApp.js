@@ -32,23 +32,26 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	function testBreak() {
 		createWorldLimits()
 
-		const touchMouseHandler = _worldManager.createTouchMouseHandler({
-			onmousedown: function (e) {
-				const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
-				if (entities.length > 0) {
-					const breakHandler = new Box2DCreateJS.BreakHandler(_worldManager, {
-						numCuts: 2,
-						explosion: false
-					})
+		function handleMouseDownOrTouchStart(e, touchMouseHandler) {
+			const entities = touchMouseHandler.getEntitiesAtMouseTouch(e)
+			if (entities.length > 0) {
+				const breakHandler = new Box2DCreateJS.BreakHandler(_worldManager, {
+					numCuts: 2,
+					explosion: false
+				})
 
-					entities.filter(entity => entity.b2body.GetUserData().group === 'breakable')
-						.forEach(entity => {
-							const x = e.x || e.clientX
-							const y = e.y || e.clientY
-							breakHandler.breakEntity(entity, x, y)
-						})
-				}
+				entities.filter(entity => entity.b2body.GetUserData().group === 'breakable')
+					.forEach(entity => {
+						const x = e.x || e.clientX
+						const y = e.y || e.clientY
+						breakHandler.breakEntity(entity, x, y)
+					})
 			}
+		}
+
+		const touchMouseHandler = _worldManager.createTouchMouseHandler({
+			onmousedown: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler),
+			ontouchstart: (e) => handleMouseDownOrTouchStart(e, touchMouseHandler)
 		})
 
 		const timeStepHandler = _worldManager.createTimeStepHandler()
