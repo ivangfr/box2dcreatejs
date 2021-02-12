@@ -801,9 +801,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	function createButtonsForMobile() {
 		// go up button
 		_worldManager.createScreenButton({
-			x: 225, y: 460,
+			x: 225, y: 425,
 			shape: 'box',
-			boxOpts: { width: 80, height: 80 },
+			boxOpts: { width: 50, height: 50 },
 			render: {
 				type: 'image',
 				imageOpts: {
@@ -818,9 +818,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 		// go down button
 		_worldManager.createScreenButton({
-			x: 305, y: 460,
+			x: 225, y: 475,
 			shape: 'box',
-			boxOpts: { width: 80, height: 80 },
+			boxOpts: { width: 50, height: 50 },
 			render: {
 				type: 'image',
 				imageOpts: {
