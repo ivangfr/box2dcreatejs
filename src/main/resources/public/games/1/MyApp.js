@@ -750,4 +750,31 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		}
 	}
 
+	function formatTime(auxTime, updateMil) {
+		const mil = auxTime % 1000
+		const sec = Math.floor(auxTime / 1000 % 60)
+		const min = Math.floor(auxTime / 1000 / 60)
+	
+		let timeFormat = (min < 10) ? '0' + min : min
+		timeFormat += ':'
+		timeFormat += (sec < 10) ? '0' + sec : sec
+		if (updateMil) {
+			timeFormat += '.'
+			if (mil < 10) {
+				timeFormat += '00' + mil
+			}
+			else if (mil < 100) {
+				timeFormat += '0' + mil
+			}
+			else {
+				timeFormat += mil
+			}
+		}
+		return timeFormat
+	}
+
+	function randomIntFromInterval(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min)
+	}
+
 }())

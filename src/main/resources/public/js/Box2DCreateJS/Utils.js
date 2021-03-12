@@ -1,30 +1,3 @@
-function formatTime(auxTime, updateMil) {
-	const mil = auxTime % 1000
-	const sec = Math.floor(auxTime / 1000 % 60)
-	const min = Math.floor(auxTime / 1000 / 60)
-
-	let timeFormat = (min < 10) ? '0' + min : min
-	timeFormat += ':'
-	timeFormat += (sec < 10) ? '0' + sec : sec
-	if (updateMil) {
-		timeFormat += '.'
-		if (mil < 10) {
-			timeFormat += '00' + mil
-		}
-		else if (mil < 100) {
-			timeFormat += '0' + mil
-		}
-		else {
-			timeFormat += mil
-		}
-	}
-	return timeFormat
-}
-
-function randomIntFromInterval(min, max) {
-	return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 function findCentroid(vs) {
 	const center = new box2d.b2Vec2()
 	const p1X = 0.0
@@ -70,23 +43,6 @@ function getArea(vs) {
 		area += triangleArea
 	}
 	return area
-}
-
-function getElementPosition(element) {
-	let elem = element, tagname = "", x = 0, y = 0
-
-	while (typeof elem === 'object' && typeof elem.tagName !== 'undefined') {
-		y += elem.offsetTop
-		x += elem.offsetLeft
-		tagname = elem.tagName.toUpperCase()
-		if (tagname === "BODY") {
-			elem = 0
-		}
-		if (typeof elem === 'object' && typeof elem.offsetParent === 'object') {
-			elem = elem.offsetParent
-		}
-	}
-	return { x, y }
 }
 
 function arrangeClockwise(vec) {

@@ -439,4 +439,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		}, 300)
 	}
 
+	function randomIntFromInterval(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min)
+	}
+
 }())
