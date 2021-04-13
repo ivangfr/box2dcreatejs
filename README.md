@@ -12,7 +12,7 @@ Access now [**Box2DCreateJS** Website](https://box2dcreatejs.appspot.com/)! Play
 
 - Run the command below
   ```
-  ./mvnw clean spring-boot:run 
+  ./mvnw clean spring-boot:run
   ```
 
 - In a browser, access http://localhost:8080
