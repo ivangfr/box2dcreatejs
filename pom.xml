@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.0</version>
+        <version>2.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -38,24 +38,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>appengine-maven-plugin</artifactId>
                 <version>${appengine-maven-plugin.version}</version>
                 <configuration>
-                  <version>1</version>
-                  <projectId>GCLOUD_CONFIG</projectId>
+                    <version>1</version>
+                    <projectId>GCLOUD_CONFIG</projectId>
                 </configuration>
-              </plugin>
+            </plugin>
         </plugins>
     </build>
 
