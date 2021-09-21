@@ -9,5 +9,4 @@ public class Box2DCreateJSApplication {
     public static void main(String[] args) {
         SpringApplication.run(Box2DCreateJSApplication.class, args);
     }
-
 }

@@ -11,5 +11,4 @@ class Box2DCreateJSApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
