@@ -6,6 +6,10 @@
 
 Access now [**Box2DCreateJS** Website](https://box2dcreatejs.appspot.com/)! Play with some games and check some experiments!
 
+## Prerequisites
+
+- [`Java 11+`](https://www.oracle.com/java/technologies/downloads/#java11)
+
 ## Running locally
 
 - Open a terminal and navigate to `box2dcreatejs` root folder
