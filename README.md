@@ -8,7 +8,7 @@ Access now [**Box2DCreateJS** Website](https://box2dcreatejs.appspot.com/)! Play
 
 ## Prerequisites
 
-- [`Java 11+`](https://www.oracle.com/java/technologies/downloads/#java11)
+- [`Java 17+`](https://www.oracle.com/java/technologies/downloads/#java17)
 
 ## Running locally
 

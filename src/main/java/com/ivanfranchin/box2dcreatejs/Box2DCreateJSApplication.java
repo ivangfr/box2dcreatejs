@@ -1,4 +1,4 @@
-package com.mycompany.box2dcreatejs;
+package com.ivanfranchin.box2dcreatejs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

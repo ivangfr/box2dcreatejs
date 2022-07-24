@@ -1,4 +1,4 @@
-package com.mycompany.box2dcreatejs;
+package com.ivanfranchin.box2dcreatejs;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
