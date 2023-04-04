@@ -7,7 +7,7 @@ image::images/homepage/box2dcreatejs.png[]
 Access now https://ivangfr.github.io/box2dcreatejs[**Box2DCreateJS** Website]! Play with some games and check some experiments!
 
 [.text-center]
-image::images/homepage/play-button.png[link=https://ivangfr.github.io/box2dcreatejs,width=75%]
+image::images/homepage/play-button.png[alt=Play-Box2DCreateJS,width=128,height=128,scaledwidth=50%,link=https://ivangfr.github.io/box2dcreatejs]
 
 == References
 
