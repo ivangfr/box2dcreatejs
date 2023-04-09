@@ -33,7 +33,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	}
 
 	const _validWorldManagerDef = ['scale', 'world', 'stepOpts', 'enableRender', 'enableDebug', 'fpsIndicator', 'tickMod', 'userOnTick', 'preLoad']
-	const _validWorldManagerStepOptsDef = ['FPS', 'velocityIterations', 'positionIterations',]
+	const _validWorldManagerStepOptsDef = ['FPS', 'velocityIterations', 'positionIterations']
 	const _validWorldManagerPreLoadDef = ['showLoadingIndicator', 'files', 'onComplete', 'loadingIndicatorOpts']
 	const _validWorldManagerFpsIndicatorDef = ['enabled', 'x', 'y', 'font', 'color']
 
@@ -735,11 +735,11 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				}
 			}
 
-			if (details.activeRender !== undefined && typeof details.activeRender !== 'boolean') {
-				throw new Error(arguments.callee.name + " : activeRender must be a true/false!")
+			if (details.enableRender !== undefined && typeof details.enableRender !== 'boolean') {
+				throw new Error(arguments.callee.name + " : enableRender must be a true/false!")
 			}
-			if (details.activeDebug !== undefined && typeof details.activeDebug !== 'boolean') {
-				throw new Error(arguments.callee.name + " : activeDebug must be a true/false!")
+			if (details.enableDebug !== undefined && typeof details.enableDebug !== 'boolean') {
+				throw new Error(arguments.callee.name + " : enableDebug must be a true/false!")
 			}
 			if (details.tickMod !== undefined && (typeof details.tickMod !== 'number' || details.tickMod <= 0)) {
 				throw new Error(arguments.callee.name + " : invalid number for tickMod!")

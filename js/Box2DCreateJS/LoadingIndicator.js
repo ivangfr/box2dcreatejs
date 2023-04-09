@@ -8,7 +8,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		initialize(this, worldManager, details)
 	}
 
-	const _validLoadindIndicatorDef = ['x', 'y', 'font', 'color']
+	const _validLoadingIndicatorDef = ['x', 'y', 'font', 'color']
 
 	function initialize(loading, worldManager, details) {
 		validate(worldManager, details)
@@ -38,8 +38,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				throw new Error(arguments.callee.name + " : The LoadingIndicator details must be an object!")
 			}
 			for (let def in details) {
-				if (_validLoadindIndicatorDef.indexOf(def) < 0) {
-					throw new Error(arguments.callee.name + " : the detail (" + def + ") for LoadingIndicator is not supported! Valid definitions: " + _validLoadindIndicatorDef)
+				if (_validLoadingIndicatorDef.indexOf(def) < 0) {
+					throw new Error(arguments.callee.name + " : the detail (" + def + ") for LoadingIndicator is not supported! Valid definitions: " + _validLoadingIndicatorDef)
 				}
 			}
 			

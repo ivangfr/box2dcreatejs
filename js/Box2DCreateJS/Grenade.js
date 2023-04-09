@@ -169,7 +169,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				throw new Error(arguments.callee.name + " : invalid value for numParticles!")
 			}
 			if (details.blastPower !== undefined && (typeof details.blastPower !== 'number' || details.blastPower <= 0)) {
-				throw new Error(arguments.callee.name + " : invalue value for blastPower!")
+				throw new Error(arguments.callee.name + " : invalid value for blastPower!")
 			}
 
 			if (details.particleOpts !== undefined) {
@@ -254,7 +254,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					for (let i = 0; i < details.particleOpts.polygonOpts.points.length; i++) {
 						const point = details.particleOpts.polygonOpts.points[i]
 						if (!(point instanceof Object)) {
-							throw new Error(arguments.callee.name + " : points elemtent must be an Object!")
+							throw new Error(arguments.callee.name + " : points element must be an Object!")
 						}
 						if (point.x === undefined) {
 							throw new Error(arguments.callee.name + " : points[i].x must be informed!")

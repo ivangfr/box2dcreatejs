@@ -160,7 +160,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				throw new Error(arguments.callee.name + " : invalid value for gravityRadius!")
 			}
 			if (details.attractionPower !== undefined && (typeof details.attractionPower !== 'number' || details.attractionPower <= 0)) {
-				throw new Error(arguments.callee.name + " : invalue value for attractionPower!")
+				throw new Error(arguments.callee.name + " : invalid value for attractionPower!")
 			}
 		}
 	}

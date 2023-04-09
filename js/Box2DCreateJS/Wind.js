@@ -40,7 +40,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		const adjustX = (details && details.adjustX) ? details.adjustX : 0
 		const adjustY = (details && details.adjustY) ? details.adjustY : 0
 		const width = (details && details.width) ? details.width : box2dCanvas.width
-		const height = (details && details.height) ? details.height : box2dCanvas.width
+		const height = (details && details.height) ? details.height : box2dCanvas.height
 
 		const rays = createRays(adjustX, adjustY, width, height, numRays, directionTo)
 		wind.getRays = function () { return rays }

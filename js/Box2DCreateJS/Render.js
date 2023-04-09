@@ -22,7 +22,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	
 	const _validRenderSpriteSheetOptsDef = ['startAnimation', 'spriteData', 'adjustImageSize']
 	const _validRenderSpriteSheetDataDef = ['animations', 'frames', 'images']
-	// For more information about attibutes in details.spriteSheetOpts.spriteData.animations,
+	// For more information about attributes in details.spriteSheetOpts.spriteData.animations,
 	// details.spriteSheetOpts.spriteData.frames or details.spriteSheetOpts.spriteData.images,
 	// see https://www.createjs.com/docs/easeljs/classes/SpriteSheet.html
 	

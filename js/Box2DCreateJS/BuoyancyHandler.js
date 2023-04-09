@@ -11,7 +11,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		initialize(worldManager, details)
 	}
 
-	const _validBuoyancyDef = ['complexDragFunction']
+	const _validBuoyancyHandlerDef = ['complexDragFunction']
 
 	let _worldManager
 	let _complexDragFunction
@@ -297,8 +297,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				throw new Error(arguments.callee.name + " : The BuoyancyHandler details must be an object!")
 			}
 			for (let def in details) {
-				if (_validBuoyancyDef.indexOf(def) < 0) {
-					throw new Error(arguments.callee.name + " : the detail (" + def + ") for BuoyancytHandler is not supported! Valid definitions: " + _validBuoyancyDef)
+				if (_validBuoyancyHandlerDef.indexOf(def) < 0) {
+					throw new Error(arguments.callee.name + " : the detail (" + def + ") for BuoyancytHandler is not supported! Valid definitions: " + _validBuoyancyHandlerDef)
 				}
 			}
 			if (details.complexDragFunction !== undefined && typeof details.complexDragFunction !== 'boolean') {

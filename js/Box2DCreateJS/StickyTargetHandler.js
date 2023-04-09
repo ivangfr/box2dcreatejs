@@ -10,7 +10,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 	// TODO - postSolveStick works better than preSolveStick
 	// Maybe, on the next changes, remove preSolveStick
-	const _validStickyTargetDef = ['preSolveStick']
+	const _validStickyTargetHandlerDef = ['preSolveStick']
 
 	let _worldManager
 	let _preSolveStick
@@ -159,8 +159,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				throw new Error(arguments.callee.name + " : The StickyTargetHandler details must be an object!")
 			}
 			for (let def in details) {
-				if (_validStickyTargetDef.indexOf(def) < 0) {
-					throw new Error(arguments.callee.name + " : the detail (" + def + ") for StickyTargetHandler is not supported! Valid definitions: " + _validStickyTargetDef)
+				if (_validStickyTargetHandlerDef.indexOf(def) < 0) {
+					throw new Error(arguments.callee.name + " : the detail (" + def + ") for StickyTargetHandler is not supported! Valid definitions: " + _validStickyTargetHandlerDef)
 				}
 			}
 			if (details.preSolveStick !== undefined && typeof details.preSolveStick !== 'boolean') {
