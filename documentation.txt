@@ -1,0 +1,950 @@
+Box2DCreateJS Documentation
+###########################
+
+In this document, it's presented the Box2DCreateJS classes.
+
+Note: It's still in development.
+
+------------------------------------------------------------------------------------------------------------------------
+
+BreakHandler
+============
+
+    Constructor
+    -----------
+
+    BreakHandler (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            numCuts: Number,        // Optional, default: 5
+            explosion: Boolean.     // Optional, default: false
+            explosionRadius: Number // Optional, default: 50
+        }
+    )
+
+    Methods
+    -------
+
+    * getNumCuts()
+    * setNumCuts( Number )
+    * hasExplosion
+    * setExplosion( Boolean )
+    * getExplosionRadius()
+    * setExplosionRadius( Number )
+
+------------------------------------------------------------------------------------------------------------------------
+
+BuoyancyHandler
+===============
+
+    Constructor
+    -----------
+
+    BuoyancyHandler (
+        worldManager: WorldManager,      // Mandatory
+        details: {                       // Optional
+            complexDragFunction: Boolean // Optional, default: true
+        }
+    )
+
+    Methods
+    -------
+
+    None
+
+------------------------------------------------------------------------------------------------------------------------
+
+Camera
+======
+
+    Constructor
+    -----------
+
+    Camera (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            xAxisOn: Number,        // Optional, default: 0
+            yAxisOn: Number,        // Optional, default: 0
+            adjustX: Boolean,       // Optional, default: false
+            adjustY: Boolean        // Optional, default: false
+        }
+    )
+
+    Methods
+    -------
+
+    * getXAxisOn()
+    * setXAxisOn(xAxisOn: Boolean)
+    * getYAxisOn()
+    * setYAxisOn(yAxisOn: Boolean)
+    * getAdjustX()
+    * setAdjustX(adjustX: Number)
+    * getAdjustY()
+    * setAdjustY(adjustY: Number)
+
+------------------------------------------------------------------------------------------------------------------------
+
+ContactHandler
+==============
+
+    Constructor
+    -----------
+
+    ContactHandler (
+        worldManager: WorldManager,                        // Mandatory
+        details: {                                         // Optional
+            enabledBuoyancy: Boolean,                      // Optional, default: true
+            enabledStickyTarget: Boolean,                  // Optional, default: true
+            enabledBreak: Boolean,                         // Optional, default: true
+            buoyancyOpts: BuoyancyHandler.details          // Optional, default: {}
+            stickyTargetOpts: StickyTargetHandler.details, // Optional, default: {}
+            breakOpts: BreakHandler.details,               // Optional, default: {}
+            beginContact: Function,                        // Optional, default: undefined
+            endContact: Function,                          // Optional, default: undefined
+            preSolve: Function,                            // Optional, default: undefined
+            postSolve: Function,                           // Optional, default: undefined
+        }
+    )
+
+    Methods
+    -------
+
+    * isEnabledBuoyancy()
+    * getBuoyancyHandler()
+    * isEnabledStickyTarget()
+    * getStickyTargetHandler()
+    * isEnabledBreak()
+    * getBreakHandler()
+    * getEntitiesToBeBroken()
+
+------------------------------------------------------------------------------------------------------------------------
+
+Entity
+======
+
+    Constructor
+    -----------
+
+    Entity (
+        worldManager: WorldManager,                     // Mandatory
+        details: {                                      // Mandatory
+            x: Number,                                  // Optional, default: 0
+            y: Number,                                  // Optional, default: 0
+            angle: Number,                              // Optional, default: 0
+            shape: String ['circle', 'box', 'polygon'], // Mandatory
+            circleOpts: {                               // Mandatory if shape is 'circle'
+                radius: Number                          // Mandatory if shape is 'circle'
+            }
+            boxOpts: {                                  // Mandatory if shape is 'box'
+                width: Number,                          // Mandatory if shape is 'box'
+                height: Number                          // Mandatory if shape is 'box'
+            }
+            polygonOpts: {                              // Mandatory if shape is 'polygon'
+                points: Array[{                         // Mandatory if shape is 'polygon'
+                    x: Number,                          // Mandatory if shape is 'polygon'
+                    y: Number                           // Mandatory if shape is 'polygon'
+                }]
+            },
+            name: String,                               // Optional, default: "entity" + seq
+            group: String,                              // Optional, default: "none"
+            type: String ['static', 'dynamic', 'kinematic', 0, 1, 2],
+            render: Render,
+            draggable: Boolean,                         // Optional, default: true
+            sliceable: Boolean,                         // Optional, default: false
+            noGravity: Boolean,                         // Optional, default: false
+            fixtureDefOpts: {
+                density: Number,                        // Optional, default: 1.0
+                friction: Number,                       // Optional, default: 1.0
+                restitution: Number,                    // Optional, default: 0
+                isSensor: Boolean,                      // Optional, default: false
+                filterGroupIndex: Number,               // Optional, default: undefined
+                filterCategoryBits: Number,             // Optional, default: undefined
+                filterMaskBits: Number,                 // Optional, default: undefined
+                isFluid: Boolean,                       // Optional, default: false
+                dragConstant: Number,                   // Optional, default: 0.25
+                liftConstant: Number,                   // Optional, default: 0.25
+                isSticky: Boolean,                      // Optional, default: false
+                isTarget: Boolean,                      // Optional, default: false
+                hardness: Number                        // Optional, default: 1
+            }
+            bodyDefOpts: {
+                fixedRotation: Boolean,                 // Optional, default: undefined
+                bullet: Boolean,                        // Optional, default: undefined
+                linearDamping: Number,                  // Optional, default: undefined
+                linearVelocity: {
+                    x: Number,                          // Optional, default: undefined
+                    y: Number                           // Optional, default: undefined
+                }
+                angularDamping: Number,                 // Optional, default: undefined
+                angularVelocity: Number,                // Optional, default: undefined
+                active: Boolean,                        // Optional, default: undefined
+                allowSleep: Boolean,                    // Optional, default: undefined
+                awake: Boolean,                         // Optional, default: undefined
+            }
+            events: {
+                ['onslice', 'onbreak', 'ontick'] : Function
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * getId()
+    * getName()
+    * getGroup()
+    * isDraggable()
+    * setDraggable( Number )
+    * isSliceable()
+    * setSliceable( Number )
+    * getB2Body()
+    * getPosition()
+    * setPosition( Number, Number)
+    * changeRender( Render )
+    * changeScale( Number )
+
+------------------------------------------------------------------------------------------------------------------------
+
+Gravitation
+===========
+
+    Constructor
+    -----------
+
+    Gravitation (
+        worldManager: WorldManager,  // Mandatory
+        entity: Entity,              // Mandatory
+        details: {                   // Optional
+            gravityRadius: Number,   // Optional, default: entity_radius * 3
+            attractionPower: Number, // Optional, default: 1
+            render: Render           // Optional, default: undefined
+        }
+    )
+
+    Methods
+    -------
+
+    * getEntity()
+    * getGravityRadius()
+    * getAttractionPower()
+
+------------------------------------------------------------------------------------------------------------------------
+
+Grenade
+=======
+
+    Constructor
+    -----------
+
+    Grenade (
+        worldManager: worldManager,                         // Mandatory
+        entity: Entity,                                     // Mandatory
+        details: {                                          // Optional
+            numParticles: Number,                           // Optional, default: 36
+            blastPower: Number,                             // Optional, default: 100
+            particleOpts: {                                 // Optional
+                shape: String ['circle', 'box', 'polygon'], // Mandatory, default 'cicle'
+                circleOpts: {                               // Mandatory if shape is 'cicle'
+                    radius: Number                          // Mandatory if shape is 'cicle', default: 2
+                },
+                boxOpts: {                                  // Mandatory if shape is 'box'
+                    width: Number,                          // Mandatory if shape is 'box'
+                    height: Number                          // Mandatory if shape is 'box'
+                },
+                polygonOpts: {                              // Mandatory if shape is 'polygon'
+                    points: Array[{                         // Mandatory if shape is 'polygon'
+                        x: Number,                          // Mandatory if shape is 'polygon'
+                        y: Number                           // Mandatory if shape is 'polygon'
+                    }]
+                },
+                render: Render                              // Optional, default: { type: 'draw', drawOpts: { bgColorStyle: 'transparent' } }
+            }
+            beforeExplosion: Function,                      // Optional, default: undefined
+            afterExplosion: Function                        // Optional, default: undefined
+        }
+    )
+
+    Methods
+
+    * getEntity()
+    * getNumParticles()
+    * getBlastPower()
+    * getBlastType()
+    * getBlastParticles()
+    * getPosition()
+    * explode()
+    * clearParticles()
+
+------------------------------------------------------------------------------------------------------------------------
+
+KeyboardHandler
+===============
+
+    Constructor
+    -----------
+
+    KeyboardHandler (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            keys: {                 // Optional
+                keyboardKey : {
+                    ['onkeydown', 'onkeyup', 'keepPressed'] : Function
+                }
+            },
+            keyboardHint:           // Optional
+                enabled: Boolean,   // Optional, default: false
+                x: Number,          // Optional, default: 80
+                y: Number,          // Optional, default: 10
+                color: String,      // Optional, default: 'white'
+                font: String        // Optional, default: 'bold 12px Monaco'
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * getKeyboardHintText()
+    * update( Number )
+
+------------------------------------------------------------------------------------------------------------------------
+
+Landscape
+=========
+
+    Constructor
+    -----------
+
+    Landscape (
+        worldManager: WorldManager,                     // Mandatory
+        details: {                                      // Mandatory
+            x: Number,                                  // Optional, default: 0
+            y: Number,                                  // Optional, default: 0
+            angle: Number,                              // Optional, default: 0
+            shape: String ['circle', 'box', 'polygon'], // Mandatory
+            circleOpts: {                               // Mandatory if shape is 'cicle'
+                radius: Number                          // Mandatory if shape is 'cicle'
+            }
+            boxOpts: {                                  // Mandatory if shape is 'box'
+                width: Number,                          // Mandatory if shape is 'box'
+                height: Number                          // Mandatory if shape is 'box'
+            }
+            polygonOpts: {                              // Mandatory if shape is 'polygon'
+                points: Array[{                         // Mandatory if shape is 'polygon'
+                    x: Number,                          // Mandatory if shape is 'polygon'
+                    y: Number                           // Mandatory if shape is 'polygon'
+                }]
+            },
+            render: Render                              // Mandatory
+        }
+    )
+
+    Methods
+    -------
+
+    * changeRender( Render )
+
+------------------------------------------------------------------------------------------------------------------------
+
+Link
+====
+
+    Constructor
+    -----------
+
+    Link (
+        worldManager: WorldManager,                                                                       // Mandatory
+        details: {
+            entityA: Entity,                                                                              // Mandatory
+            entityB: Entity,                                                                              // Mandatory
+            type: String ['distance', 'rope', 'revolute', 'prismatic', 'pulley', 'gear', 'line', 'weld'], // Mandatory
+            localAnchorA: {                                                                               // Mandatory
+                x: Number,                                                                                // Mandatory
+                y: Number                                                                                 // Mandatory
+            },
+            localAnchorB: {                                                                               // Mandatory
+                x: Number,                                                                                // Mandatory
+                y: Number                                                                                 // Mandatory
+            },
+            localAxisA: {                                                                                 // Mandatory
+                x: Number,                                                                                // Mandatory
+                y: Number                                                                                 // Mandatory
+            },
+            options: {
+                collideConnected: Number,                                                                 // Optional
+                dampingRatio: Number,                                                                     // Optional
+                frequencyHz: Number,                                                                      // Optional
+                length: Number,                                                                           // Optional
+                maxLength: Number,                                                                        // Optional
+                enableMotor: Number,                                                                      // Optional
+                motorSpeed: Number,                                                                       // Optional
+                maxMotorTorque: Number,                                                                   // Optional
+                maxMotorForce: Number,                                                                    // Optional
+                lowerTranslation: Number,                                                                 // Optional
+                upperTranslation: Number,                                                                 // Optional
+                enableLimit: Number,                                                                      // Optional
+                referenceAngle: Number,                                                                   // Optional
+                lowerAngle: Number,                                                                       // Optional
+                upperAngle: Number                                                                        // Optional
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * getJoint()
+    * changeScale( Number )
+
+------------------------------------------------------------------------------------------------------------------------
+
+LoadingIndicator
+================
+
+    Constructor
+    -----------
+
+    LoadingIndicator (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            x: Number,              // Optional, default: center of the canvas
+            y: Number,              // Optional, default: center of the canvas
+            font: String,           // Optional, default: "bold 30px Monaco"
+            color: String           // Optional, default" "white"
+        }
+    )
+
+    Methods
+    -------
+
+    None
+
+------------------------------------------------------------------------------------------------------------------------
+
+MobileTabletDetector
+====================
+
+    Constructor
+    -----------
+
+    MobileTabletDetector ()
+
+    Methods
+    -------
+
+    None
+
+------------------------------------------------------------------------------------------------------------------------
+
+Player
+======
+
+    Constructor
+    -----------
+
+    Player (
+        worldManager: WorldManager,   // Mandatory
+        entity: Entity,               // Mandatory
+        details: {                    // Optional
+            camera: Camera.details,   // Optional
+            events: {                 // Optional
+                eventName : Function
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * getEntity()
+    * getB2Body()
+    * getPosition()
+    * getCamera()
+    * getCameraAdjust()
+    * isNecessaryToFocus()
+
+------------------------------------------------------------------------------------------------------------------------
+
+Render
+======
+
+    Constructor
+    -----------
+
+    Render()
+
+    Properties
+    ----------
+
+    {
+        z: Number,                                                                            // Optional, default: worldManager.numChildren
+        type: String ['draw', 'image', 'spritesheet'],                                        // Mandatory
+        opacity: Number,                                                                      // Optional, default: 1
+        action: Function,
+        filters: Array of createjs.Filter                                                     // Optional, https://www.createjs.com/docs/easeljs/classes/Filter.html
+        drawOpts: {                                                                           // Mandatory if type is 'draw'
+            borderWidth: Number,                                                              // Optional, default: 0
+            borderColor: String,                                                              // Optional, default: 'black'
+            borderRadius: Number,                                                             // Optional, default: 0
+            bgColorStyle: String ['transparent', 'solid', 'linearGradient', 'radialGradient'] // Mandatory
+            bgSolidColorOpts: {                                                               // Mandatory if bgColorStyle is 'solid'
+                color: String                                                                 // Mandatory if bgColorStyle is 'solid'
+            },
+            bgLinearGradientOpts: {                                                           // Mandatory if bgColorStyle is 'linearGradient'
+                colors: Array of String,                                                      // Mandatory if bgColorStyle is 'linearGradient'
+                ratios: Array of Number,                                                      // Mandatory if bgColorStyle is 'linearGradient'
+                x0: Number,                                                                   // Mandatory if bgColorStyle is 'linearGradient'
+                y0: Number,                                                                   // Mandatory if bgColorStyle is 'linearGradient'
+                x1: Number,                                                                   // Mandatory if bgColorStyle is 'linearGradient'
+                y1: Number                                                                    // Mandatory if bgColorStyle is 'linearGradient'
+            },
+            bgRadialGradientOpts: {                                                           // Mandatory if bgColorStyle is 'radialGradient'
+                colors: Array of String                                                       // Mandatory if bgColorStyle is 'radialGradient'
+                ratios: Array of Number                                                       // Mandatory if bgColorStyle is 'radialGradient'
+                x0: Number,                                                                   // Mandatory if bgColorStyle is 'radialGradient'
+                y0: Number,                                                                   // Mandatory if bgColorStyle is 'radialGradient'
+                r0: Number,                                                                   // Mandatory if bgColorStyle is 'radialGradient'
+                x1: Number,                                                                   // Mandatory if bgColorStyle is 'radialGradient'
+                y1: Number,                                                                   // Mandatory if bgColorStyle is 'radialGradient'
+                r1: Number                                                                    // Mandatory if bgColorStyle is 'radialGradient'
+            },
+            bgImage: String,                                                                  // Optional, default: undefined
+            repeatBgImage: Boolean,                                                           // Optional, default: 'no-repeat'
+            adjustBgImageSize: Boolean,                                                       // Optional, default: false
+            cache: Boolean,                                                                   // Optional, default: false
+            textOpts: {                                                                       // Optional
+                text: String,                                                                 // Optional, default: ''
+                font: String,                                                                 // Optional, default: 'bold 18px Arial'
+                color: String                                                                 // Optional, default: 'white'
+            }
+        }
+        imageOpts: {                                                                          // Mandatory if type is 'image'
+            image: String,                                                                    // Mandatory
+            adjustImageSize: Boolean                                                          // Optional, default: false
+        }
+        spriteSheetOpts: {                                                                    // Mandatory if type is 'spritesheet'
+            startAnimation: String,                                                           // Mandatory
+            spriteData: createjs.SpriteSheet,                                                 // Mandatory, https://createjs.com/docs/easeljs/classes/SpriteSheet.html
+            adjustImageSize: Boolean                                                          // Optional, default: false
+        }
+    }
+
+    Methods
+    -------
+
+    None
+
+------------------------------------------------------------------------------------------------------------------------
+
+ScreenButton
+============
+
+    Constructor
+    -----------
+
+    ScreenButton (
+        worldManager: WorldManager,                     // Mandatory
+        details: {
+            x: Number,                                  // Optional, default: 0
+            y: Number,                                  // Optional, default: 0
+            angle: Number,                              // Optional, default: 0
+            shape: String ['circle', 'box', 'polygon'], // Mandatory
+            circleOpts: {                               // Mandatory if shape is 'circle'
+                radius: Number                          // Mandatory if shape is 'circle'
+            }
+            boxOpts: {                                  // Mandatory if shape is 'box'
+                width: Number,                          // Mandatory if shape is 'box'
+                height: Number                          // Mandatory if shape is 'box'
+            }
+            polygonOpts: {                              // Mandatory if shape is 'polygon'
+                points: Array[{                         // Mandatory if shape is 'polygon'
+                    x: Number,                          // Mandatory if shape is 'polygon'
+                    y: Number                           // Mandatory if shape is 'polygon'
+                }]
+            },
+            render: Render,                             // Mandatory
+            onmousedown: Function,                      // Optional, default: undefined
+            onmouseup: Function,                        // Optional, default: undefined
+            keepPressed: Boolean,                       // Optional, default: false
+        }
+    )
+
+    Methods
+    -------
+
+    * changeRender
+
+------------------------------------------------------------------------------------------------------------------------
+
+ScreenHandler
+=============
+
+    Constructor
+    -----------
+
+    ScreenHandler (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            fullScreen: Boolean,    // Optional, default: false
+        }
+    )
+
+    Methods
+    -------
+
+    * isFullScreen()
+    * showFullScreen()
+    * showNormalCanvasSize()
+
+------------------------------------------------------------------------------------------------------------------------
+
+SliceHandler
+============
+
+    Constructor
+    -----------
+
+    SliceHandler (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            drawLine: Boolean,      // Optional, default: true
+            lineWidth: Number,      // Optional, default: 2
+            lineColor: String       // Optional, default: 'red'
+        }
+    )
+
+    Methods
+    -------
+
+    * getDrawLine()
+    * setDrawLine( Boolean )
+    * getLineWidth()
+    * setLineWidth( Number )
+    * getLineColor()
+    * setLineColor( String )
+    * isTouchable()
+
+------------------------------------------------------------------------------------------------------------------------
+
+SoundHandler
+============
+
+    Constructor
+    -----------
+
+    SoundHandler (
+        details: {                 // Mandatory
+            registerFiles: Array[{ // Mandatory
+                id: String,        // Mandatory
+                src: String        // Mandatory
+            }]
+        }
+    )
+
+    Methods
+    -------
+
+    * addSoundInstance(SoundInstance)
+    * getSoundInstance(String)
+    * createSoundInstance(SoundHandler.details)
+
+------------------------------------------------------------------------------------------------------------------------
+
+SoundInstance
+=============
+
+    Methods
+    -------
+
+    - isPlaying()
+    - isStopped()
+    - isPaused()
+    - myPlay(opts: {
+        interrupt: Number, // Optional, default: createjs.Sound.INTERRUPT_NONE
+        delay: Number,     // Optional, default: 0
+        offset: Number,    // Optional, default: 0
+        loop: Number,      // Optional, default: 0
+        volume: Number,    // Optional, default: 1
+        pan: Number        // Optional, default: 0
+    })
+
+------------------------------------------------------------------------------------------------------------------------
+
+StickyTargetHandler
+===================
+
+    Constructor
+    -----------
+
+    StickyTargetHandler (
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optional
+            preSolveStick: Function // Optional, default: undefined
+        }
+    )
+
+    Methods
+    -------
+
+    None
+
+------------------------------------------------------------------------------------------------------------------------
+
+TimeStepHandler
+===============
+
+    Constructor
+    -----------
+
+    TimeStepHandler (
+        worldManager: worldManager,                         // Mandatory
+        details: {                                          // Optional
+            layer: {                                        // Optional
+                x: Number,                                  // Optional, default: canvas.width / 2
+                y: Number,                                  // Optional, default: canvas.height / 2
+                angle: Number,                              // Optional, default: 0
+                shape: String ['circle', 'box', 'polygon'], // Optional, default: 'box'
+                circleOpts: {                               // Optional
+                    radius: Number                          // Optional, default: undefined
+                },
+                boxOpts: {                                  // Optional
+                    width: Number,                          // Optional, default: canvas.width
+                    height: Number                          // Optional, default: canvas.height
+                },
+                polygonOpts: {                              // Optional
+                    points: Array of {x: Number, y: Number} // Optional, default: undefined
+                },
+                render: Render                              // Optional, default: { type: 'draw', opacity: 0.5, drawOpts: { bgColorStyle: 'solid', textOpts: { text: 'Paused', font: 'bold 38px Verdana', color: 'white' } } }
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * isPaused()
+    * pause()
+    * play()
+    * setFPS( Number )
+    * getFPS()
+    * restoreFPS()
+
+------------------------------------------------------------------------------------------------------------------------
+
+TouchMouseHandler
+=================
+
+    Constructor
+    -----------
+
+    TouchMouseHandler (
+        worldManager: WorldManager,           // Mandatory
+        details: {                            // Optional
+            enableDrag: Boolean,              // Optional, default: true
+            enableSlice: Boolean,             // Optional, default: false
+            sliceOpts: SliceHandler,          // Optional, default: SliceHandler.details
+            debugTouchMouseLocation: Boolean, // Optional, default: false
+            pointerRadius: Number,            // Optional, default: 1 / worldManager_scale
+            pointerAccurate: Boolean,         // Optional, default: true
+            onmousedown: Function,            // Optional, default: undefined
+            onmouseup: Function,              // Optional, default: undefined
+            onmousemove: Function,            // Optional, default: undefined
+            ontouchstart: Function,           // Optional, default: undefined
+            ontouchmove: Function,            // Optional, default: undefined
+            ontouchend: Function              // Optional, default: undefined
+        }
+    )
+
+    Methods
+    -------
+
+    * getEnableDrag()
+    * setEnableDrag()
+    * getEnableSlice()
+    * setEnableSlice()
+    * getPointerRadius()
+    * setPointerRadius()
+    * getPointerAccurate()
+    * setPointerAccurate()
+    * getSliceHandler()
+    * isMouseDown()
+    * isTouchable()
+
+------------------------------------------------------------------------------------------------------------------------
+
+Utils
+=====
+
+    Methods
+    -------
+
+    * findCentroid(vertices)
+    * getArea(vertices)
+    * arrangeClockwise(Array of box2d.b2Vec2)
+    * createEntityPiece(WorldManager, Entity, vertices, center, id)
+    * getNew2PolygonVertices(fixture, point, fixtureEntryPoint)
+
+------------------------------------------------------------------------------------------------------------------------
+
+Wind
+====
+
+    Constructor
+    -----------
+
+    Wind (
+        worldManager: WorldManager,                  // Mandatory
+        details: {                                   // Optional
+            numRays: Number,                         // Optional, default: 20
+            power: Number,                           // Optional, default: 1000
+            on: Boolean,                             // Optional, default: true
+            directionTo: String ("left" or "right"), // Optional, default: 'left'
+            width: Number,                           // Optional, default: canvas.width
+            height: Number,                          // Optional, default: canvas.width
+            adjustX: Number,                         // Optional, default: 0
+            adjustY: Number                          // Optional, default: 0
+        }
+    )
+
+    Methods
+    -------
+
+    * getNumRays()
+    * getPower()
+    * isOn()
+    * getDirectionTo()
+    * getRays()
+    * start()
+    * stop()
+    * getBodiesAffectedByRay()
+    * clearBodiesAffectedByRay()
+
+------------------------------------------------------------------------------------------------------------------------
+
+WorldManager
+============
+
+    Constuctor
+    ----------
+
+    WorldManager (
+        easelJSCanvas: HTMLCanvasElement,                      // Mandatory
+        box22DCanvas: HTMLCanvasElement,                       // Mandatory
+        details: {                                             // Optional
+            scale: Number,                                     // Optional, default: 30
+            world: box2d.b2World,                              // Optional, default: box2d.b2World(new box2d.b2Vec2(0, 9.8), true))
+            stepOpts: {                                        // Optional
+                FPS: Number,                                   // Optional, default: 60
+                velocityIterations: Number,                    // Optional, default: 10
+                positionIterations: Number                     // Optional, default: 10
+            },
+            enableRender: Boolean,                             // Optional, default: true
+            enableDebug: Boolean,                              // Optional, default: false
+            fpsIndicator: {                                    // Optional
+                enabled: Boolean,                              // Optional, default: false
+                x: Number,                                     // Optional, default: 10
+                y: Number,                                     // Optional, default: 10
+                font: String,                                  // Optional, default: 'bold 18px Monaco'
+                color: String                                  // Optional, default: 'white'
+            }
+            tickMod: Number,                                   // Optional, default: 12
+            userOnTick: Function,                              // Optional, default: undefined
+            preLoad: {                                         // Optional
+                showLoadingIndicator: Boolean,                 // Optional, default: true
+                files: Array of String,                        // Optional, default: undefined
+                onComplete: Function,                          // Optional, default: undefined
+                loadingIndicatorOpts: LoadingIndicator.details // Optional, default: undefined
+            }
+        }
+    )
+
+    Methods
+    -------
+
+    * getScale()
+    * getWorld()
+    * getEnableRender()
+    * setEnableRender( Boolean )
+    * getEnableDebug()
+    * setEnableDebug( Boolean )
+    * getTickMod()
+    * getNextEntityIdSeq()
+    * getEntities()
+    * getGravitations()
+    * getLandscapes()
+    * getScreenButtons()
+    * getBox2dCanvas()
+    * getBox2dCanvasCtx()
+    * getEaseljsCanvas()
+    * getEaseljsStage()
+    * getCanvasCtxScale()
+    * setCanvasCtxScale( Number )
+    * getPlayer()
+    * setPlayer( Player )
+    * getCameraAdjust()
+    * getPlayers()
+    * getTimeStepHandler()
+    * getZoomHandler()
+    * getScreenHandler()
+    * getTouchMouseHandler()
+    * getContactHandler()
+    * getSoundHandler()
+    * getMobileTabletDetector()
+    * getWind()
+    * getPreLoad()
+    * getFPS()
+    * setFPS( Number )
+    * getTimeStep()
+    * setTimeStep( Number )
+    * getVelocityIterations()
+    * getPositionIterations()
+    * setUserOnTick(Function)
+    * start()
+    * createScreenButton( ScreenButton.details )
+    * createTimeStepHandler( TimeStepHandler.details )
+    * createZoomHandler( ZoomHandler.details )
+    * createScreenHandler( ScreenHandler.details )
+    * createLandscape( Landscape.details )
+    * createEntity( Entity.details )
+    * deleteEntity( Entity )
+    * getEntityByItsBody( Body )
+    * createLink( Link.details )
+    * createKeyboardHandler( KeyboardHandler.details )
+    * createTouchMouseHandler( TouchMouseHandler.details )
+    * createPlayer( Entity, Player.details )
+    * getPlayerByItsEntity( Entity )
+    * createGrenade( Entity, Grenade.details )
+    * createGravitation( Entity, Gravitation.details )
+    * createWind( Wind.details )
+    * createContactHandler( ContactHandler.details )
+    * createSoundHandler( SoundHandler.details )
+    * createMobileTabletDetector()
+
+------------------------------------------------------------------------------------------------------------------------
+
+ZoomHandler
+===========
+
+    Constuctor
+    ----------
+
+    ZoomHandler ( 
+        worldManager: WorldManager, // Mandatory
+        details: {                  // Optinonal
+            max: Number,            // Optinonal, default: 2.0
+            min: Number,            // Optinonal, default: 0.0
+            step: Number,           // Optinonal, default: 0.05
+        }
+    )
+
+    Methods
+    -------
+
+    * getMax()
+    * getMin()
+    * getStep()
+    * zoomIn()
+    * zoomOut()
+    * getScale()
+
+------------------------------------------------------------------------------------------------------------------------
