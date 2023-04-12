@@ -8,6 +8,10 @@ Access now https://ivangfr.github.io/box2dcreatejs[**Box2DCreateJS** Website] an
 
 image::images/homepage/play-button.png[alt=Play-Box2DCreateJS,width=64,height=64,link=https://ivangfr.github.io/box2dcreatejs]
 
+== Tutorials
+
+* [Medium]: https://medium.com/@ivangfr/box2dcreatejs-unleashing-the-potential-of-box2d-and-createjs-in-a-unified-library-93e258ade217[**Box2DCreateJS: Unleashing the Potential of Box2D and CreateJS in a Unified Library**]
+
 == References
 
 * https://box2d.org/
