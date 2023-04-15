@@ -348,10 +348,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			y: projectileEntity.getPosition().y,
 			angle: angle + 90,
 			shape: 'circle',
-			circleOpts: { radius: 40 },
+			circleOpts: { radius: 30 },
 			render: {
 				z: moonEntity.b2body.GetUserData().render.z,
-				opacity: 0,
 				type: 'image',
 				imageOpts: {
 					image: '../../images/atomic_explosion.png',

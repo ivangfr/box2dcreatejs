@@ -30,9 +30,8 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					color: 'black'
 				},
 				files: [
-					'../../images/tire.png',
-					'../../images/tire2.png',
-					'../../images/hummer.png',
+					'../../images/monster-chassis.png',
+					'../../images/monster-tire.png',
 					'../../images/arrow_left.png',
 					'../../images/arrow_right.png',
 					'../../images/background.jpg',
@@ -190,7 +189,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		const greyScaleFilter = new createjs.ColorMatrixFilter(colorMatrix)
 
 		_worldManager.createLandscape({
-			x: 5000, y: -100,
+			x: 5000, y: -70,
 			shape: 'box',
 			boxOpts: { width: 10000, height: 1137 },
 			render: {
@@ -272,7 +271,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			render: {
 				type: 'image',
 				imageOpts: {
-					image: '../../images/hummer.png',
+					image: '../../images/monster-chassis.png',
 					adjustImageSize: true
 				},
 				filters: [colorFilter]
@@ -283,7 +282,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		const tireRender = {
 			type: 'image',
 			imageOpts: {
-				image: '../../images/tire.png',
+				image: '../../images/monster-tire.png',
 				adjustImageSize: true
 			}
 		}
@@ -292,7 +291,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			type: 'dynamic',
 			x: CAR_X - 30, y: CAR_Y + 50,
 			shape: 'circle',
-			circleOpts: { radius: 20 },
+			circleOpts: { radius: 30 },
 			render: tireRender,
 			bodyDefOpts: { angularVelocity: 70 },
 			fixtureDefOpts: { restitution: 0.2 }
@@ -302,7 +301,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			type: 'dynamic',
 			x: CAR_X + 60, y: CAR_Y + 50,
 			shape: 'circle',
-			circleOpts: { radius: 20 },
+			circleOpts: { radius: 30 },
 			render: tireRender,
 			bodyDefOpts: { angularVelocity: 70 },
 			fixtureDefOpts: { restitution: 0.2 }
@@ -312,7 +311,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			entityA: chassis,
 			entityB: backTire,
 			type: 'revolute',
-			localAnchorA: { x: -1.6, y: 0.9 },
+			localAnchorA: { x: -1.6, y: 1.6 },
 			localAnchorB: { x: 0, y: 0 }
 		})
 
@@ -320,7 +319,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			entityA: chassis,
 			entityB: frontTire,
 			type: 'revolute',
-			localAnchorA: { x: 1.8, y: 0.9 },
+			localAnchorA: { x: 1.6, y: 1.6 },
 			localAnchorB: { x: 0, y: 0 }
 		})
 

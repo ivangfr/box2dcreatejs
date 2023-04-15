@@ -159,7 +159,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			type: 'dynamic',
 			x: 50, y: 100,
 			shape: 'circle',
-			circleOpts: { radius: 20 },
+			circleOpts: { radius: 30 },
 			render: {
 				type: 'image',
 				imageOpts: {
@@ -177,7 +177,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			type: 'dynamic',
 			x: 50, y: 100, angle: 25,
 			shape: 'box',
-			boxOpts: { width: 40, height: 40 },
+			boxOpts: { width: 70, height: 70 },
 			render: {
 				type: 'image',
 				imageOpts: {
@@ -187,7 +187,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 			},
 			bodyDefOpts: { angularVelocity: 150 }
 		})
-		box.b2body.ApplyImpulse(new box2d.b2Vec2(50, 0), box.b2body.GetWorldCenter())
+		box.b2body.ApplyImpulse(new box2d.b2Vec2(100, 0), box.b2body.GetWorldCenter())
 	}
 
 }())

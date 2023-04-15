@@ -7,7 +7,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	const TIRE_VS_CONCRETE = 1
 	const CAR_VS_CONCRETE = 2
 	const CAR_WIDTH = 170, CAR_HEIGHT = 55, CAR_X = 360, CAR_Y = 330
-	const FINISHLINE_X = 18000
+	const FINISH_LINE_X = 18000
 
 	let _worldManager
 
@@ -55,7 +55,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					'../../images/arrow_down.png',
 					'../../images/arrow_left.png',
 					'../../images/arrow_right.png',
-					'../../images/background2.jpg',
+					'../../images/background.jpg',
 					'../../images/finishFlag.jpg'
 				],
 				onComplete: () => {
@@ -90,7 +90,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					car.frontTire.getB2Body().SetAngularVelocity(-90)
 					_tireClockwise = -1
 				},
-				foward: () => {
+				forward: () => {
 					car.frontTire.getB2Body().SetAngularVelocity(90)
 					_tireClockwise = 1
 				},
@@ -143,7 +143,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				}
 			})
 
-			if (!_carArrived && (car.chassis.getPosition().x + CAR_WIDTH / 2) >= FINISHLINE_X) {
+			if (!_carArrived && (car.chassis.getPosition().x + CAR_WIDTH / 2) >= FINISH_LINE_X) {
 				_carArrived = true
 				clearInterval(_interval)
 				_hintElem.innerHTML = 'FINISHED!!'
@@ -170,14 +170,15 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		})
 
 		_worldManager.createLandscape({
-			x: 10000, y: 115,
+			x: 10000, y: 139,
 			shape: 'box',
-			boxOpts: { width: 20000, height: 575 },
+			boxOpts: { width: 20000, height: 500 },
 			render: {
+			    opacity: 0.7,
 				type: 'draw',
 				drawOpts: {
 					bgColorStyle: 'transparent',
-					bgImage: '../../images/background2.jpg',
+					bgImage: '../../images/background.jpg',
 					repeatBgImage: 'repeat-x'
 				}
 			}
@@ -190,7 +191,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 				o: { onkeydown: () => timeStepHandler.getFPS() === 980 ? timeStepHandler.restoreFPS() : timeStepHandler.setFPS(980) },
 				ArrowLeft: { onkeydown: (e) => player.anticlockwise(e) },
 				ArrowUp: {
-					onkeydown: (e) => player.foward(e),
+					onkeydown: (e) => player.forward(e),
 					keepPressed: true
 				},
 				ArrowRight: {
@@ -509,7 +510,7 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 					adjustImageSize: true
 				}
 			},
-			onmousedown: function (e) { player.foward(e) },
+			onmousedown: function (e) { player.forward(e) },
 			keepPressed: true
 		})
 	}
@@ -621,20 +622,21 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 	function buildFinishLine() {
 		_worldManager.createEntity({
 			type: 'static',
-			x: FINISHLINE_X, y: 190,
+			x: FINISH_LINE_X, y: 190,
 			shape: 'box',
-			boxOpts: { width: 50, height: 400 },
+			boxOpts: { width: 40, height: 400 },
 			render: {
-				type: 'image',
-				imageOpts: {
-					image: '../../images/finishFlag.jpg',
-					adjustImageSize: true
-				}
+                type: 'draw',
+                drawOpts: {
+                    bgColorStyle: 'transparent',
+                    bgImage: '../../images/finishFlag.jpg',
+                    repeatBgImage: 'repeat-y'
+                },
 			}
 		})
 		_worldManager.createEntity({
 			type: 'static',
-			x: FINISHLINE_X, y: 180,
+			x: FINISH_LINE_X, y: 180,
 			shape: 'box',
 			boxOpts: { width: 5, height: 420 },
 			render: {
