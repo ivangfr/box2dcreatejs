@@ -608,8 +608,10 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 
 		_easeljsStage.setTransform(x * _canvasCtxScale, y * _canvasCtxScale, _canvasCtxScale, _canvasCtxScale)
 
-		_fpsIndicatorText.x = _fpsIndicatorText.x0 - x
-		_fpsIndicatorText.y = _fpsIndicatorText.y0 - y
+        if (_fpsIndicatorText !== undefined) {
+            _fpsIndicatorText.x = _fpsIndicatorText.x0 - x
+            _fpsIndicatorText.y = _fpsIndicatorText.y0 - y
+        }
 
 		if (_keyboardHandler) {
 			const keyboardHintText = _keyboardHandler.getKeyboardHintText();

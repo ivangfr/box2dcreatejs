@@ -215,9 +215,9 @@ this.Box2DCreateJS = this.Box2DCreateJS || {};
 		// Floor
 		_worldManager.createEntity({
 			type: 'static',
-			x: 980, y: 450,
+			x: 5000, y: 450,
 			shape: 'box',
-			boxOpts: { width: 20000, height: 10 },
+			boxOpts: { width: 10000, height: 10 },
 			render: staticRender
 		})
 

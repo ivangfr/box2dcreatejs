@@ -358,17 +358,17 @@ Link
             entityA: Entity,                                                                              // Mandatory
             entityB: Entity,                                                                              // Mandatory
             type: String ['distance', 'rope', 'revolute', 'prismatic', 'pulley', 'gear', 'line', 'weld'], // Mandatory
-            localAnchorA: {                                                                               // Mandatory
-                x: Number,                                                                                // Mandatory
-                y: Number                                                                                 // Mandatory
+            localAnchorA: {                                                                               // Optional
+                x: Number,                                                                                // Optional, default: 0
+                y: Number                                                                                 // Optional, default: 0
             },
-            localAnchorB: {                                                                               // Mandatory
-                x: Number,                                                                                // Mandatory
-                y: Number                                                                                 // Mandatory
+            localAnchorB: {                                                                               // Optional
+                x: Number,                                                                                // Optional, default: 0
+                y: Number                                                                                 // Optional, default: 0
             },
-            localAxisA: {                                                                                 // Mandatory
-                x: Number,                                                                                // Mandatory
-                y: Number                                                                                 // Mandatory
+            localAxisA: {                                                                                 // Optional
+                x: Number,                                                                                // Optional, default: 0
+                y: Number                                                                                 // Optional, default: 0
             },
             options: {
                 collideConnected: Number,                                                                 // Optional
@@ -509,7 +509,7 @@ Render
                 r1: Number                                                                    // Mandatory if bgColorStyle is 'radialGradient'
             },
             bgImage: String,                                                                  // Optional, default: undefined
-            repeatBgImage: Boolean,                                                           // Optional, default: 'no-repeat'
+            repeatBgImage: String ['no-repeat', 'repeat', 'repeat-x', 'repeat-y'],            // Optional, default: 'no-repeat'
             adjustBgImageSize: Boolean,                                                       // Optional, default: false
             cache: Boolean,                                                                   // Optional, default: false
             textOpts: {                                                                       // Optional
