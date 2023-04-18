@@ -13,6 +13,7 @@ image::images/homepage/play-button.png[alt=Play-Box2DCreateJS,width=64,height=64
 * [Medium]: https://medium.com/@ivangfr/box2dcreatejs-unleashing-the-potential-of-box2d-and-createjs-in-a-unified-library-93e258ade217[**Box2DCreateJS: Unleashing the Potential of Box2D and CreateJS in a Unified Library**]
 * [Medium]: https://medium.com/@ivangfr/box2dcreatejs-creating-the-project-initial-setup-f9896d7ab622[**Box2DCreateJS: Creating the Project Initial Setup**]
 * [Medium]: https://medium.com/@ivangfr/box2dcreatejs-creating-a-ball-and-interacting-with-it-using-the-cursor-a7072bbe2d7e[**Box2DCreateJS: Creating a Ball and Interacting with it using the Cursor**]
+* [Medium]: https://medium.com/@ivangfr/box2dcreatejs-creating-a-monster-truck-game-225193431735[**Box2DCreateJS: Creating a Monster Truck Game**]
 
 == References
 
